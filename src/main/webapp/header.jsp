@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>麦当劳</title>
+    <title>点餐系统</title>
     <link rel="stylesheet" type="text/css" href="${APP_PATH}/css/mainfront.css">
     <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js" ></script>
     <script type="text/javascript">
@@ -43,14 +43,14 @@
     <div id="u41">
         <div id="u41_div"></div>
         <div id="u41_text">
-            <p><span>麦当劳(青岛科技大学青软国际软件学院店)</span></p>
+            <p><span>点餐系统</span></p>
         </div>
     </div>
     <!-- 索引菜单栏 -->
     <div id="index">
         <button>返回首页</button>
-        <button>注册/充值</button>
-        <button>查询余额</button>
+        <!-- <button>注册/充值</button>
+        <button>查询余额</button> -->
         <a target="_blank" href="${APP_PATH}/admin/main"><button>后台管理</button></a>
     </div>
 </div>

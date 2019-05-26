@@ -18,7 +18,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #393C3D;border-bottom-color:#666868" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <div><a class="navbar-brand" href="${APP_PATH}/product/show" style="font-size:32px;">点餐平台</a></div>
+          <div><a class="navbar-brand" href="${APP_PATH}/product/show" style="font-size:32px;">点餐系统</a></div>
         </div>
       </div>
     </nav>
@@ -35,7 +35,6 @@
 			<span class="glyphicon glyphicon-lock form-control-feedback"></span>
 		  </div>
         <a class="btn btn-lg btn-success btn-block" onclick="dologin()" > 登录</a>
-          <a class="btn btn-lg btn-success btn-block" onclick="testTomianAjax()" > ceshiyisbu</a>
       </form>
     </div>
     <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>

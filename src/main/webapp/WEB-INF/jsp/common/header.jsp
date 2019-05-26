@@ -9,7 +9,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #393C3D;" role="navigation">
 <div class="container-fluid">
     <div class="navbar-header">
-        <div><a href="${APP_PATH}/admin/main" class="navbar-brand" style="font-size:32px;">点餐平台 - 后台管理</a></div>
+        <div><a href="${APP_PATH}/admin/main" class="navbar-brand" style="font-size:32px;">点餐系统- 后台管理</a></div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -25,11 +25,11 @@
                     </ul>
                 </div>
             </li>
-            <li style="margin-left:10px;padding-top:8px;margin-right: 25px">
+            <!-- <li style="margin-left:10px;padding-top:8px;margin-right: 25px">
                 <button type="button" class="btn btn-default btn-danger">
                     <span class="glyphicon glyphicon-question-sign"></span> 帮助
                 </button>
-            </li>
+            </li> -->
         </ul>
     </div>
 </div>

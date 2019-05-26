@@ -69,15 +69,10 @@
 	<script src="${APP_PATH}/script/docs.min.js"></script>
     <script src="${APP_PATH}/script/echarts.min.js"></script>
     <script src="${APP_PATH}/laydate/laydate.js"></script> <!-- 改成你的路径 -->
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
-    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/echarts/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/echarts/ecStat.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/echarts/dataTool.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/echarts/simplex.js"></script>
     <script type="text/javascript">
         var date="";
         $(function () {

@@ -12,10 +12,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>麦当劳</title>
+    <title>点餐系统</title>
     <link rel="stylesheet" type="text/css" href="${APP_PATH}/css/mainfront.css">
     <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js" ></script>
-    <%--<script src="/js/main.js" type="text/javascript"></script>--%>
     <script type="text/javascript">
         //为什么都接收字符串？如果不接收字符串会报空指针异常（可能是空指针），反正会报异常
         var pageNum = "${pageInfo.pageNum}";//获取当前页数
@@ -170,12 +169,6 @@
         <c:forEach items="${category}" var="category">
             <div class="menu_1" categoryId="${category.id}">${category.name}</div>
         </c:forEach>
-        <%--<div class="menu_1">商家推荐</div>--%>
-        <%--<div class="menu_1">超值套餐</div>--%>
-        <%--<div class="menu_1">小食</div>--%>
-        <%--<div class="menu_1">甜品</div>--%>
-        <%--<div class="menu_1">饮品</div>--%>
-        <%--<div class="menu_1">开心乐园餐</div>--%>
     </div>
 </div>
 <div id="content">
@@ -191,8 +184,8 @@
         总计：￥<strong>0</strong>
     </div>
     <div id="pay">
-        <button id="vip_pay">会员结账</button>
-        <button id="user_pay">普通结账</button>
+        <!-- <button id="vip_pay">结账</button> -->
+        <button id="user_pay">结账</button>
     </div>
 
 </div>
