@@ -2,29 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.qst.goldenarches.dao.CategoryMapper">
    <sql id="baseCategoryList">
-       category_id id,category_name name
+       category_id id,parent_id parentId,category_name name,printid
    </sql>
     <insert id="insertCategory">
-        INSERT INTO product_category(category_name) VALUES (#{name})
+        INSERT INTO product_category(parent_id,category_name,printid) VALUES (#{parentId},#{name},#{printid})
     </insert>
     <update id="updateCategory">
-        UPDATE product_category SET category_name=#{name}
+        UPDATE product_category SET category_name=#{name},parent_id=#{parentId},printid=#{printid}
         WHERE category_id=#{id}
     </update>
     <delete id="deleteCategory">
         DELETE FROM product_category
         WHERE category_id=#{id}
     </delete>
+    <select id="getById" resultType="com.qst.goldenarches.pojo.Category" parameterType="java.lang.Integer">
+         SELECT <include refid="baseCategoryList"/>
+        FROM product_category
+        WHERE category_id=#{id}
+    </select>
+    
     <delete id="deleteCategories">
         DELETE FROM product_category WHERE category_id IN
         <foreach collection="categoryids" item="categoryid" open="(" close=")" separator=",">
             #{categoryid}
         </foreach>
     </delete>
-    <select id="selectAll" resultType="com.qst.goldenarches.pojo.Category">
+    <select id="selectAll" resultType="com.qst.goldenarches.pojo.Category" parameterType="java.util.HashMap">
         SELECT <include refid="baseCategoryList"/>
         FROM product_category
         <where>
+            1=1
+            <if test="parentId !=null">
+                AND parent_id = #{parentId}
+            </if>
             <if test="queryText!=null">
                 AND category_name LIKE CONCAT('%',#{queryText},'%')
             </if>

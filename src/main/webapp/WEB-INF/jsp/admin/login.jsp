@@ -62,7 +62,9 @@
         		loadingIndex = layer.msg('处理中', {icon: 16});
         	},
         	success : function(result) {
+        		debugger
         		layer.close(loadingIndex);
+        		
         		if (result.code==100) {
         			window.location.href = "${APP_PATH}/admin/main";
         		} else {

@@ -6,23 +6,26 @@
  */
 package com.qst.goldenarches.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.pojo.Category;
-import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.pojo.Product;
-import com.qst.goldenarches.service.CategoryService;
-import com.sun.org.apache.regexp.internal.RE;
-import com.sun.org.apache.xml.internal.security.keys.keyresolver.implementations.PrivateKeyResolver;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.pojo.Category;
+import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.pojo.TreeNode;
+import com.qst.goldenarches.service.CategoryService;
 
 @Controller
 @RequestMapping("/category")
@@ -110,6 +113,7 @@ public class CategoryController {
      */
     @RequestMapping("edit")
     public String toEdit(Category category, Model model){
+    	category = categoryService.getById(category.getId());
         model.addAttribute("category", category);
         return "category/edit";
     }
@@ -134,7 +138,8 @@ public class CategoryController {
      * @return
      */
     @RequestMapping("add")
-    public String toAdd(){
+    public String toAdd(Category category, Model model){
+    	model.addAttribute("category", category);
         return "category/add";
     }
     /**
@@ -145,9 +150,12 @@ public class CategoryController {
      */
     @ResponseBody
     @RequestMapping("pagedGetAll")
-    public Msg pagedGetAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn, String queryText){
+    public Msg pagedGetAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn, String queryText,Integer parentId){
         PageHelper.startPage(pn,5);
-        List<Category> categories =categoryService.getAll(queryText);
+        Map<String, Object> param = new HashMap<String,Object>();
+        param.put("queryText", queryText);
+        param.put("parentId", parentId);
+        List<Category> categories =categoryService.getAll(param);
         com.github.pagehelper.PageInfo<Category> categoryPageInfo =new com.github.pagehelper.PageInfo<Category>(categories,5);
         return Msg.success().add("pageInfo",categoryPageInfo);
     }
@@ -162,7 +170,7 @@ public class CategoryController {
         return "category/index";
     }
     /***
-     * 商品后台：获取全部商品类别
+          * 商品后台：获取全部商品类别
      * @return
      */
     @ResponseBody
@@ -171,5 +179,18 @@ public class CategoryController {
         List<Category> categories =categoryService.getAll(null);
         return Msg.success().add("categoryInfo",categories);
     }
+    
+    
+    @RequestMapping(value = "getTreeListAll",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TreeNode> getListAll(HttpServletRequest request) throws Exception{
+		List<Category> categories = categoryService.getAll(null);
+		List<TreeNode> treeNodes = new ArrayList<TreeNode>(categories.size());
+		treeNodes.add(new TreeNode("0","", "ROOT", true, false, false));
+		for (Category category : categories) {
+			treeNodes.add(new TreeNode(category.getId()+"", category.getParentId()+"", category.getName(), true, false, false));
+		}
+		return treeNodes;
+	}
 
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 
 public interface CategoryMapper {
 
-    List<Category> selectAll(@Param("queryText") String queryText);
+    List<Category> selectAll(Map<String, Object> param);
 
     int insertCategory(Category category);
 
@@ -25,4 +25,6 @@ public interface CategoryMapper {
     int deleteCategories(Map<String, Object> map);
 
     List<Category> selectHaveProductCategories(Map<String, Object> map);
+
+	Category getById(Integer id);
 }

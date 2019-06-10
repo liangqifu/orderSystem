@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -73,15 +73,10 @@
 				<p>测试内容2，测试内容2，测试内容2，测试内容2，测试内容2，测试内容2</p>
 			  </div>
 		  </div>
-		  <!--
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Save changes</button>
-		  </div>
-		  -->
+		 
 		</div>
 	  </div>
-	</div>
+	</div> -->
 	</div>
     <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
     <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
@@ -101,8 +96,6 @@
             });
         });
         $("#resetBtn").click(function(){
-            // Jquery[0] ==> DOM
-            // $(DOM) ==> Jquery
             $("#categoryForm")[0].reset();
         });
 
@@ -112,15 +105,15 @@
                 layer.msg("商品类型名称不能为空", {time:2000, icon:5, shift:6}, function(){});
                 return;
             }
+            
             $.ajax({
                 type : "POST",
                 url  : "${APP_PATH}/category/doEdit",
-                data : {id:${category.id},name:categoryName},
+                data : {id:${category.id},parentId:${category.parentId},name:categoryName},
                 beforeSend : function(){
                     loadingIndex = layer.msg('处理中', {icon: 16});
                 },
                 success : function(result) {
-                    console.log(result);
                     layer.close(loadingIndex);
                     if ( result.code==100 ) {
                         layer.msg("商品类别信息修改成功", {time:1000, icon:6}, function(){

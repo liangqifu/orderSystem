@@ -37,7 +37,7 @@
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <tx:advice id="transactionAdvice" transaction-manager="txManager" >
+    <!-- <tx:advice id="transactionAdvice" transaction-manager="txManager" >
         <tx:attributes>
             <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="java.lang.Exception" />
             <tx:method name="select*" read-only="true" />
@@ -46,6 +46,6 @@
     </tx:advice>
     <aop:config>
         <aop:advisor advice-ref="transactionAdvice" pointcut="execution(* com.qst.goldenarches.service.impl.*.*(..))"/>
-    </aop:config>
+    </aop:config> -->
 
 </beans>

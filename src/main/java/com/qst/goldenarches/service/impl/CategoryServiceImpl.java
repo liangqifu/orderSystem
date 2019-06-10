@@ -21,8 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
-    public List<Category> getAll(String queryText) {
-       return categoryMapper.selectAll(queryText);
+    public List<Category> getAll(Map<String, Object> param) {
+       return categoryMapper.selectAll(param);
     }
 
     public boolean addCategory(Category category) {
@@ -44,4 +44,11 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> getHaveProductCategories(Map<String, Object> map) {
         return categoryMapper.selectHaveProductCategories(map);
     }
+
+	@Override
+	public Category getById(Integer id) {
+		return categoryMapper.getById(id);
+	}
+    
+    
 }

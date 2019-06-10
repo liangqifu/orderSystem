@@ -1,95 +1,120 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
 
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	table tbody tr:nth-child(odd){background:#F4F4F4;}
-	table tbody td:nth-child(even){color:#C00;}
-	</style>
-  </head>
+<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
+<link rel="stylesheet" href="${APP_PATH}/css/main.css">
+<link rel="stylesheet" href="${APP_PATH}/ztree/zTreeStyle.css">
+<style>
+.tree li {
+	list-style-type: none;
+	cursor: pointer;
+}
 
-  <body>
+table tbody tr:nth-child(odd) {
+	background: #F4F4F4;
+}
 
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
+table tbody td:nth-child(even) {
+	color: #C00;
+}
+</style>
+</head>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
+<body>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<%@include file="/WEB-INF/jsp/common/header.jsp"%>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-3 col-md-2 sidebar">
+				<div class="tree">
+					<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
+				</div>
 			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 商品类别数据</h3>
-			  </div>
-			  <div class="panel-body">
-<form class="form-inline" role="form" style="float:left;">
-  <div class="form-group has-feedback">
-    <div class="input-group">
-      <div class="input-group-addon">查询条件</div>
-      <input id="queryText" class="form-control has-success" type="text" placeholder="请输入查询条件">
-    </div>
-  </div>
-  <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
-</form>
-<button type="button" class="btn btn-danger" onclick="deleteUsers()" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
-<button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='${APP_PATH}/category/add'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
-<br>
- <hr style="clear:both;">
-          <div class="table-responsive">
-            <form id="categoryForm">
-            <table class="table  table-bordered ">
-              <thead>
-                <tr >
-                    <th width="30">#</th>
-				    <th width="30"><input type="checkbox" id="allSelBox"></th>
-                    <th width="45">类别名称</th>
-                    <th width="100">操作</th>
-                </tr>
-              </thead>
-              
-              <tbody id="categoryData">
-                  
-              </tbody>
-              
-			  <tfoot>
-			     <tr >
-				     <td colspan="9" align="center">
-						<ul class="pagination"></ul>
-					 </td>
-				 </tr>
-
-			  </tfoot>
-            </table>
-            </form>
-          </div>
-			  </div>
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<i class="glyphicon glyphicon-th"></i> 商品类别数据
+						</h3>
+					</div>
+					<div>
+					   <div class="panel panel-default" style="float: left;width: 20%;">
+					        <ul id="categoryTree" style="display: none;" class="ztree"></ul>
+					   </div>
+					    <div class="panel-body" style="float: right; width: 80%;">
+							<form class="form-inline" role="form" style="float: left;">
+								<div class="form-group has-feedback">
+									<div class="input-group">
+										<div class="input-group-addon">查询条件</div>
+										<input id="queryText" class="form-control has-success"
+											type="text" placeholder="请输入查询条件">
+									</div>
+								</div>
+								<button id="queryBtn" parentId="0" type="button" class="btn btn-warning">
+									<i class="glyphicon glyphicon-search"></i> 查询
+								</button>
+							</form>
+							<button type="button" class="btn btn-danger"
+								onclick="deleteUsers()" style="float: right; margin-left: 10px;">
+								<i class=" glyphicon glyphicon-remove"></i> 删除
+							</button>
+							<button type="button" id="addBtn" class="btn btn-primary"
+								style="float: right;">
+								<i class="glyphicon glyphicon-plus"></i> 新增
+							</button>
+							<br>
+							<hr style="clear: both;">
+							<div class="table-responsive">
+								<form id="categoryForm">
+									<table class="table  table-bordered ">
+										<thead>
+											<tr>
+												<!-- <th width="30">#</th> -->
+												<th style="width: 5%;"><input type="checkbox" id="allSelBox"></th>
+												<th style="width:60% ;text-align: center;">类别名称</th>
+												<th style="width:35%">操作</th>
+											</tr>
+										</thead>
+	
+										<tbody id="categoryData">
+	
+										</tbody>
+	
+										<tfoot>
+											<tr>
+												<td colspan="9" align="center">
+													<ul class="pagination"></ul>
+												</td>
+											</tr>
+	
+										</tfoot>
+									</table>
+								</form>
+							</div>
+						</div>
+					</div>
+					
+				</div>
 			</div>
-        </div>
-      </div>
-    </div>
-    <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js" ></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
+		</div>
+	</div>
+	<script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
+	<script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
 	<script src="${APP_PATH}/script/docs.min.js"></script>
 	<script src="${APP_PATH}/layer/layer.js"></script>
-    <script type="text/javascript">
+	<script src="${APP_PATH}/ztree/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript">
         var searchFlag = false;
         $(function () {
             $(".list-group-item").click(function(){
@@ -104,6 +129,7 @@
             });
             /**分页查询**/
             pageQuery(1);
+            loadCategoryTree();
 
             /**为查询按钮添加点击事件,判断内容是否为空，进行模糊查询**/
             $("#queryBtn").click(function(){
@@ -130,14 +156,58 @@
                 //判断当前选择中的元素是否全选，如果是则选中总标签
                 var flag = $(".check_item:checked").length==$(".check_item").length;
                 $("#allSelBox").prop("checked",flag);
+            }).on("click","#addBtn",function(){
+            	goAddPage();
             });
+            
+            
+            
         });
+        
+        var setting = {
+        		check: {
+        			enable: false,
+        			dblClickExpand: false
+        		},callback: {
+        			onClick: function(e,treeId, treeNode) {
+                        $("#queryBtn").attr("parentId",treeNode.id);
+                        pageQuery(1);
+                    }
+        		},
+                data:{
+                	simpleData: {
+        				enable: true
+        			}
+                }/* ,
+                async:{
+                	enable:true,
+                	url:"${APP_PATH}/category/getTreeListAll",
+                	autoParam:["id"],
+                	dataType:"json"
+                } */
+        		
+        };
+        function loadCategoryTree(){
+        	$.ajax({
+		            url:"${APP_PATH}/category/getTreeListAll",
+					type:"GET",
+					dataType:"text",
+					success:function(data, textStatus){	
+						var zNodes = eval('('+data+')');
+						$.fn.zTree.init($("#categoryTree"), setting, zNodes);
+						$("#categoryTree").show();
+					},
+					error:function(){
+						alert("error");
+					}
+       		});
+        }
 
         /***分页查询构建表格***/
         function pageQuery( pageno ) {
             var loadingIndex = null;
-
-            var jsonData = {"pageno" : pageno};
+            var parentId = $("#queryBtn").attr("parentId");
+            var jsonData = {"pageno" : pageno,"parentId":parentId};
             if ( searchFlag == true ) {
                 jsonData.queryText = $("#queryText").val();
             }
@@ -160,7 +230,7 @@
                         var categorys=result.extend.pageInfo.list;
                         $.each(categorys, function(i, category){
                             tableContent += '<tr>';
-                            tableContent += '  <td>'+(i+1)+'</td>';
+                            //tableContent += '  <td>'+(i+1)+'</td>';
                             tableContent += '  <td><input type="checkbox" name="categoryid" value="'+category.id+'" class="check_item"></td>';
                             tableContent += '  <td>'+category.name+'</td>';
                             tableContent += '  <td>';
@@ -200,6 +270,10 @@
         function goUpdatePage(id,name) {
             window.location.href = "${APP_PATH}/category/edit?id="+id+"&name="+name;
         }
+        function goAddPage() {
+        	var parentId = $("#queryBtn").attr("parentId");
+            window.location.href = "${APP_PATH}/category/add?parentId="+parentId;
+        }
         /***批量删除商品类别信息***/
         function deleteUsers() {
             var checkedlength = $(".check_item:checked").length;
@@ -217,7 +291,8 @@
                             success : function(result) {
                                 if ( result.code ==100 ) {
                                     layer.msg("商品类别信息删除成功", {time:1000, icon:6}, function(){
-                                        pageQuery(1);
+                                    	loadCategoryTree()
+                                    	pageQuery(1);                                     
                                     });
 
                                 } else {
@@ -244,7 +319,8 @@
                         success : function(result) {
                             if ( result.code==100 ) {
                                 layer.msg("商品类别信息删除成功", {time:1000, icon:6}, function(){
-                                    pageQuery(1);
+                                	loadCategoryTree()
+                                	pageQuery(1);
                                 });
                             } else {
                                 layer.msg("商品类别信息删除失败", {time:2000, icon:5, shift:6}, function(){});
@@ -301,5 +377,5 @@
             return flag;
         }
     </script>
-  </body>
+</body>
 </html>
