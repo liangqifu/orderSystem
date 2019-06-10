@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : MySQL(root)
-Source Server Version : 50717
+Source Server         : localhost
+Source Server Version : 50520
 Source Host           : localhost:3306
 Source Database       : ztgoldenarches
 
 Target Server Type    : MYSQL
-Target Server Version : 50717
+Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2018-11-06 22:25:03
+Date: 2019-06-10 23:04:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,7 @@ CREATE TABLE `order_detail` (
   `product_price` double(10,2) DEFAULT NULL,
   `product_number` int(32) DEFAULT NULL COMMENT '商品数量',
   PRIMARY KEY (`detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 COMMENT='订单详情表';
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8 COMMENT='订单详情表';
 
 -- ----------------------------
 -- Records of order_detail
@@ -203,6 +203,12 @@ INSERT INTO `order_detail` VALUES ('168', '69', '6', '金黄脆薯格下午茶�
 INSERT INTO `order_detail` VALUES ('169', '69', '7', '金黄脆薯格下午茶香芋派组', '13.60', '0');
 INSERT INTO `order_detail` VALUES ('170', '70', '1', '万圣节日辣堡桶S', '67.00', '1');
 INSERT INTO `order_detail` VALUES ('171', '70', '3', '国庆狂欢小食盒', '66.00', '1');
+INSERT INTO `order_detail` VALUES ('172', '71', '3', '???????', '66.00', '1');
+INSERT INTO `order_detail` VALUES ('173', '72', '29', '??????????', '22.00', '3');
+INSERT INTO `order_detail` VALUES ('174', '73', '3', '???????', '66.00', '3');
+INSERT INTO `order_detail` VALUES ('175', '73', '4', '????', '79.00', '2');
+INSERT INTO `order_detail` VALUES ('176', '73', '7', '????????????', '17.00', '2');
+INSERT INTO `order_detail` VALUES ('177', '73', '8', '????????????', '19.00', '1');
 
 -- ----------------------------
 -- Table structure for order_master
@@ -214,7 +220,7 @@ CREATE TABLE `order_master` (
   `total_amount` double(10,2) DEFAULT NULL COMMENT '订单总金额',
   `create_time` char(19) DEFAULT NULL,
   PRIMARY KEY (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8 COMMENT='订单总表';
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8 COMMENT='订单总表';
 
 -- ----------------------------
 -- Records of order_master
@@ -289,6 +295,9 @@ INSERT INTO `order_master` VALUES ('67', '30', '319.20', '2018-10-29 20:20:50');
 INSERT INTO `order_master` VALUES ('68', '-1', '346.00', '2018-10-29 20:35:39');
 INSERT INTO `order_master` VALUES ('69', '31', '639.20', '2018-10-29 20:37:32');
 INSERT INTO `order_master` VALUES ('70', '-1', '133.00', '2018-11-02 15:12:42');
+INSERT INTO `order_master` VALUES ('71', '-1', '66.00', '2019-05-26 18:23:30');
+INSERT INTO `order_master` VALUES ('72', '-1', '66.00', '2019-05-26 18:39:58');
+INSERT INTO `order_master` VALUES ('73', '-1', '409.00', '2019-05-26 18:40:27');
 
 -- ----------------------------
 -- Table structure for product_category
@@ -296,19 +305,21 @@ INSERT INTO `order_master` VALUES ('70', '-1', '133.00', '2018-11-02 15:12:42');
 DROP TABLE IF EXISTS `product_category`;
 CREATE TABLE `product_category` (
   `category_id` int(32) NOT NULL AUTO_INCREMENT COMMENT '商品类型id',
+  `parent_id` int(32) NOT NULL DEFAULT '0' COMMENT '父id',
   `category_name` varchar(255) NOT NULL COMMENT '商品类型名',
+  `printid` int(21) DEFAULT NULL COMMENT '打印机id',
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='商品类型表';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='商品类型表';
 
 -- ----------------------------
 -- Records of product_category
 -- ----------------------------
-INSERT INTO `product_category` VALUES ('1', '主食');
-INSERT INTO `product_category` VALUES ('2', '超值套餐');
-INSERT INTO `product_category` VALUES ('3', '小食');
-INSERT INTO `product_category` VALUES ('4', '甜品');
-INSERT INTO `product_category` VALUES ('5', '饮品');
-INSERT INTO `product_category` VALUES ('6', '开心乐园餐');
+INSERT INTO `product_category` VALUES ('1', '0', '主食', null);
+INSERT INTO `product_category` VALUES ('2', '0', '酒水', null);
+INSERT INTO `product_category` VALUES ('3', '1', '小食', null);
+INSERT INTO `product_category` VALUES ('4', '1', '甜品', null);
+INSERT INTO `product_category` VALUES ('5', '2', '饮品', null);
+INSERT INTO `product_category` VALUES ('6', '1', '开心乐园餐', null);
 
 -- ----------------------------
 -- Table structure for product_info
@@ -330,12 +341,12 @@ CREATE TABLE `product_info` (
 -- ----------------------------
 INSERT INTO `product_info` VALUES ('1', '万圣节日辣堡桶S', '67.00', '74', '1', '1', '636adc4794484ca88a8bae6ff0ebd909.JPG');
 INSERT INTO `product_info` VALUES ('2', '无辣不欢组合', '43.00', '93', '0', '1', '8111d7da0e39484ea669e19e5b5e52ea.JPG');
-INSERT INTO `product_info` VALUES ('3', '国庆狂欢小食盒', '66.00', '62', '1', '1', 'cde5c5c7c6f446cc9787579d18a871b7.JPG');
-INSERT INTO `product_info` VALUES ('4', '麦趣鸡盒', '79.00', '66', '1', '1', '5fd8e7239ad448b7b95e873e94bae20b.JPG');
+INSERT INTO `product_info` VALUES ('3', '国庆狂欢小食盒', '66.00', '58', '1', '1', 'cde5c5c7c6f446cc9787579d18a871b7.JPG');
+INSERT INTO `product_info` VALUES ('4', '麦趣鸡盒', '79.00', '64', '1', '1', '5fd8e7239ad448b7b95e873e94bae20b.JPG');
 INSERT INTO `product_info` VALUES ('5', '蛋挞', '8.00', '77', '1', '1', '72708d2c20864af9bb2bb0f4429496ce.JPG');
 INSERT INTO `product_info` VALUES ('6', '金黄脆薯格下午茶鸡翅组', '19.00', '80', '1', '1', '4f98bb3ca9e24d0f8b5f532573c067e2.JPG');
-INSERT INTO `product_info` VALUES ('7', '金黄脆薯格下午茶香芋派组', '17.00', '89', '1', '1', 'ebe680e693d64dc3a67e1663d3172e53.JPG');
-INSERT INTO `product_info` VALUES ('8', '金黄脆薯格下午茶麦乐鸡组', '19.00', '100', '1', '1', '96812ba0bd274a2bb9151d92a2227ad3.JPG');
+INSERT INTO `product_info` VALUES ('7', '金黄脆薯格下午茶香芋派组', '17.00', '87', '1', '1', 'ebe680e693d64dc3a67e1663d3172e53.JPG');
+INSERT INTO `product_info` VALUES ('8', '金黄脆薯格下午茶麦乐鸡组', '19.00', '99', '1', '1', '96812ba0bd274a2bb9151d92a2227ad3.JPG');
 INSERT INTO `product_info` VALUES ('9', '经典麦辣鸡腿汉堡', '22.00', '98', '0', '2', '1770641e2c084d55958d01f329fef7e2.JPG');
 INSERT INTO `product_info` VALUES ('10', '原味板烧鸡腿堡', '20.00', '96', '1', '2', '3fec9e1c54f747b6a85f35e2f3244b4a.JPG');
 INSERT INTO `product_info` VALUES ('11', '麦香鸡', '13.00', '97', '1', '2', 'b2ec8e72f91042dfb7a21c5b0b54bc6f.JPG');
@@ -356,7 +367,7 @@ INSERT INTO `product_info` VALUES ('25', '纯纯玉米饮', '13.50', '99', '1', 
 INSERT INTO `product_info` VALUES ('26', '黑pro豆浆', '13.50', '100', '1', '5', '8aa9b2509b69481cb14ddec4334c7704.JPG');
 INSERT INTO `product_info` VALUES ('27', '可口可乐', '8.00', '99', '1', '5', '7e763c74c2984e9ba68e2218bfc34002.JPG');
 INSERT INTO `product_info` VALUES ('28', '九珍果汁饮料', '8.00', '100', '1', '5', '379d7f1483494b848d1df901b6740f8f.JPG');
-INSERT INTO `product_info` VALUES ('29', '开心乐园餐（汉堡包）', '22.00', '97', '1', '6', '1a9186fcb40240e39d9a86a16e4be912.png');
+INSERT INTO `product_info` VALUES ('29', '开心乐园餐（汉堡包）', '22.00', '94', '1', '6', '1a9186fcb40240e39d9a86a16e4be912.png');
 INSERT INTO `product_info` VALUES ('30', '开心乐园餐（吉士汉堡包）', '23.00', '98', '1', '6', '28159d626d4e45b68f59098a989ab914.png');
 INSERT INTO `product_info` VALUES ('31', '开心乐园餐（麦乐鸡）', '22.00', '95', '1', '6', '88fa45f8597e45ae83ba1e5c22ef6804.png');
 INSERT INTO `product_info` VALUES ('32', '苹果片', '6.00', '96', '1', '6', 'a44e4a74fe794e1d8a957dac5b6c0bf1.jpg');
@@ -378,7 +389,7 @@ CREATE TABLE `t_admin` (
 -- ----------------------------
 -- Records of t_admin
 -- ----------------------------
-INSERT INTO `t_admin` VALUES ('1', '孙中军', 'admin', '1234', null);
+INSERT INTO `t_admin` VALUES ('1', 'admin', 'admin', '1234', '2018-10-29 17:05:23');
 INSERT INTO `t_admin` VALUES ('73', '任年祥', 'SR', '1234', '2018-10-29 17:05:23');
 INSERT INTO `t_admin` VALUES ('74', '程乘', 'CC', '1234', '2018-10-29 17:05:58');
 INSERT INTO `t_admin` VALUES ('75', '徐强', 'XuQiang', '1234', '2018-10-29 17:06:29');
@@ -430,7 +441,7 @@ CREATE TABLE `t_permission` (
   `url` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_permission
@@ -443,7 +454,6 @@ INSERT INTO `t_permission` VALUES ('6', '商品管理', '1', '', 'glyphicon glyp
 INSERT INTO `t_permission` VALUES ('7', '全部商品', '6', '/product/index', 'glyphicon glyphicon-check');
 INSERT INTO `t_permission` VALUES ('8', '添加商品', '6', '/product/add', 'glyphicon glyphicon-check');
 INSERT INTO `t_permission` VALUES ('9', '商品类别', '6', '/category/index', 'glyphicon glyphicon-tag');
-INSERT INTO `t_permission` VALUES ('11', '添加类别', '6', '/category/add', 'glyphicon glyphicon-tag');
 INSERT INTO `t_permission` VALUES ('12', '数据管理', '1', null, 'glyphicon glyphicon-equalizer');
 INSERT INTO `t_permission` VALUES ('13', '会员数据', '12', '/member/index', 'glyphicon glyphicon-king');
 INSERT INTO `t_permission` VALUES ('14', '订单数据', '12', '/order/index', 'glyphicon glyphicon-list-alt');
@@ -451,6 +461,25 @@ INSERT INTO `t_permission` VALUES ('15', '数据分析', '12', '/admin/main', 'g
 INSERT INTO `t_permission` VALUES ('16', '会员显示', '13', '/member/index', 'glyphicon glyphicon-king');
 INSERT INTO `t_permission` VALUES ('17', '金额修改', '13', '/member/doEdit', 'glyphicon glyphicon-jpy');
 INSERT INTO `t_permission` VALUES ('18', '删除会员', '13', '/member/delete', 'glyphicon glyphicon-check');
+INSERT INTO `t_permission` VALUES ('19', '系统设置管理', '1', null, 'glyphicon glyphicon-cog');
+INSERT INTO `t_permission` VALUES ('20', '打印机设置', '19', '/printer/index', 'glyphicon glyphicon-print');
+
+-- ----------------------------
+-- Table structure for t_printer
+-- ----------------------------
+DROP TABLE IF EXISTS `t_printer`;
+CREATE TABLE `t_printer` (
+  `id` int(32) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL COMMENT '打印机名称',
+  `ip` varchar(20) NOT NULL COMMENT '打印机ip',
+  `status` char(1) NOT NULL COMMENT '状态0正常1删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_printer
+-- ----------------------------
+INSERT INTO `t_printer` VALUES ('1', '1212', '121212222', '0');
 
 -- ----------------------------
 -- Table structure for t_role
@@ -478,43 +507,45 @@ CREATE TABLE `t_role_permission` (
   `role_id` int(10) DEFAULT NULL,
   `permission_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=426 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=468 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_role_permission
 -- ----------------------------
-INSERT INTO `t_role_permission` VALUES ('347', '2', '1');
-INSERT INTO `t_role_permission` VALUES ('348', '2', '6');
-INSERT INTO `t_role_permission` VALUES ('349', '2', '7');
-INSERT INTO `t_role_permission` VALUES ('350', '2', '8');
-INSERT INTO `t_role_permission` VALUES ('351', '2', '9');
-INSERT INTO `t_role_permission` VALUES ('352', '2', '11');
-INSERT INTO `t_role_permission` VALUES ('353', '2', '12');
-INSERT INTO `t_role_permission` VALUES ('354', '2', '13');
-INSERT INTO `t_role_permission` VALUES ('355', '2', '16');
-INSERT INTO `t_role_permission` VALUES ('356', '2', '14');
-INSERT INTO `t_role_permission` VALUES ('357', '2', '15');
 INSERT INTO `t_role_permission` VALUES ('358', '26', '1');
 INSERT INTO `t_role_permission` VALUES ('359', '26', '12');
 INSERT INTO `t_role_permission` VALUES ('360', '26', '13');
 INSERT INTO `t_role_permission` VALUES ('361', '26', '16');
 INSERT INTO `t_role_permission` VALUES ('362', '26', '14');
 INSERT INTO `t_role_permission` VALUES ('363', '26', '15');
-INSERT INTO `t_role_permission` VALUES ('411', '1', '1');
-INSERT INTO `t_role_permission` VALUES ('412', '1', '3');
-INSERT INTO `t_role_permission` VALUES ('413', '1', '4');
-INSERT INTO `t_role_permission` VALUES ('414', '1', '5');
-INSERT INTO `t_role_permission` VALUES ('415', '1', '6');
-INSERT INTO `t_role_permission` VALUES ('416', '1', '7');
-INSERT INTO `t_role_permission` VALUES ('417', '1', '8');
-INSERT INTO `t_role_permission` VALUES ('418', '1', '9');
-INSERT INTO `t_role_permission` VALUES ('419', '1', '11');
-INSERT INTO `t_role_permission` VALUES ('420', '1', '12');
-INSERT INTO `t_role_permission` VALUES ('421', '1', '13');
-INSERT INTO `t_role_permission` VALUES ('422', '1', '16');
-INSERT INTO `t_role_permission` VALUES ('423', '1', '17');
-INSERT INTO `t_role_permission` VALUES ('424', '1', '14');
-INSERT INTO `t_role_permission` VALUES ('425', '1', '15');
+INSERT INTO `t_role_permission` VALUES ('440', '1', '1');
+INSERT INTO `t_role_permission` VALUES ('441', '1', '3');
+INSERT INTO `t_role_permission` VALUES ('442', '1', '4');
+INSERT INTO `t_role_permission` VALUES ('443', '1', '5');
+INSERT INTO `t_role_permission` VALUES ('444', '1', '6');
+INSERT INTO `t_role_permission` VALUES ('445', '1', '7');
+INSERT INTO `t_role_permission` VALUES ('446', '1', '8');
+INSERT INTO `t_role_permission` VALUES ('447', '1', '9');
+INSERT INTO `t_role_permission` VALUES ('448', '1', '12');
+INSERT INTO `t_role_permission` VALUES ('449', '1', '13');
+INSERT INTO `t_role_permission` VALUES ('450', '1', '16');
+INSERT INTO `t_role_permission` VALUES ('451', '1', '17');
+INSERT INTO `t_role_permission` VALUES ('452', '1', '14');
+INSERT INTO `t_role_permission` VALUES ('453', '1', '15');
+INSERT INTO `t_role_permission` VALUES ('454', '1', '19');
+INSERT INTO `t_role_permission` VALUES ('455', '1', '20');
+INSERT INTO `t_role_permission` VALUES ('456', '2', '1');
+INSERT INTO `t_role_permission` VALUES ('457', '2', '6');
+INSERT INTO `t_role_permission` VALUES ('458', '2', '7');
+INSERT INTO `t_role_permission` VALUES ('459', '2', '8');
+INSERT INTO `t_role_permission` VALUES ('460', '2', '9');
+INSERT INTO `t_role_permission` VALUES ('461', '2', '12');
+INSERT INTO `t_role_permission` VALUES ('462', '2', '13');
+INSERT INTO `t_role_permission` VALUES ('463', '2', '16');
+INSERT INTO `t_role_permission` VALUES ('464', '2', '14');
+INSERT INTO `t_role_permission` VALUES ('465', '2', '15');
+INSERT INTO `t_role_permission` VALUES ('466', '2', '19');
+INSERT INTO `t_role_permission` VALUES ('467', '2', '20');
 
 -- ----------------------------
 -- Table structure for vip_info
