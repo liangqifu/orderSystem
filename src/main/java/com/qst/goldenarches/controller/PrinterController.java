@@ -60,5 +60,28 @@ public class PrinterController {
         return Msg.fail();
     }
     
+    @RequestMapping("edit")
+    public String toEdit(Printer printer, Model model){
+    	printer = printerService.getById(printer.getId());
+        model.addAttribute("printer", printer);
+        return "printer/edit";
+    }
+    
+    @ResponseBody
+    @RequestMapping(value= "doEdit",method=RequestMethod.POST,
+    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg doEdit(Printer printer){
+        try {
+            if(!printerService.edit(printer)){
+                return Msg.fail();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Msg.fail();
+        }
+        return Msg.success();
+    }
+    
     
 }

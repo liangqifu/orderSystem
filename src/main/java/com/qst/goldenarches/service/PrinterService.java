@@ -11,4 +11,8 @@ public interface PrinterService {
 
 	Boolean add(Printer printer);
 
+	Printer getById(int id);
+
+	boolean edit(Printer printer);
+
 }

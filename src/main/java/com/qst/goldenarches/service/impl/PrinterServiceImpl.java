@@ -22,5 +22,13 @@ public class PrinterServiceImpl implements PrinterService {
 		printer.setStatus("0");
 		return printerMapper.insert(printer)==1?true:false;
 	}
+	@Override
+	public Printer getById(int id) {
+		return printerMapper.getById(id);
+	}
+	@Override
+	public boolean edit(Printer printer) {
+		return printerMapper.update(printer)==1?true:false;
+	}
 
 }
