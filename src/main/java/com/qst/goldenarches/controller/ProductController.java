@@ -14,6 +14,9 @@ import com.qst.goldenarches.pojo.PageInfo;
 import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.service.ProductService;
 import com.qst.goldenarches.utils.ImageUtil;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -29,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@ApiIgnore
 @Controller
 @RequestMapping("/product")
 public class ProductController {

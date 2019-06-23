@@ -15,4 +15,6 @@ public interface PrinterService {
 
 	boolean edit(Printer printer);
 
+	int ckExitIp(String ip);
+
 }

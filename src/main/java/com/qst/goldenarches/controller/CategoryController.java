@@ -27,6 +27,8 @@ import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.TreeNode;
 import com.qst.goldenarches.service.CategoryService;
 
+import springfox.documentation.annotations.ApiIgnore;
+@ApiIgnore
 @Controller
 @RequestMapping("/category")
 public class CategoryController {

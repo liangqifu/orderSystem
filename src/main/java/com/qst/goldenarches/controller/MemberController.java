@@ -13,6 +13,9 @@ import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.MemberService;
 import com.qst.goldenarches.utils.ImageUtil;
 import com.qst.goldenarches.utils.OrderByEnumUtil;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@ApiIgnore
 @Controller
 @RequestMapping("/member")
 public class MemberController {

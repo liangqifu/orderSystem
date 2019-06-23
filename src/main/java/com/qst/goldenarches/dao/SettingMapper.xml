@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qst.goldenarches.dao.SettingMapper">
+  <resultMap id="BaseResultMap" type="com.qst.goldenarches.pojo.Setting">
+    <id column="Setting_id" jdbcType="INTEGER" property="id" />
+    <result column="Setting_app_pwd" jdbcType="VARCHAR" property="appPwd" />
+    <result column="Setting_lunch_num" jdbcType="INTEGER" property="lunchNum" />
+    <result column="Setting_dinner_num" jdbcType="INTEGER" property="dinnerNum" />
+    <result column="Setting_wait_time" jdbcType="INTEGER" property="waitTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    Setting.id as Setting_id, Setting.app_pwd as Setting_app_pwd, Setting.lunch_num as Setting_lunch_num, 
+    Setting.dinner_num as Setting_dinner_num, Setting.wait_time as Setting_wait_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_setting Setting
+    where Setting.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_setting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qst.goldenarches.pojo.Setting">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_setting (app_pwd, lunch_num, dinner_num, 
+      wait_time)
+    values (#{appPwd,jdbcType=VARCHAR}, #{lunchNum,jdbcType=INTEGER}, #{dinnerNum,jdbcType=INTEGER}, 
+      #{waitTime,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qst.goldenarches.pojo.Setting">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_setting
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="appPwd != null">
+        app_pwd,
+      </if>
+      <if test="lunchNum != null">
+        lunch_num,
+      </if>
+      <if test="dinnerNum != null">
+        dinner_num,
+      </if>
+      <if test="waitTime != null">
+        wait_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="appPwd != null">
+        #{appPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="lunchNum != null">
+        #{lunchNum,jdbcType=INTEGER},
+      </if>
+      <if test="dinnerNum != null">
+        #{dinnerNum,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        #{waitTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qst.goldenarches.pojo.Setting">
+    update t_setting
+    <set>
+      <if test="appPwd != null">
+        app_pwd = #{appPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="lunchNum != null">
+        lunch_num = #{lunchNum,jdbcType=INTEGER},
+      </if>
+      <if test="dinnerNum != null">
+        dinner_num = #{dinnerNum,jdbcType=INTEGER},
+      </if>
+      <if test="waitTime != null">
+        wait_time = #{waitTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qst.goldenarches.pojo.Setting">
+    update t_setting
+    set app_pwd = #{appPwd,jdbcType=VARCHAR},
+      lunch_num = #{lunchNum,jdbcType=INTEGER},
+      dinner_num = #{dinnerNum,jdbcType=INTEGER},
+      wait_time = #{waitTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

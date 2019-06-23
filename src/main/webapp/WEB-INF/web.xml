@@ -44,6 +44,10 @@
     <filter-name>encoding</filter-name>
     <servlet-name>springmvc</servlet-name>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/v2/api/*</url-pattern>
+  </filter-mapping>
 
   <welcome-file-list>
     <welcome-file>/main.jsp</welcome-file>

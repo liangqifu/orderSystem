@@ -39,4 +39,9 @@
            and s.status = #{status}
         </if>
     </select>
+    <select id="ckExitIp" parameterType="java.lang.String" resultType="java.lang.Integer">
+     SELECT count(1)
+        FROM t_printer s
+        WHERE s.ip=#{ip}
+    </select>
 </mapper>

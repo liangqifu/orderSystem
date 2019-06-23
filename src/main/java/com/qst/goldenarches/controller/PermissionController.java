@@ -9,6 +9,9 @@ package com.qst.goldenarches.controller;
 
 import com.qst.goldenarches.pojo.Permission;
 import com.qst.goldenarches.service.PermissionService;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@ApiIgnore
 @Controller
 @RequestMapping("permission")
 public class PermissionController {

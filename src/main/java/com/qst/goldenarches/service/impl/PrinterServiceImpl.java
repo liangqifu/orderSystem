@@ -30,5 +30,9 @@ public class PrinterServiceImpl implements PrinterService {
 	public boolean edit(Printer printer) {
 		return printerMapper.update(printer)==1?true:false;
 	}
+	@Override
+	public int ckExitIp(String ip) {
+		return printerMapper.ckExitIp(ip);
+	}
 
 }

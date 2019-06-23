@@ -58,6 +58,9 @@
             <mvc:exclude-mapping path="/layer/**" />
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
+            <mvc:exclude-mapping path="swagger-ui.html" />
+            <mvc:exclude-mapping path="/webjars/**" />
+            <mvc:exclude-mapping path="/v2/api/**" />
             <bean class="com.qst.goldenarches.web.LoginInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>
@@ -79,6 +82,9 @@
             <mvc:exclude-mapping path="/layer/**" />
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
+            <mvc:exclude-mapping path="swagger-ui.html" />
+            <mvc:exclude-mapping path="/webjars/**" />
+            <mvc:exclude-mapping path="/v2/api/**" />
             <bean class="com.qst.goldenarches.web.AuthInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
@@ -89,7 +95,9 @@
     <mvc:resources mapping="/script/**" location="/script/"/>
     <mvc:resources mapping="/layer/**" location="/layer/"/>
     <mvc:resources mapping="/bootstrap/**" location="/bootstrap/"/>
-
+    <!-- Enables swgger ui-->
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
     <!--视图解析器-->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>

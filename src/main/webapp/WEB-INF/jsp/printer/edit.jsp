@@ -1,4 +1,5 @@
 <%@page pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,19 +38,27 @@
 				<ol class="breadcrumb">
 				  <li><a href="${APP_PATH}/admin/main">首页</a></li>
 				  <li><a href="${APP_PATH}/printer/index">打印机设置</a></li>
-				  <li class="active">新增</li>
+				  <li class="active">修改</li>
 				</ol>
 			<div class="panel panel-default">
               <div class="panel-heading">打印机详情<div style="float:right;cursor:pointer;" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-question-sign"></i></div></div>
 			  <div class="panel-body">
-				<form id="Form"  action="${APP_PATH}/printer/doAdd" >
+				<form id="Form"  action="${APP_PATH}/printer/doEdit" >
+				    <input type="hidden" name="id" value="${printer.id }" />
 					<div class="form-group">
 						<label for="">打印机名称</label>
-						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空"  class="form-control" id="name" name="name" placeholder="请输入打印机名称">
+						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空"  class="form-control" id="name" name="name" value="${printer.name }" placeholder="请输入打印机名称" >
 					</div>
 					<div class="form-group">
 						<label for="">IP</label>
-						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空" class="form-control" id="ip" name="ip" placeholder="请输入打印机IP">
+						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空" class="form-control" id="ip" name="ip" value="${printer.ip }" placeholder="请输入打印机IP">
+					</div>
+					<div class="form-group">
+						<label for="">状态</label>
+						<select class="form-control" id="status" name="status" >
+						   <option value="0"  <c:if test="${printer.status =='0' }">selected</c:if> >正常</option>
+						   <option value="1" <c:if test="${printer.status =='1' }">selected</c:if> >停用</option>
+						</select>
 					</div>
 					<div style="display:block">
 						<button id="insertBtn" type="submit" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>保存</button>
@@ -118,6 +127,7 @@
                 var bv = $form.data('bootstrapValidator');
                 // Use Ajax to submit form data 提交至form标签中的action，result自定义
                 var params  = JSON.stringify($form.serializeJSON());
+                debugger
                 $.ajax({
                     type : "POST",
                     dataType : 'json',
@@ -126,11 +136,11 @@
                     contentType:"application/json",
                     success : function(result) {
                         if ( result.code==100 ) {
-                            layer.msg("添加成功:"+result.extend.printer.name, {time:1500, icon:6}, function(){
+                            layer.msg("修改成功:"+result.extend.printer.name, {time:1500, icon:6}, function(){
                             	 window.location.href = "${APP_PATH}/printer/index";
                             });
                         } else {
-                            layer.msg("添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
+                            layer.msg("修改失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
                             });
                         }
                     }

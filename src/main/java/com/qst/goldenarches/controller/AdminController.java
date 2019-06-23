@@ -10,6 +10,9 @@ import com.qst.goldenarches.pojo.*;
 import com.qst.goldenarches.service.AdminService;
 import com.qst.goldenarches.service.PermissionService;
 import com.qst.goldenarches.service.RoleService;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@ApiIgnore
 @Controller
 @RequestMapping("admin")
 public class AdminController {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,8 @@ import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Printer;
 import com.qst.goldenarches.service.PrinterService;
 
+import springfox.documentation.annotations.ApiIgnore;
+@ApiIgnore
 @Controller
 @RequestMapping("/printer")
 public class PrinterController {
@@ -52,7 +55,14 @@ public class PrinterController {
     @RequestMapping(value= "doAdd",method=RequestMethod.POST,
     consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doAdd(Printer printer){
+    public Msg doAdd(@RequestBody Printer printer){
+    	int count = printerService.ckExitIp(printer.getIp());
+    	if(count >0) {
+    		Msg result =new Msg();
+            result.setCode(200);
+            result.setMsg("IP已存在，请重新输入");
+            return result;
+    	}
         Boolean flag =printerService.add(printer);
         if (flag){
             return Msg.success().add("printer",printer);
@@ -71,16 +81,26 @@ public class PrinterController {
     @RequestMapping(value= "doEdit",method=RequestMethod.POST,
     consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doEdit(Printer printer){
+    public Msg doEdit(@RequestBody Printer printer){
         try {
+        	Printer printerOld = printerService.getById(printer.getId());
+        	if(!printerOld.getIp().equals(printer.getIp())) {
+        		int count = printerService.ckExitIp(printer.getIp());
+            	if(count >0) {
+            		Msg result =new Msg();
+                    result.setCode(200);
+                    result.setMsg("IP已存在，请重新输入");
+                    return result;
+            	}
+        	}
             if(!printerService.edit(printer)){
-                return Msg.fail();
+            	return Msg.fail();
             }
         }catch (Exception e){
             e.printStackTrace();
             return Msg.fail();
         }
-        return Msg.success();
+        return Msg.success().add("printer",printer);
     }
     
     

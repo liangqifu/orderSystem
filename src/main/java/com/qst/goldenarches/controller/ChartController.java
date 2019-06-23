@@ -8,6 +8,9 @@ package com.qst.goldenarches.controller;
 
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.service.ChartService;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+@ApiIgnore
 @Controller
 @RequestMapping("chart")
 public class ChartController {
