@@ -18,6 +18,16 @@
     from t_setting Setting
     where Setting.id = #{id,jdbcType=INTEGER}
   </select>
+  
+  <select id="getSettingInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_setting Setting
+    order by Setting.id desc
+     LIMIT 1
+  </select>
+ 
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_setting
     where id = #{id,jdbcType=INTEGER}

@@ -2,33 +2,42 @@ package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+@ApiModel
 public class Setting implements Serializable {
+	private static final long serialVersionUID = 1L;
     /**
      * 
      */
+	@ApiModelProperty(value="主键ID")
     private Integer id;
 
     /**
      * app开机密码
      */
+	@ApiModelProperty(value="app开机密码")
     private String appPwd;
 
     /**
      * 每轮午餐能点的数量
      */
+	@ApiModelProperty(value="每轮午餐能点的数量")
     private Integer lunchNum;
 
     /**
      * 每轮晚餐能点的数量
      */
+	@ApiModelProperty(value="每轮晚餐能点的数量")
     private Integer dinnerNum;
 
     /**
      * 每轮需要等的时间
      */
+	@ApiModelProperty(value="每轮需要等的时间")
     private Integer waitTime;
 
-    private static final long serialVersionUID = 1L;
+    
 
     public Integer getId() {
         return id;

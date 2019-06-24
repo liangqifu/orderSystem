@@ -35,8 +35,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 		
 		if ( loginAdmin == null ) {
 			String path = session.getServletContext().getContextPath();
-			String p =request.getContextPath().toString();
-			//System.out.println("LoginInterceptor path----------------->"+path+"===="+p);
 			response.sendRedirect(path + "/admin/login");
 			return false;	
 		} else {

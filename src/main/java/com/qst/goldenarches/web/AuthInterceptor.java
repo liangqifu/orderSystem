@@ -41,7 +41,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			}
 		}
 		
-		if ( uriSet.contains(uri) ) {
+		if (uriSet.contains(uri) ) {
 			// 权限验证
 			// 判断当前用户是否拥有对应的权限
 			Set<String> authUriSet = (Set<String>)request.getSession().getAttribute("authUriSet");

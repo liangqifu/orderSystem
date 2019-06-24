@@ -58,9 +58,7 @@
             <mvc:exclude-mapping path="/layer/**" />
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
-            <mvc:exclude-mapping path="swagger-ui.html" />
-            <mvc:exclude-mapping path="/webjars/**" />
-            <mvc:exclude-mapping path="/v2/api/**" />
+            <mvc:exclude-mapping path="/setting/info" />
             <bean class="com.qst.goldenarches.web.LoginInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>
@@ -82,9 +80,7 @@
             <mvc:exclude-mapping path="/layer/**" />
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
-            <mvc:exclude-mapping path="swagger-ui.html" />
-            <mvc:exclude-mapping path="/webjars/**" />
-            <mvc:exclude-mapping path="/v2/api/**" />
+            <mvc:exclude-mapping path="/setting/info" />
             <bean class="com.qst.goldenarches.web.AuthInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

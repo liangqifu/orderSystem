@@ -14,4 +14,6 @@ public interface SettingMapper {
     int updateByPrimaryKeySelective(Setting record);
 
     int updateByPrimaryKey(Setting record);
+
+	Setting getSettingInfo();
 }
