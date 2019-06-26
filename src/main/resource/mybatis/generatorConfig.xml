@@ -47,7 +47,7 @@
         </javaClientGenerator>
         <!-- 指定数据库表 -->
         <!--<table tableName="items"></table> -->
-        <table tableName="t_setting" mapperName="SettingMapper" alias="Setting" domainObjectName="Setting" enableCountByExample="false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" selectByExampleQueryId="false" >
+        <table tableName="t_area" mapperName="AreaMapper"  domainObjectName="Area" enableCountByExample="false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" selectByExampleQueryId="false" >
              <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>

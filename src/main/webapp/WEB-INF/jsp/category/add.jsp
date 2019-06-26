@@ -11,12 +11,7 @@
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	</style>
+
   </head>
 
   <body>
@@ -81,42 +76,33 @@
 	<script src="${APP_PATH}/layer/layer.js"></script>
 	<script type="text/javascript">
         $(function () {
-            $(".list-group-item").click(function () {
-                if ($(this).find("ul")) {
-                    $(this).toggleClass("tree-closed");
-                    if ($(this).hasClass("tree-closed")) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
+        	/**提交表单**/
+            $("#insertBtn").click(function(){
+                var categoryName =$("#name").val();
+                if (categoryName ==""){
+                    layer.msg("商品类型名称不能为空", {time:2000, icon:5, shift:6}, function(){});
+                    return;
+    			}
+                $.ajax({
+                    type : "POST",
+                    url  : "${APP_PATH}/category/doAdd",
+                    data : { parentId:${category.parentId},name : categoryName },
+                    success : function(result) {
+                        if ( result.code==100 ) {
+                            layer.msg("商品类型添加成功:"+result.extend.category.name, {time:1500, icon:6}, function(){
+                            	 window.location.href = "${APP_PATH}/category/index";
+                            });
+                        } else {
+                            layer.msg("商品类型添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
+                            });
+                        }
                     }
-                }
+                });
+
             });
         });
 
-        /**提交表单**/
-        $("#insertBtn").click(function(){
-            var categoryName =$("#name").val();
-            if (categoryName ==""){
-                layer.msg("商品类型名称不能为空", {time:2000, icon:5, shift:6}, function(){});
-                return;
-			}
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/category/doAdd",
-                data : { parentId:${category.parentId},name : categoryName },
-                success : function(result) {
-                    if ( result.code==100 ) {
-                        layer.msg("商品类型添加成功:"+result.extend.category.name, {time:1500, icon:6}, function(){
-                        	 window.location.href = "${APP_PATH}/category/index";
-                        });
-                    } else {
-                        layer.msg("商品类型添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
-                        });
-                    }
-                }
-            });
-
-        });
+        
 
         /**表单数据是否为空验证**/
         function checkFrom(){

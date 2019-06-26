@@ -84,47 +84,39 @@
 	<script src="${APP_PATH}/script/ajaxfileupload.js"></script>
 	<script type="text/javascript">
         $(function () {
-            $(".list-group-item").click(function(){
-                if ( $(this).find("ul") ) {
-                    $(this).toggleClass("tree-closed");
-                    if ( $(this).hasClass("tree-closed") ) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
-                    }
-                }
+        	
+        	$("#resetBtn").click(function(){
+                $("#categoryForm")[0].reset();
             });
-        });
-        $("#resetBtn").click(function(){
-            $("#categoryForm")[0].reset();
-        });
 
-        $("#updateFormBtn").click(function () {
-            var categoryName =$("#name").val();
-            if (categoryName ==""){
-                layer.msg("商品类型名称不能为空", {time:2000, icon:5, shift:6}, function(){});
-                return;
-            }
-            
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/category/doEdit",
-                data : {id:${category.id},parentId:${category.parentId},name:categoryName},
-                beforeSend : function(){
-                    loadingIndex = layer.msg('处理中', {icon: 16});
-                },
-                success : function(result) {
-                    layer.close(loadingIndex);
-                    if ( result.code==100 ) {
-                        layer.msg("商品类别信息修改成功", {time:1000, icon:6}, function(){
-                            window.location.href = "${APP_PATH}/category/index";
-						});
-                    } else {
-                        layer.msg("商品类别信息修改失败", {time:2000, icon:5, shift:6}, function(){});
-                    }
+            $("#updateFormBtn").click(function () {
+                var categoryName =$("#name").val();
+                if (categoryName ==""){
+                    layer.msg("商品类型名称不能为空", {time:2000, icon:5, shift:6}, function(){});
+                    return;
                 }
+                
+                $.ajax({
+                    type : "POST",
+                    url  : "${APP_PATH}/category/doEdit",
+                    data : {id:${category.id},parentId:${category.parentId},name:categoryName},
+                    beforeSend : function(){
+                        loadingIndex = layer.msg('处理中', {icon: 16});
+                    },
+                    success : function(result) {
+                        layer.close(loadingIndex);
+                        if ( result.code==100 ) {
+                            layer.msg("商品类别信息修改成功", {time:1000, icon:6}, function(){
+                                window.location.href = "${APP_PATH}/category/index";
+    						});
+                        } else {
+                            layer.msg("商品类别信息修改失败", {time:2000, icon:5, shift:6}, function(){});
+                        }
+                    }
+                });
             });
         });
+        
 	</script>
   </body>
 </html>

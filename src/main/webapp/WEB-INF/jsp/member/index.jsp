@@ -113,18 +113,32 @@
         var bdescflag=true;
         var current_page_no=1;
         $(function () {
-            $(".list-group-item").click(function () {
-                if ($(this).find("ul")) {
-                    $(this).toggleClass("tree-closed");
-                    if ($(this).hasClass("tree-closed")) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
-                    }
-                }
-            });
             /**分页查询**/
             pageQuery(1);
+            
+            /**保存信息**/
+            $("#balance_save_btn").click(function () {
+                $.ajax({
+                    url:"${APP_PATH}/member/doEdit",
+                    type:"POST",
+                    data:$("#balance_update_modal form").serialize(),
+                    success:function (result) {
+                        $("#balance_update_modal").modal('hide');//关闭模态框
+                        if (result.code!=null){
+                            if ( result.code ==100 ) {
+                                layer.msg("金额修改成功", {time:1000, icon:6}, function(){
+                                    pageQuery(current_page_no);//跳转到修改的那一页
+                                });
+                            } else {
+                                layer.msg("金额修改失败", {time:2000, icon:5, shift:6}, function(){});
+                            }
+                        }else {
+                            layer.msg("权限不足", {time:2000, icon:5, shift:6}, function(){});
+                        }
+                    }
+                });
+            });
+            
         });
         /**根据创建时间排序**/
         function createTimeClick() {
@@ -223,33 +237,7 @@
             });
             //alert($("#balance_update_modal form").serialize());
         }
-        /**保存信息**/
-        $("#balance_save_btn").click(function () {
-//            //校验数据合法性
-//            if(!validate_add_emp()){
-//                return false;
-//            }
-            //alert($("#balance_update_modal form").serialize());
-            $.ajax({
-                url:"${APP_PATH}/member/doEdit",
-                type:"POST",
-                data:$("#balance_update_modal form").serialize(),
-                success:function (result) {
-                    $("#balance_update_modal").modal('hide');//关闭模态框
-                    if (result.code!=null){
-                        if ( result.code ==100 ) {
-                            layer.msg("金额修改成功", {time:1000, icon:6}, function(){
-                                pageQuery(current_page_no);//跳转到修改的那一页
-                            });
-                        } else {
-                            layer.msg("金额修改失败", {time:2000, icon:5, shift:6}, function(){});
-                        }
-                    }else {
-                        layer.msg("权限不足", {time:2000, icon:5, shift:6}, function(){});
-                    }
-                }
-            });
-        });
+        
 
         /**
          * 删除会员

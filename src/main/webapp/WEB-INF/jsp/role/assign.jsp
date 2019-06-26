@@ -56,16 +56,7 @@
 	<script src="${APP_PATH}/ztree/jquery.ztree.all-3.5.min.js"></script>
         <script type="text/javascript">
             $(function () {
-			    $(".list-group-item").click(function(){
-				    if ( $(this).find("ul") ) {
-						$(this).toggleClass("tree-closed");
-						if ( $(this).hasClass("tree-closed") ) {
-							$("ul", this).hide("fast");
-						} else {
-							$("ul", this).show("fast");
-						}
-					}
-				});
+			    
 			    
 			    var setting = {
 		    		check : {

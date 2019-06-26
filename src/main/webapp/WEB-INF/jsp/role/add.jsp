@@ -64,42 +64,63 @@
 	<script src="${APP_PATH}/script/ajaxfileupload.js"></script>
 	<script type="text/javascript">
         $(function () {
-            $(".list-group-item").click(function(){
-                if ( $(this).find("ul") ) {
-                    $(this).toggleClass("tree-closed");
-                    if ( $(this).hasClass("tree-closed") ) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
+        	$("#resetBtn").click(function(){
+                // Jquery[0] ==> DOM
+                // $(DOM) ==> Jquery
+                $("#roleForm")[0].reset();
+            });
+
+            /**校验用户账户的唯一性**/
+            $("#name").change(function () {
+                var name = this.value;
+                $.ajax({
+                    url:"${APP_PATH}/role/uniqueName",
+                    type:"POST",
+                    data:{"name":name},
+                    success:function (result) {
+                        if(100 == result.code){
+                            show_validate_msg("#name","success","账户可用");
+                            $("#insertBtn").attr("ajax-va","success");
+                            return true;
+                        }else {
+                            show_validate_msg("#name","error",result.extend.va_msg);
+                            $("#insertBtn").attr("ajax-va","error");
+                        }
                     }
+                })
+            });
+            
+            $("#insertBtn").click(function () {
+                if("error" == $(this).attr("ajax-va")){
+                    return false;
                 }
+                var roleName =$("#name").val();
+                if (roleName ==""){
+                    layer.msg("角色名称不能为空", {time:2000, icon:5, shift:6}, function(){});
+                    return;
+                }
+                $.ajax({
+                    type : "POST",
+                    url  : "${APP_PATH}/role/doAdd",
+                    data : {name:roleName},
+                    beforeSend : function(){
+                        loadingIndex = layer.msg('处理中', {icon: 16});
+                    },
+                    success : function(result) {
+                        console.log(result);
+                        layer.close(loadingIndex);
+                        if ( result.code==100 ) {
+                            layer.msg("角色信息添加成功", {time:1000, icon:6}, function(){
+                                window.location.href = "${APP_PATH}/role/index";
+    						});
+                        } else {
+                            layer.msg("角色信息添加失败", {time:2000, icon:5, shift:6}, function(){});
+                        }
+                    }
+                });
             });
         });
-        $("#resetBtn").click(function(){
-            // Jquery[0] ==> DOM
-            // $(DOM) ==> Jquery
-            $("#roleForm")[0].reset();
-        });
-
-        /**校验用户账户的唯一性**/
-        $("#name").change(function () {
-            var name = this.value;
-            $.ajax({
-                url:"${APP_PATH}/role/uniqueName",
-                type:"POST",
-                data:{"name":name},
-                success:function (result) {
-                    if(100 == result.code){
-                        show_validate_msg("#name","success","账户可用");
-                        $("#insertBtn").attr("ajax-va","success");
-                        return true;
-                    }else {
-                        show_validate_msg("#name","error",result.extend.va_msg);
-                        $("#insertBtn").attr("ajax-va","error");
-                    }
-                }
-            })
-        });
+        
         /**显示校验结果的提示信息**/
         function show_validate_msg(ele,status,msg){
             //清除当前元素的校验状态
@@ -114,35 +135,7 @@
                 $(ele).next("span").text(msg);
             }
         }
-        $("#insertBtn").click(function () {
-            if("error" == $(this).attr("ajax-va")){
-                return false;
-            }
-            var roleName =$("#name").val();
-            if (roleName ==""){
-                layer.msg("角色名称不能为空", {time:2000, icon:5, shift:6}, function(){});
-                return;
-            }
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/role/doAdd",
-                data : {name:roleName},
-                beforeSend : function(){
-                    loadingIndex = layer.msg('处理中', {icon: 16});
-                },
-                success : function(result) {
-                    console.log(result);
-                    layer.close(loadingIndex);
-                    if ( result.code==100 ) {
-                        layer.msg("角色信息添加成功", {time:1000, icon:6}, function(){
-                            window.location.href = "${APP_PATH}/role/index";
-						});
-                    } else {
-                        layer.msg("角色信息添加失败", {time:2000, icon:5, shift:6}, function(){});
-                    }
-                }
-            });
-        });
+        
 	</script>
   </body>
 </html>

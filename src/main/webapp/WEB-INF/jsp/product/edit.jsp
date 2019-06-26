@@ -128,81 +128,73 @@
 	<script src="${APP_PATH}/script/ajaxfileupload.js"></script>
 	<script type="text/javascript">
         $(function () {
-            $(".list-group-item").click(function(){
-                if ( $(this).find("ul") ) {
-                    $(this).toggleClass("tree-closed");
-                    if ( $(this).hasClass("tree-closed") ) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
-                    }
-                }
-            });
+            
             getTypes("#type_select");
             bindKeyEvent($("#price"));
             $("#productForm input[name=status]").val([${product.status}]);
-        });
-        $("#resetBtn").click(function(){
-            // Jquery[0] ==> DOM
-            // $(DOM) ==> Jquery
-            $("#productForm")[0].reset();
-        });
+            
+            $("#resetBtn").click(function(){
+                
+                $("#productForm")[0].reset();
+            });
 
-        $("#updateFormBtn").click(function () {
-            var checkResult =checkFrom(true,false);
-            if (checkResult!="success"){
-                layer.msg(checkResult, {time:2000, icon:5, shift:6}, function(){
-                });
-                return;
-            }
-            var datajson=$('#productForm').serializeObject();
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/product/doUpdateProductData",
-                data : datajson,
-                beforeSend : function(){
-                    loadingIndex = layer.msg('处理中', {icon: 16});
-                },
-                success : function(result) {
-                    console.log(result);
-                    layer.close(loadingIndex);
-                    if ( result.code==100 ) {
-                        layer.msg("商品信息修改成功", {time:2000, icon:6}, function(){});
-                    } else {
-                        layer.msg("商品信息修改失败", {time:2000, icon:5, shift:6}, function(){});
-                    }
+            $("#updateFormBtn").click(function () {
+                var checkResult =checkFrom(true,false);
+                if (checkResult!="success"){
+                    layer.msg(checkResult, {time:2000, icon:5, shift:6}, function(){
+                    });
+                    return;
                 }
+                var datajson=$('#productForm').serializeObject();
+                $.ajax({
+                    type : "POST",
+                    url  : "${APP_PATH}/product/doUpdateProductData",
+                    data : datajson,
+                    beforeSend : function(){
+                        loadingIndex = layer.msg('处理中', {icon: 16});
+                    },
+                    success : function(result) {
+                        console.log(result);
+                        layer.close(loadingIndex);
+                        if ( result.code==100 ) {
+                            layer.msg("商品信息修改成功", {time:2000, icon:6}, function(){});
+                        } else {
+                            layer.msg("商品信息修改失败", {time:2000, icon:5, shift:6}, function(){});
+                        }
+                    }
+                });
+            });
+            $("#updatePicBtn").click(function () {
+                var checkResult =checkFrom(false,true);
+                if (checkResult!="success"){
+                    layer.msg(checkResult, {time:2000, icon:5, shift:6}, function(){
+                    });
+                    return;
+                }
+    			var productId =$("#productId").val();
+    			var datajson ={"id":productId};
+                $.ajaxFileUpload({
+                    url : '${APP_PATH}/product/doUpdateProductPic',
+                    fileElementId : 'pic',
+                    type : 'POST',
+                    data:datajson,
+                    dataType : 'json',
+                    success : function(result) {
+                        console.log(result);
+                        console.log(result.code);
+                        if ( result.code==100 ) {
+                            layer.msg("商品图片修改成功", {time:1000, icon:6}, function(){
+                                window.location.href = "${APP_PATH}/product/index";
+                            });
+                        } else {
+                            layer.msg("商品图片修改失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
+                            });
+                        }
+                    }
+                });
             });
         });
-        $("#updatePicBtn").click(function () {
-            var checkResult =checkFrom(false,true);
-            if (checkResult!="success"){
-                layer.msg(checkResult, {time:2000, icon:5, shift:6}, function(){
-                });
-                return;
-            }
-			var productId =$("#productId").val();
-			var datajson ={"id":productId};
-            $.ajaxFileUpload({
-                url : '${APP_PATH}/product/doUpdateProductPic',
-                fileElementId : 'pic',
-                type : 'POST',
-                data:datajson,
-                dataType : 'json',
-                success : function(result) {
-                    console.log(result);
-                    console.log(result.code);
-                    if ( result.code==100 ) {
-                        layer.msg("商品图片修改成功", {time:1000, icon:6}, function(){
-                            window.location.href = "${APP_PATH}/product/index";
-                        });
-                    } else {
-                        layer.msg("商品图片修改失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
-                        });
-                    }
-                }
-            });
-        });
+        
         /**获取产品类别信息,并表单构建**/
         function getTypes(ele) {
             //清空之前下拉列表的信息

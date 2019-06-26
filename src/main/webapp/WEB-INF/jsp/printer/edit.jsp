@@ -98,16 +98,6 @@
 	<script src="${APP_PATH}/layer/layer.js"></script>
 	<script type="text/javascript">
         $(function () {
-            $(".list-group-item").click(function () {
-                if ($(this).find("ul")) {
-                    $(this).toggleClass("tree-closed");
-                    if ($(this).hasClass("tree-closed")) {
-                        $("ul", this).hide("fast");
-                    } else {
-                        $("ul", this).show("fast");
-                    }
-                }
-            });
             
             $('#Form').bootstrapValidator({
             	// 默认的提示消息
@@ -148,30 +138,6 @@
             });
         });
 
-        /**提交表单**/
-        /* $("#insertBtn").click(function(){
-            var name =$("#name").val();
-            if (name ==""){
-                layer.msg("打印机名称不能为空", {time:2000, icon:5, shift:6}, function(){});
-                return;
-			}
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/printer/doAdd",
-                data : { parentId:${category.parentId},name : categoryName },
-                success : function(result) {
-                    if ( result.code==100 ) {
-                        layer.msg("商品类型添加成功:"+result.extend.category.name, {time:1500, icon:6}, function(){
-                        	 window.location.href = "${APP_PATH}/category/index";
-                        });
-                    } else {
-                        layer.msg("商品类型添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
-                        });
-                    }
-                }
-            });
-
-        }); */
 
 	</script>
   </body>

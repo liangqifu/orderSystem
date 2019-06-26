@@ -284,6 +284,12 @@ public class AdminController {
     public String toMain(){
         return "admin/main";
     }
+    @RequestMapping("dataAnalysis")
+    public String toDataAnalysis(){
+        return "admin/dataAnalysis";
+    }
+    
+    
     /**
      * 执行管理员登陆
      * @param admin
