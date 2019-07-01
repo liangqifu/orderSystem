@@ -7,7 +7,7 @@ import com.qst.goldenarches.pojo.Printer;
 
 public interface PrinterService {
 
-	List<Printer> query(Map<String, Object> param);
+	List<Printer> query(Printer printer);
 
 	Boolean add(Printer printer);
 

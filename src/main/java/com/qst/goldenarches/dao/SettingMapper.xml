@@ -7,10 +7,14 @@
     <result column="Setting_lunch_num" jdbcType="INTEGER" property="lunchNum" />
     <result column="Setting_dinner_num" jdbcType="INTEGER" property="dinnerNum" />
     <result column="Setting_wait_time" jdbcType="INTEGER" property="waitTime" />
+    <result column="Setting_adult_price" jdbcType="DOUBLE" property="adultPrice" />
+    <result column="Setting_child_price" jdbcType="DOUBLE" property="childPrice" />
+    
   </resultMap>
   <sql id="Base_Column_List">
     Setting.id as Setting_id, Setting.app_pwd as Setting_app_pwd, Setting.lunch_num as Setting_lunch_num, 
-    Setting.dinner_num as Setting_dinner_num, Setting.wait_time as Setting_wait_time
+    Setting.dinner_num as Setting_dinner_num, Setting.wait_time as Setting_wait_time,Setting.adult_price as Setting_adult_price,
+    Setting.child_price as Setting_child_price 
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -37,9 +41,9 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into t_setting (app_pwd, lunch_num, dinner_num, 
-      wait_time)
+      wait_time,adult_price,child_price)
     values (#{appPwd,jdbcType=VARCHAR}, #{lunchNum,jdbcType=INTEGER}, #{dinnerNum,jdbcType=INTEGER}, 
-      #{waitTime,jdbcType=INTEGER})
+      #{waitTime,jdbcType=INTEGER},#{adultPrice,jdbcType=DOUBLE},#{childPrice,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="com.qst.goldenarches.pojo.Setting">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -59,6 +63,12 @@
       <if test="waitTime != null">
         wait_time,
       </if>
+      <if test="adultPrice != null">
+        adult_price,
+      </if>
+      <if test="childPrice != null">
+        child_price,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="appPwd != null">
@@ -72,6 +82,12 @@
       </if>
       <if test="waitTime != null">
         #{waitTime,jdbcType=INTEGER},
+      </if>
+      <if test="childPrice != null">
+        #{adultPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="childPrice != null">
+        #{childPrice,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -90,6 +106,12 @@
       <if test="waitTime != null">
         wait_time = #{waitTime,jdbcType=INTEGER},
       </if>
+      <if test="adultPrice != null">
+        adult_price = #{adultPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="childPrice != null">
+        child_price = #{childPrice,jdbcType=DOUBLE},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -98,7 +120,9 @@
     set app_pwd = #{appPwd,jdbcType=VARCHAR},
       lunch_num = #{lunchNum,jdbcType=INTEGER},
       dinner_num = #{dinnerNum,jdbcType=INTEGER},
-      wait_time = #{waitTime,jdbcType=INTEGER}
+      wait_time = #{waitTime,jdbcType=INTEGER},
+      adult_price = #{adultPrice,jdbcType=DOUBLE},
+      child_price = #{childPrice,jdbcType=DOUBLE}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

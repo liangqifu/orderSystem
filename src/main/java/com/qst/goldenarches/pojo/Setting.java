@@ -36,7 +36,16 @@ public class Setting implements Serializable {
      */
 	@ApiModelProperty(value="每轮需要等的时间")
     private Integer waitTime;
-
+	 /**
+     * 每轮需要等的时间
+     */
+	@ApiModelProperty(value="每位成人价格")
+    private Double adultPrice;
+	 /**
+     * 每轮需要等的时间
+     */
+	@ApiModelProperty(value="每位小孩价格")
+    private Double childPrice;
     
 
     public Integer getId() {
@@ -78,4 +87,22 @@ public class Setting implements Serializable {
     public void setWaitTime(Integer waitTime) {
         this.waitTime = waitTime;
     }
+
+	public Double getAdultPrice() {
+		return adultPrice;
+	}
+
+	public void setAdultPrice(Double adultPrice) {
+		this.adultPrice = adultPrice;
+	}
+
+	public Double getChildPrice() {
+		return childPrice;
+	}
+
+	public void setChildPrice(Double childPrice) {
+		this.childPrice = childPrice;
+	}
+    
+    
 }

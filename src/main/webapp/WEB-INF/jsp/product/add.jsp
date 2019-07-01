@@ -1,128 +1,13 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	</style>
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		<%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-				<ol class="breadcrumb">
-				  <li><a href="${APP_PATH}/admin/main">首页</a></li>
-				  <li><a href="${APP_PATH}/product/index">商品数据</a></li>
-				  <li class="active">新增</li>
-				</ol>
-			<div class="panel panel-default">
-              <div class="panel-heading">商品详情<div style="float:right;cursor:pointer;" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-question-sign"></i></div></div>
-			  <div class="panel-body">
-				<form id="ProductForm"  method="post" enctype="multipart/form-data">
-					<div class="form-group">
-						<label for="exampleInputPassword1">商品名称</label>
-						<input type="text" class="form-control" id="name" name="name" placeholder="请输入商品名称">
-					</div>
-					<div class="form-group">
-						<label for="exampleInputPassword1">商品价格</label>
-						<div class="input-group">
-							<span class="input-group-addon">￥</span>
-							<input type="text" class="form-control" id="price" name="price" placeholder="请输入商品价格">
-						</div>
-						<p class="help-block label label-warning">请输入合法的数据, 格式为：25.60</p>
-					</div>
-					<div class="form-group">
-						<label for="exampleInputPassword1">商品库存</label>
-						<input type="text" class="form-control" id="inventory" name="inventory" placeholder="请输入商品库存" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onpaste="return false">
-					</div>
-					<div class="form-group">
-						<label >商品状态</label>
-						<label>
-							<input type="radio"  name="status"  value="1"> 上架
-						</label>
-						<label>
-							<input type="radio"  name="status"  value="0"> 下架
-						</label>
-					</div>
-					<div class="form-group">
-						<label for="exampleInputPassword1">商品类别</label>
-						<select id ="type_select"class="form-control" name="cid">
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="exampleInputFile">上传图片</label>
-						<input id="pic"name="pic" onchange="onupload(this)" type="file" accept="image/png, image/jpeg, image/gif, image/jpg" class="btn-info">
-						<img style="padding-top: 2px;" id="Img" width="376" height="213" src="${basePath}/img/upload.png" >
-						<div ><p class="help-block label label-warning">仅支持png gif jpg gif jpeg格式</p></div>
-					</div>
-					<div style="display:block">
-						<button id="insertBtn" type="button" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i> 新增</button>
-						<button type="button" class="btn btn-danger"><i class="glyphicon glyphicon-refresh"></i> 重置</button>
-					</div>
-				</form>
-			  </div>
-			</div>
-        </div>
-      </div>
-    </div>
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-			<h4 class="modal-title" id="myModalLabel">帮助</h4>
-		  </div>
-		  <div class="modal-body">
-			<div class="bs-callout bs-callout-info">
-				<h4>测试标题1</h4>
-				<p>测试内容1，测试内容1，测试内容1，测试内容1，测试内容1，测试内容1</p>
-			  </div>
-			<div class="bs-callout bs-callout-info">
-				<h4>测试标题2</h4>
-				<p>测试内容2，测试内容2，测试内容2，测试内容2，测试内容2，测试内容2</p>
-			  </div>
-		  </div>
-		  <!--
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Save changes</button>
-		  </div>
-		  -->
-		</div>
-	  </div>
-	</div>
-	<script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
-	<script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-	<script src="${APP_PATH}/script/docs.min.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-	<script src="${APP_PATH}/script/ajaxfileupload.js"></script>
-	<script type="text/javascript">
+<html >
+  <%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+  <script type="text/javascript">
         $(function () {
-            
-            getTypes("#type_select");
+        	$(".selectpicker").selectpicker({
+                noneSelectedText : '请选择'    //默认显示内容
+            });
+            getTypes();
             bindKeyEvent($("#price"));
             /**提交表单**/
             $("#insertBtn").click(function(){
@@ -132,46 +17,59 @@
                     });
                     return;
     			}
-                var datajson=$('#ProductForm').serializeObject();
+                var datajson=$('#productForm').serializeObject();
 
                 $.ajaxFileUpload({
                     url : '${APP_PATH}/product/doAdd', //用于文件上传的服务器端请求地址
-                    fileElementId : 'pic', //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                    fileElementId : 'pic',
                     type : 'POST',
                     data:datajson,
                     dataType : 'json',
                     success : function(result) {
-                        console.log(result);
-                        console.log(result.code);
                         if ( result.code==100 ) {
-                            layer.msg("商品添加成功", {time:1000, icon:6}, function(){
-                                window.location.href = "${APP_PATH}/product/index";
+                            layer.msg("菜品添加成功", {time:1000, icon:6}, function(){
+                            	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/index")
                             });
                         } else {
-                            layer.msg("商品添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
+                            layer.msg("菜品添加失败，请重新操作", {time:2000, icon:5, shift:6}, function(){
                             });
                         }
                     }
                 });
 
             });
+            
+            $("#goBackBtn").click(function(){
+            	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/index")
+            });
+            
+            $("#resetBtn").click(function(){
+                $("#productForm")[0].reset();
+            });
         });
 
         
         /**获取产品类别信息,并表单构建**/
-        function getTypes(ele) {
-            //清空之前下拉列表的信息
-            $(ele).empty();
-            $.ajax({
-                type:"POST",
-                url:"${APP_PATH}/category/getAll",
+        function getTypes() {
+        	var params = {
+        			state:"0",
+        		};
+        	
+        	$.ajax({
+                type : "POST",
+                dataType : 'json',
+                url  : "${APP_PATH}/category/queryList",
+                data:JSON.stringify(params),
+                contentType:"application/json",
                 success:function (result) {
-                    console.log(result);
-                    //解析产品分类信息
-                    $.each(result.extend.categoryInfo,function() {
-                        var optionEle = $("<option></option>").append(this.name).attr("value",this.id);
-                        optionEle.appendTo(ele);
-                    })
+                	 var data = result.extend.data || [];
+	           		 var options = [];
+	           		 for(var i=0;i<data.length;i++){
+	                    var item = data[i];
+	　　　　　　　　　　　　      options.push('<option value="'+item.id+'">'+item.name+'</option>') 
+	                 }
+                     $("#productForm #cid").html(options.join(' ')); 
+          		     $("#productForm #cid").selectpicker('refresh');
                 }
             })
         }
@@ -218,7 +116,6 @@
             var reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('Img').src = e.target.result;
-                //image = e.target.result;
             };
             reader.readAsDataURL(file.files[0]);
         }
@@ -241,24 +138,24 @@
         };
         /**表单数据是否为空验证**/
         function checkFrom(){
-            ///检查商品名称
+            ///检查菜品名称
 			if($("#name").val()==""){
-			    return "商品名称不能为空";
+			    return "菜品名称不能为空";
 			}
-			//检查商品价格
+			//检查菜品价格
 			if($("#price").val()==""){
-			    return "商品价格不能为空";
+			    return "菜品价格不能为空";
 			}
             if($("#inventory").val()==""){
-                return "商品库存不能为空";
+                return "菜品库存不能为空";
             }
             var status =$('input:radio[name="status"]:checked').val();
             if(status!=1 && status!=0){
-                return "请选择商品状态";
+                return "请选择菜品状态";
             }
             var type =$("#type_select option:selected").val();
             if(type==""){
-                return "请选择商品类别";
+                return "请选择菜品类别";
             }
             var picInfo = $("#pic").val();
             if(picInfo.length==0 || picInfo == ''){
@@ -268,5 +165,120 @@
             return "success";
 		}
 	</script>
-  </body>
+<body>
+	<div>
+		<ol class="breadcrumb">
+			<li><a href="${APP_PATH}/product/index">菜品列表</a></li>
+			<li class="active">新增</li>
+		</ol>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				菜品详情
+				<div style="float: right; cursor: pointer;" data-toggle="modal"
+					data-target="#myModal">
+					<i class="glyphicon glyphicon-question-sign"></i>
+				</div>
+			</div>
+			<div class="panel-body">
+				<form id="productForm" class="form-horizontal" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+						<label for="name" class="col-sm-1 control-label">菜品名称:</label> 
+						<div class="col-sm-4">
+						    <input type="text" autocomplete="off" class="form-control" id="name" name="name" placeholder="请输入菜品名称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="price" class="col-sm-1 control-label">菜品价格:</label>
+						<div class="col-sm-4">
+						    <div class="input-group">
+								<span class="input-group-addon">￥</span> 
+								<input  autocomplete="off" type="text" class="form-control" id="price" name="price" placeholder="请输入菜品价格">
+							</div>
+						</div>
+						<p class="help-block label label-warning">请输入合法的数据, 格式为：25.60</p>
+					</div>
+					<div class="form-group">
+						<label for="inventory" class="col-sm-1 control-label">菜品库存:</label>
+						<div class="col-sm-4">
+						    <input  autocomplete="off" type="number" class="form-control" id="inventory" name="inventory"
+							placeholder="请输入菜品库存"
+							onkeyup="this.value=this.value.replace(/[^\d]/g,'')"
+							onpaste="return false">
+						</div>
+						
+					</div>
+					<div class="form-group">
+						<label for="status" class="col-sm-1 control-label">菜品状态:</label> 
+						<div class="col-sm-4">
+							<label><input type="radio" name="status" value="1">上架</label> 
+							<label><input type="radio" name="status" value="0">下架</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="cid" class="col-sm-1 control-label" >菜品类别:</label> 
+						<div class="col-sm-4">
+                               <select data-size="6" id="cid" name="cid" class="form-control selectpicker"></select>
+                         </div>
+					</div>
+					<div class="form-group">
+						<label for="pic"  class="col-sm-1 control-label">上传图片:</label> 
+						<div class="col-sm-4">
+						   <input id="pic"
+							name="pic" onchange="onupload(this)" type="file"
+							accept="image/png, image/jpeg, image/gif, image/jpg"
+							class="btn-info"> <img style="padding-top: 2px;" id="Img"
+							width="376" height="213" src="${basePath}/img/upload.png">
+						</div>
+						
+						<div>
+							<p class="help-block label label-warning">仅支持png gif jpg gif
+								jpeg格式</p>
+						</div>
+					</div>
+					<div style="display: block">
+						<button id="insertBtn" type="button" class="btn btn-success">
+							<i class="glyphicon glyphicon-plus"></i> 新增
+						</button>
+						<button id="resetBtn" type="button" class="btn btn-danger">
+							<i class="glyphicon glyphicon-refresh"></i> 重置
+						</button>
+						<button id="goBackBtn" type="button" class="btn btn-default">
+							<i class="glyphicon glyphicon-share-alt"></i> 返回
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">帮助</h4>
+				</div>
+				<div class="modal-body">
+					<div class="bs-callout bs-callout-info">
+						<h4>测试标题1</h4>
+						<p>测试内容1，测试内容1，测试内容1，测试内容1，测试内容1，测试内容1</p>
+					</div>
+					<div class="bs-callout bs-callout-info">
+						<h4>测试标题2</h4>
+						<p>测试内容2，测试内容2，测试内容2，测试内容2，测试内容2，测试内容2</p>
+					</div>
+				</div>
+				<!--
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary">Save changes</button>
+		  </div>
+		  -->
+			</div>
+		</div>
+	</div>
+
+</body>
 </html>

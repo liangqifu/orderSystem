@@ -52,7 +52,6 @@ public class ImageUtil {
     public static void dropPic(HttpServletRequest request,String imgName) {
         //取出文件的绝对路径，然后用File方法删除相应文件。
         String absolutePath =getRealPath(request)+imgName;
-        System.out.println("ImageUtil dropPic  absolutePath"+absolutePath);
         File file = new File(absolutePath);
         if (file.exists()) {
             file.delete();
@@ -60,8 +59,8 @@ public class ImageUtil {
     }
 
     private static String getRealPath(HttpServletRequest request){
-        String rootPath =request.getSession().getServletContext().getRealPath(File.separator);
-        String relatPath = File.separator+"img"+ File.separator+"product"+ File.separator;
+        String rootPath =request.getSession().getServletContext().getRealPath("img");
+        String relatPath =  File.separator+"product"+ File.separator;
         return rootPath+relatPath;
     }
 }

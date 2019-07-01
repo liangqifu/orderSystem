@@ -15,6 +15,16 @@ public class SettingServiceImpl implements SettingService {
 	public Setting getSettingInfo() {
 		return settingMapper.getSettingInfo();
 	}
+
+	@Override
+	public void update(Setting setting) {
+		settingMapper.updateByPrimaryKeySelective(setting);		
+	}
+
+	@Override
+	public void insert(Setting setting) {
+		settingMapper.insert(setting);
+	}
 	
 
 }

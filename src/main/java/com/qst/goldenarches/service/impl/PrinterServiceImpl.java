@@ -14,8 +14,8 @@ public class PrinterServiceImpl implements PrinterService {
 	@Autowired
 	private PrinterMapper printerMapper;
 	@Override
-	public List<Printer> query(Map<String, Object> param) {
-		return printerMapper.query(param);
+	public List<Printer> query(Printer printer) {
+		return printerMapper.query(printer);
 	}
 	@Override
 	public Boolean add(Printer printer) {

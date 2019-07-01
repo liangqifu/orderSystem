@@ -11,14 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
@@ -57,8 +57,10 @@ public class CategoryController {
      * @returns
      */
     @ResponseBody
-    @RequestMapping("deleteBatch")
-    public Msg deleteBatch(Integer[] categoryid){
+    @RequestMapping(value = "deleteBatch",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg deleteBatch(@RequestBody Integer[] categoryid){
         try {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("categoryids", categoryid);
@@ -71,25 +73,7 @@ public class CategoryController {
         }
         return Msg.success();
     }
-    /**
-     * 商品类别：执行单个删除商品类别
-     * @param id
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("deleteOne")
-    public Msg deleteOne(Integer id){
-        try {
-
-            if(!categoryService.reomveCategory(id)){
-                return Msg.fail();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return Msg.fail();
-        }
-        return Msg.success();
-    }
+    
     /**
      * 商品类别：执行商品信息修改方法
      * @param category
@@ -108,6 +92,19 @@ public class CategoryController {
         }
         return Msg.success();
     }
+    
+    @ResponseBody
+    @RequestMapping(value= "save",method=RequestMethod.POST,
+    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg save(@RequestBody Category category){
+    	if(category.getId()>0) {
+    		return this.doEdit(category);
+    	}else {
+    		return this.doAdd(category);
+    	}
+    }
+    
     /**
      * 商品类别：跳转方法
      * 跳转到商品类别修改界面
@@ -118,6 +115,15 @@ public class CategoryController {
     	category = categoryService.getById(category.getId());
         model.addAttribute("category", category);
         return "category/edit";
+    }
+    
+    
+    @ResponseBody
+    @RequestMapping(value= "{id}/info",method=RequestMethod.GET,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg getById(@PathVariable("id") Integer id){
+        return Msg.success().add("data",categoryService.getById(id));
     }
 
     /**
@@ -151,16 +157,24 @@ public class CategoryController {
      * @return json数据 Msg
      */
     @ResponseBody
-    @RequestMapping("pagedGetAll")
-    public Msg pagedGetAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn, String queryText,Integer parentId){
-        PageHelper.startPage(pn,5);
-        Map<String, Object> param = new HashMap<String,Object>();
-        param.put("queryText", queryText);
-        param.put("parentId", parentId);
-        List<Category> categories =categoryService.getAll(param);
-        com.github.pagehelper.PageInfo<Category> categoryPageInfo =new com.github.pagehelper.PageInfo<Category>(categories,5);
-        return Msg.success().add("pageInfo",categoryPageInfo);
+    @RequestMapping(value= "queryListByPage",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryListByPage(@RequestBody Category category){
+        PageHelper.startPage(category.getPageNum(),category.getPageSize());
+        List<Category> categories =categoryService.query(category);
+        com.github.pagehelper.PageInfo<Category> categoryPageInfo =new com.github.pagehelper.PageInfo<Category>(categories,category.getPageSize());
+        return Msg.success().add("data",categoryPageInfo);
     }
+    
+    @ResponseBody
+    @RequestMapping(value= "queryList",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryList(@RequestBody Category category){
+	   List<Category> categories = categoryService.query(category);
+	   return Msg.success().add("data",categories);
+	}
 
     /**
      * 商品后台：跳转方法
@@ -171,22 +185,15 @@ public class CategoryController {
     public String toIndex(){
         return "category/index";
     }
-    /***
-          * 商品后台：获取全部商品类别
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getAll")
-    public Msg getAll(){
-        List<Category> categories =categoryService.getAll(null);
-        return Msg.success().add("categoryInfo",categories);
-    }
+   
     
     
-    @RequestMapping(value = "getTreeListAll",method = RequestMethod.GET)
+    @RequestMapping(value = "getTreeListAll",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<TreeNode> getListAll(HttpServletRequest request) throws Exception{
-		List<Category> categories = categoryService.getAll(null);
+	public List<TreeNode> getTreeListAll() throws Exception{
+    	Category param = new Category();
+    	param.setState("0");
+		List<Category> categories = categoryService.query(param);
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>(categories.size());
 		treeNodes.add(new TreeNode("0","", "ROOT", true, false, false));
 		for (Category category : categories) {

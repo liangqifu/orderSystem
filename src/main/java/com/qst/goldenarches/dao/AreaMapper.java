@@ -1,5 +1,7 @@
 package com.qst.goldenarches.dao;
 
+import java.util.List;
+
 import com.qst.goldenarches.pojo.Area;
 
 public interface AreaMapper {
@@ -14,4 +16,6 @@ public interface AreaMapper {
     int updateByPrimaryKeySelective(Area record);
 
     int updateByPrimaryKey(Area record);
+
+	List<Area> query(Area area);
 }

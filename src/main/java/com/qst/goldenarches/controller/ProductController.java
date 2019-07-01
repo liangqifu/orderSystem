@@ -7,8 +7,26 @@
 package com.qst.goldenarches.controller;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.PageInfo;
 import com.qst.goldenarches.pojo.Product;
@@ -16,22 +34,6 @@ import com.qst.goldenarches.service.ProductService;
 import com.qst.goldenarches.utils.ImageUtil;
 
 import springfox.documentation.annotations.ApiIgnore;
-
-import org.apache.ibatis.annotations.Update;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 @ApiIgnore
 @Controller
 @RequestMapping("/product")
@@ -94,29 +96,30 @@ public class ProductController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("doUpdateProductPic")
+    @RequestMapping(value="doUpdateProductPic",method=RequestMethod.POST,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg doUpdateProductPic(HttpServletRequest request){
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile mFile = multipartRequest.getFile("pic");
         String img = ImageUtil.upload(request,mFile);
-        if (img!=null){
-            Product product =new Product();
-            product.setId(Integer.parseInt(request.getParameter("id")));
-            product.setPic(img);
-            //System.out.println("img=====>"+product);
-            //删除硬盘上的图片
-            String imgName=productService.getProductById(product.getId()).getPic();
-            if (imgName!=null &&!"".equals(imgName)){
-                ImageUtil.dropPic(request,imgName);
-            }
-            try {
-                boolean flag=productService.editProductPic(product);
-                if(flag){
-                    return Msg.success();
+        if (!StringUtils.isEmpty(img)){
+            Product product =  productService.getProductById(Integer.parseInt(request.getParameter("id")));
+            if(product !=null) {
+            	String imgName=product.getPic();
+                if (!StringUtils.isEmpty(imgName)){
+                    ImageUtil.dropPic(request,imgName);
                 }
-            }catch (Exception e){
-                return  Msg.fail();
+                try {
+                	product.setPic(img);
+                    boolean flag=productService.editProductPic(product);
+                    if(flag){
+                        return Msg.success();
+                    }
+                }catch (Exception e){
+                    return  Msg.fail();
+                }
             }
+            
         }
         return Msg.fail();
     }
@@ -151,25 +154,22 @@ public class ProductController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "doAdd", method = RequestMethod.POST)
+    @RequestMapping(value = "doAdd", method = RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg doAdd(HttpServletRequest request){
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile mFile = multipartRequest.getFile("pic");
-
         Product product =new Product();
         product.setName(request.getParameter("name"));
         product.setPrice(Double.parseDouble(request.getParameter("price")));
         product.setInventory(Integer.parseInt(request.getParameter("inventory")));
         product.setStatus(Integer.parseInt(request.getParameter("status")));
         product.setCid(Integer.parseInt(request.getParameter("cid")));
-
-        if (!"".equals(mFile.getOriginalFilename())){
+        if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
             String img = ImageUtil.upload(request,mFile);
-            if (img!=null) {
+            if (!StringUtils.isEmpty(img)) {
                 product.setPic(img);
             }
         }
-
         try {
             boolean flag =productService.addProduct(product);
             if (flag){

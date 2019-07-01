@@ -3,7 +3,7 @@ package com.qst.goldenarches.pojo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Printer {
+public class Printer extends BasePo {
 	private int id;
 	private String name;
 	private String ip;

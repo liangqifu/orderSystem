@@ -2,101 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrapValidator.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	</style>
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		<%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-				<ol class="breadcrumb">
-				  <li><a href="${APP_PATH}/admin/main">首页</a></li>
-				  <li><a href="${APP_PATH}/printer/index">打印机设置</a></li>
-				  <li class="active">修改</li>
-				</ol>
-			<div class="panel panel-default">
-              <div class="panel-heading">打印机详情<div style="float:right;cursor:pointer;" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-question-sign"></i></div></div>
-			  <div class="panel-body">
-				<form id="Form"  action="${APP_PATH}/printer/doEdit" >
-				    <input type="hidden" name="id" value="${printer.id }" />
-					<div class="form-group">
-						<label for="">打印机名称</label>
-						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空"  class="form-control" id="name" name="name" value="${printer.name }" placeholder="请输入打印机名称" >
-					</div>
-					<div class="form-group">
-						<label for="">IP</label>
-						<input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空" class="form-control" id="ip" name="ip" value="${printer.ip }" placeholder="请输入打印机IP">
-					</div>
-					<div class="form-group">
-						<label for="">状态</label>
-						<select class="form-control" id="status" name="status" >
-						   <option value="0"  <c:if test="${printer.status =='0' }">selected</c:if> >正常</option>
-						   <option value="1" <c:if test="${printer.status =='1' }">selected</c:if> >停用</option>
-						</select>
-					</div>
-					<div style="display:block">
-						<button id="insertBtn" type="submit" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>保存</button>
-						<button type="button" class="btn btn-danger"><i class="glyphicon glyphicon-refresh"></i> 重置</button>
-					</div>
-				</form>
-			  </div>
-			</div>
-        </div>
-      </div>
-    </div>
-	<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-			<h4 class="modal-title" id="myModalLabel">帮助</h4>
-		  </div>
-		  <div class="modal-body">
-			<div class="bs-callout bs-callout-info">
-				<h4>测试标题1</h4>
-				<p>测试内容1，测试内容1，测试内容1，测试内容1，测试内容1，测试内容1</p>
-			  </div>
-			<div class="bs-callout bs-callout-info">
-				<h4>测试标题2</h4>
-				<p>测试内容2，测试内容2，测试内容2，测试内容2，测试内容2，测试内容2</p>
-			  </div>
-		  </div>
-		</div>
-	  </div>
-	</div> -->
-    <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
-    <script src="${APP_PATH}/jquery/jquery.serializejson.min.js"></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrapValidator.min.js"></script>
-    <script src="${APP_PATH}/bootstrap/language/zh_CN.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-	<script type="text/javascript">
+<%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+<script type="text/javascript">
         $(function () {
             
             $('#Form').bootstrapValidator({
@@ -108,6 +15,20 @@
                   　　　　　　　　invalid: 'glyphicon glyphicon-remove',
                   　　　　　　　　validating: 'glyphicon glyphicon-refresh'
                 },
+                fields: {
+                	ip: {
+                        message: 'ip地址格式不正确',
+                        validators: {
+                            notEmpty: {
+                                message: 'ip地址不能为空'
+                            },
+                            regexp: {
+                                regexp: /^(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$/,
+                                message: '请输入正确的IP'
+                            }
+                        }
+                    }
+                }
             }).on('success.form.bv', function(e) {//点击提交之后
                 // 终止重复提交
                 e.preventDefault();
@@ -136,9 +57,126 @@
                     }
                 });
             });
+            
+            
+            $("#goBackBtn").on('click',function(){
+            	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/printer/index");
+            });
+            $("#resetBtn").click(function(){
+                $("#Form")[0].reset();
+            });
+            $('#statusSwitch').bootstrapSwitch({  
+                onColor:"success",  
+                offColor:"info",  
+                size:"small",  
+	              onSwitchChange:function(event,state){  
+	                if(state==true){  
+	                	$("[name='status']").val("0")  
+	                }else{  
+	                	$("[name='status']").val("1") 
+	                }  
+	              }  
+           
+            }) 
+            var status = '${printer.status}';
+            if(status == "0"){
+                $("#statusSwitch").bootstrapSwitch('state',true,false);
+            }else{
+                $("#statusSwitch").bootstrapSwitch('state',false,true);
+            }
+            
+            
+            
+        
         });
 
 
 	</script>
-  </body>
+<body>
+
+	<div>
+		<ol class="breadcrumb">
+			<li><a href="${APP_PATH}/admin/main">首页</a></li>
+			<li><a href="${APP_PATH}/printer/index">打印机设置</a></li>
+			<li class="active">修改</li>
+		</ol>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				打印机详情
+				<div style="float: right; cursor: pointer;" data-toggle="modal"
+					data-target="#myModal">
+					<i class="glyphicon glyphicon-question-sign"></i>
+				</div>
+			</div>
+			<div class="panel-body">
+				<form id="Form" class="form-horizontal" action="${APP_PATH}/printer/doEdit">
+					<input type="hidden" name="id" value="${printer.id }" />
+					<div class="form-group">
+						<label for="name" class="col-sm-2 control-label">打印机名称:</label> 
+						<div class="col-sm-4">
+						   <input type="text"
+							data-bv-notempty="true" data-bv-notempty-message="不能为空"
+							class="form-control" id="name" name="name"
+							value="${printer.name }" placeholder="请输入打印机名称">
+						</div>
+						
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="ip">IP:</label> 
+						<div class="col-sm-4">
+						  <input type="text"
+							class="form-control"  id="ip" name="ip" value="${printer.ip }"
+							placeholder="请输入打印机IP">
+						</div>
+						
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开关:</label> 
+						<div class="col-sm-4">
+						  <input id="status" name="status" value="${printer.status}" type="hidden">
+						  <input id="statusSwitch" type="checkbox" data-size="small">
+						</div>
+						
+					</div>
+					
+					<div class="form-group">
+					    <div class="col-sm-offset-2 col-sm-10">
+						  <button id="insertBtn" type="submit" class="btn btn-success">
+								<i class="glyphicon glyphicon-plus"></i>保存
+							</button>
+							<button id="resetBtn" type="button" class="btn btn-danger">
+								<i class="glyphicon glyphicon-refresh"></i> 重置
+							</button>
+							<button id="goBackBtn" type="button" class="btn btn-default">
+								<i class="glyphicon glyphicon-share-alt"></i> 返回
+							</button>
+					   </div>
+						
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="myModalLabel">帮助</h4>
+		  </div>
+		  <div class="modal-body">
+			<div class="bs-callout bs-callout-info">
+				<h4>测试标题1</h4>
+				<p>测试内容1，测试内容1，测试内容1，测试内容1，测试内容1，测试内容1</p>
+			  </div>
+			<div class="bs-callout bs-callout-info">
+				<h4>测试标题2</h4>
+				<p>测试内容2，测试内容2，测试内容2，测试内容2，测试内容2，测试内容2</p>
+			  </div>
+		  </div>
+		</div>
+	  </div>
+	</div> -->
+
+</body>
 </html>

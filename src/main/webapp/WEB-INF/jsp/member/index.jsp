@@ -1,112 +1,8 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-        .tree li {
-            list-style-type: none;
-            cursor:pointer;
-        }
-	    table tbody tr:nth-child(odd){background:#F4F4F4;}
-	</style>
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 会员数据列表</h3>
-			  </div>
-			  <div class="panel-body">
-          <div class="table-responsive">
-            <form id="memberForm">
-            <table class="table ">
-              <thead>
-                <tr >
-                    <th width="50">#</th>
-                    <th>会员名</th>
-                    <th>手机号</th>
-                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="balanceClick()">账户余额</a></th>
-                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="createTimeClick()">创建时间</a></th>
-                    <th>操作</th>
-                </tr>
-              </thead>
-              
-              <tbody id="memberData">
-                  
-              </tbody>
-              
-			  <tfoot>
-			     <tr >
-				     <td colspan="9" align="center">
-						<ul class="pagination"></ul>
-					 </td>
-				 </tr>
-
-			  </tfoot>
-            </table>
-            </form>
-          </div>
-			  </div>
-			</div>
-        </div>
-      </div>
-    </div>
-    <!-- Small modal button-->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
-    <!-- Small modal -->
-    <div id="balance_update_modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">余额修改</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal">
-                        <input type="hidden" name="id" class="form-control" id="member_id">
-                        <div class="form-group">
-                            <label for="balance_update_input" class="col-sm-1 control-label"></label>
-                            <div class="col-sm-10">
-                                <input type="text" name="balance" class="form-control" id="balance_update_input">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" id="balance_save_btn">保存</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js" ></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-	<script src="${APP_PATH}/script/docs.min.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-    <script type="text/javascript">
+<html>
+<%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+<script type="text/javascript">
         var searchFlag = false;
         var balanceFlag=false;
         var cdescflag=true;
@@ -235,7 +131,6 @@
             $("#balance_update_modal").modal({
                 backdrop:"static"
             });
-            //alert($("#balance_update_modal form").serialize());
         }
         
 
@@ -272,5 +167,75 @@
             });
        }
     </script>
+  <body>
+
+    <div >
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 会员数据列表</h3>
+			  </div>
+			  <div class="panel-body">
+          <div class="table-responsive">
+            <form id="memberForm">
+            <table class="table ">
+              <thead>
+                <tr >
+                    <th width="50">#</th>
+                    <th>会员名</th>
+                    <th>手机号</th>
+                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="balanceClick()">账户余额</a></th>
+                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="createTimeClick()">创建时间</a></th>
+                    <th>操作</th>
+                </tr>
+              </thead>
+              
+              <tbody id="memberData">
+                  
+              </tbody>
+              
+			  <tfoot>
+			     <tr >
+				     <td colspan="9" align="center">
+						<ul class="pagination"></ul>
+					 </td>
+				 </tr>
+
+			  </tfoot>
+            </table>
+            </form>
+          </div>
+			  </div>
+			</div>
+        </div>
+    <!-- Small modal button-->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+    <!-- Small modal -->
+    <div id="balance_update_modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">余额修改</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <input type="hidden" name="id" class="form-control" id="member_id">
+                        <div class="form-group">
+                            <label for="balance_update_input" class="col-sm-1 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" name="balance" class="form-control" id="balance_update_input">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="balance_save_btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
   </body>
 </html>

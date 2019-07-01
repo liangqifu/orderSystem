@@ -1,252 +1,339 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
-
-<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-<link rel="stylesheet" href="${APP_PATH}/ztree/zTreeStyle.css">
-<style>
-.tree li {
-	list-style-type: none;
-	cursor: pointer;
-}
-
-table tbody tr:nth-child(odd) {
-	background: #F4F4F4;
-}
-
-table tbody td:nth-child(even) {
-	color: #C00;
-}
-</style>
-</head>
-
-<body>
-
-	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		<%@include file="/WEB-INF/jsp/common/header.jsp"%>
-	</nav>
-
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-3 col-md-2 sidebar">
-				<div class="tree">
-					<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-				</div>
-			</div>
-			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">
-							<i class="glyphicon glyphicon-th"></i> 打印机配置
-						</h3>
-					</div>
-					<div class="panel-body" >
-							<form class="form-inline" role="form" style="float: left;">
-								<div class="form-group has-feedback">
-									<div class="input-group">
-										<div class="input-group-addon">查询条件</div>
-										<input id="queryText" class="form-control has-success"
-											type="text" placeholder="请输入查询条件">
-									</div>
-								</div>
-								<button id="queryBtn" type="button" class="btn btn-warning">
-									<i class="glyphicon glyphicon-search"></i> 查询
-								</button>
-							</form>
-							<button type="button" id="addBtn" class="btn btn-primary"
-								style="float: right;">
-								<i class="glyphicon glyphicon-plus"></i> 新增
-							</button>
-							<br>
-							<hr style="clear: both;">
-							<div class="table-responsive">
-								<form id="categoryForm">
-									<table class="table  table-bordered ">
-										<thead>
-											<tr>
-												<th style="width: 5%;text-align: center;">序号</th>
-												<th style="width:30% ;text-align: center;">打印机名称</th>
-												<th style="width:20% ;text-align: center;">IP</th>
-												<th style="width:10% ;text-align: center;">状态</th>
-												<th style="width:10% ;text-align: center;">是否在线</th>
-												<th style="width:15%">操作</th>
-											</tr>
-										</thead>
-	
-										<tbody id="data">
-	
-										</tbody>
-	
-										<tfoot>
-											<tr>
-												<td colspan="9" align="center">
-													<ul class="pagination"></ul>
-												</td>
-											</tr>
-	
-										</tfoot>
-									</table>
-								</form>
-							</div>
-						</div>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-	<script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
-	<script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-	<script src="${APP_PATH}/script/docs.min.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-	<script src="${APP_PATH}/ztree/jquery.ztree.all-3.5.min.js"></script>
-	<script type="text/javascript">
-        var searchFlag = false;
+<html>
+<%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+<script type="text/javascript">
+        var pageNum = 1;
+        var pageSize = 10;
         $(function () {
-            
-            /**分页查询**/
-            pageQuery(1);
-
-            /**为查询按钮添加点击事件,判断内容是否为空，进行模糊查询**/
-            $("#queryBtn").click(function(){
-                var queryText = $("#queryText").val();
-                if ( queryText == "" ) {
-                    searchFlag = false;
-                } else {
-                    searchFlag = true;
-                }
-                pageQuery(1);
-            });
+        	bindPrinterForm();
+        	bindSwitch();
+            queryListByPage();
             $(document).on("click","#addBtn",function(){
             	goAddPage();
+            }).on("click","#queryBtn",function(){
+            	queryListByPage();
             });    
-            
         });
         
-        /***分页查询构建表格***/
-        function pageQuery( pageno ) {
-            var loadingIndex = null;
-            var parentId = $("#queryBtn").attr("parentId");
-            var jsonData = {"pageno" : pageno,"parentId":parentId};
-            if ( searchFlag == true ) {
-                jsonData.queryText = $("#queryText").val();
-            }
-
-            $.ajax({
+        function queryListByPage( ) {
+        	var loadingIndex = null;
+        	var params  = {state:"0",pageNum:pageNum,pageSize:pageSize,name:$("#queryText").val()};
+        	$.ajax({
                 type : "POST",
                 dataType : 'json',
-                url  : "${APP_PATH}/printer/pagedGetAll",
-                data : jsonData,
+                url  : "${APP_PATH}/printer/queryListByPage",
+                data:JSON.stringify(params),
                 contentType:"application/json",
                 beforeSend : function(){
                     loadingIndex = layer.msg('处理中', {icon: 16});
                 },
                 success : function(result) {
                     layer.close(loadingIndex);
-                    if ( result.code==100 ) {
-                        // 局部刷新页面数据
-                        var tableContent = "";
-                        var pageContent = "";
-                        var pages =result.extend.pageInfo.pages;
-                        var list=result.extend.pageInfo.list;
-                        $.each(list, function(i, item){
-                            tableContent += '<tr>';
-                            tableContent += '  <td>'+item.rowNo+'</td>';
-                            tableContent += '  <td>'+item.name+'</td>';
-                            tableContent += '  <td>'+item.ip+'</td>';
-                            tableContent += '  <td>'+item.status+'</td>';
-                            tableContent += '  <td>'+item.onLine+'</td>';
-                            tableContent += '  <td>';
-                            tableContent += '     <button type="button" onclick="goUpdatePage('+item.id+')" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>';
-                            tableContent += '	  &nbsp;&nbsp;&nbsp;<button type="button" onclick="deleteById('+item.id+', \''+item.name+'\')" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>';
-                            tableContent += '  </td>';
-                            tableContent += '</tr>';
-                        });
-
-                        if ( pageno > 1 ) {
-                            pageContent += '<li><a href="#" onclick="pageQuery('+(pageno-1)+')">上一页</a></li>';
-                        }
-
-                        for ( var i = 1; i <= pages; i++ ) {
-                            if ( i == pageno ) {
-                                pageContent += '<li class="active"><a  href="#">'+i+'</a></li>';
-                            } else {
-                                pageContent += '<li ><a href="#" onclick="pageQuery('+i+')">'+i+'</a></li>';
+                    if ( result.code == 100 ) {
+                        var data = result.extend.data || [];
+                        
+                        $("#queryListResult tbody").html(template("tpl-data",data));
+                        $("#queryListResult tbody").on('click','.edit',function(){
+                        	var data = JSON.parse($(this).attr('item'));
+                        	$("#printerForm").autofill(data);
+                        	if(data.status == "0"){
+                                $("#statusSwitch").bootstrapSwitch('state',true,false);
+                            }else{
+                                $("#statusSwitch").bootstrapSwitch('state',false,true);
                             }
-                        }
-
-                        if ( pageno < pages ) {
-                            pageContent += '<li><a href="#" onclick="pageQuery('+(pageno+1)+')">下一页</a></li>';
-                        }
-
-                        $("#data").html(tableContent);
-                        $(".pagination").html(pageContent);
+                         	//弹出模态框
+                            $("#printer_modal").modal({
+                                backdrop:"static"
+                            }).on('hidden.bs.modal', function() {
+                                $("#printerForm").data('bootstrapValidator').destroy();
+                                $('#printerForm').data('bootstrapValidator', null);
+                                bindPrinterForm();
+                            });;
+                        }).on('click','.del',function(){
+                        	var params = JSON.parse($(this).attr('item'));
+                        	delPrinter(params)
+                        });
+                        setPage(data.pageNum, data.total, queryListByPage)
                     } else {
-                        layer.msg("查询失败", {time:2000, icon:5, shift:6}, function(){
-
+                        layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
                         });
                     }
                 }
             });
-        }
-        /**跳转到商品类别修改页**/
-        function goUpdatePage(id,name) {
-            window.location.href = "${APP_PATH}/printer/edit?id="+id;
-        }
-        function goAddPage() {
-            window.location.href = "${APP_PATH}/printer/add";
+        	
         }
         
-        /**删除单个商品类别信息**/
-        function deleteById( id, name ) {
-            if(!isHaveUse(id)){
-                layer.confirm("删除打印机信息【"+name+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
-                    $.ajax({
-                        type : "POST",
-                        url  : "${APP_PATH}/printer/deleteOne",
-                        data : { id : id },
-                        success : function(result) {
-                            if ( result.code==100 ) {
-                                layer.msg("打印机信息删除成功", {time:1000, icon:6}, function(){
-                                	pageQuery(1);
-                                });
-                            } else {
-                                layer.msg("打印机信息删除失败", {time:2000, icon:5, shift:6}, function(){});
-                            }
+        function setPage(pageCurrent, total, callback) {
+        	$(".pagination").html('');
+        	if(total<1) return;
+        	$(".pagination").bootstrapPaginator({
+                //设置版本号
+                bootstrapMajorVersion: 3,
+                // 显示第几页
+                currentPage: pageCurrent,
+                numberOfPages: 5,
+                // 总页数
+                total: total,
+                pageSize:10,
+                size:"mini",
+                alignment:"center",
+                itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
+                    switch (type) {
+                        case "first":
+                            return "首页";
+                        case "prev":
+                            return "上一页";
+                        case "next":
+                            return "下一页";
+                        case "last":
+                            return "末页";
+                        case "page":
+                            return page;
+                    }
+                },
+                //当单击操作按钮的时候, 执行该函数, 调用ajax渲染页面
+                onPageClicked: function (event,originalEvent,type,page) {
+                    // 把当前点击的页码赋值给currentPage, 调用ajax,渲染页面
+                    pageNum = page
+                    callback && callback()
+                }
+            })
+        }
+       
+        function goAddPage() {
+        	$("#printerForm").clearForm();
+            	//弹出模态框
+            $("#printer_modal").modal({
+                backdrop:"static"
+            }).on('hidden.bs.modal', function() {
+                $("#printerForm").data('bootstrapValidator').destroy();
+                $('#printerForm').data('bootstrapValidator', null);
+                bindPrinterForm();
+            });
+        }
+        
+        function delPrinter(params) {
+        	params.state ='1';
+        	layer.confirm("删除打印机信息【"+params.name+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+                $.ajax({
+                    type : "POST",
+                    url  : "${APP_PATH}/printer/update",
+                    data : JSON.stringify(params),
+                    success : function(result) {
+                        if ( result.code==100 ) {
+                            layer.msg("打印机信息删除成功", {time:1000, icon:6}, function(){
+                            	queryListByPage();
+                            });
+                        } else {
+                            layer.msg("打印机信息删除失败", {time:2000, icon:5, shift:6}, function(){});
                         }
-                    });
-                    layer.close(cindex);
-                }, function(cindex){
-                    layer.close(cindex);
+                    }
                 });
-            }
+                layer.close(cindex);
+            }, function(cindex){
+                layer.close(cindex);
+            });
         }
 
-        function isHaveUse(id) {
-            var flag;
-            $.ajax({
-                type : "POST",
-                url  : "${APP_PATH}/printer/isHaveUse",
-                data : { id : id },
-                async: false,
-                success : function(result) {
-                    if ( result.code ==100 ) {
-                        layer.msg("改打印机正在使用中，不能删除", {time:1000, icon:7}, function(){});
-                        flag =true;
-                    }else {
-                        flag=false;
+        
+        function bindPrinterForm(){
+        	$('#printerForm').bootstrapValidator({
+            	// 默认的提示消息
+                message: 'This value is not valid',
+                // 表单框里右侧的icon
+                feedbackIcons: {
+                  　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                  　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                  　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                	ip: {
+                        message: 'ip地址格式不正确',
+                        validators: {
+                            notEmpty: {
+                                message: 'ip地址不能为空'
+                            },
+                            regexp: {
+                                regexp: /^(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$/,
+                                message: '请输入正确的IP'
+                            }
+                        }
                     }
                 }
+            }).on('success.form.bv', function(e) {//点击提交之后
+                // 终止重复提交
+                e.preventDefault();
+                // 得到form表单对象
+                var $form = $(e.target);
+                // 获得bootstrap验证对象
+                var bv = $form.data('bootstrapValidator');
+                // Use Ajax to submit form data 提交至form标签中的action，result自定义
+                var params  = $form.serializeJSON();
+                $.ajax({
+                    type : "POST",
+                    dataType : 'json',
+                    url  : $form.attr('action'),
+                    data : JSON.stringify(params),
+                    contentType:"application/json",
+                    success : function(result) {
+                        if ( result.code==100 ) {
+                        	$("#printer_modal").modal('hide');
+                            layer.msg("修改成功:"+result.extend.printer.name, {time:1500, icon:6}, function(){
+                            	queryListByPage();
+                            });
+                        } else {
+                            layer.msg("修改失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
+                            });
+                        }
+                    }
+                });
             });
-            return flag;
         }
+        
+        function bindSwitch(){
+        	$('#statusSwitch').bootstrapSwitch({  
+                onColor:"success",  
+                offColor:"info",  
+                size:"small",  
+                  onSwitchChange:function(event,state){  
+                    if(state==true){  
+                    	$("[name='status']").val("0")  
+                    }else{  
+                    	$("[name='status']").val("1") 
+                    }  
+                  }  
+           
+            })
+        }
+        
+        
+        
     </script>
+    
+    <script type="text/html" id="tpl-data">
+
+		{{each list}}
+
+           	<tr>
+                <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
+                <td>{{$value.name}}</td>
+                <td>{{$value.ip}}</td>
+                {{if $value.status == '0'}}
+                  <td style="color: green">ON</td>
+                {{else}} 
+                  <td style="color: red" >OFF</td>
+                {{/if}}
+                <td>{{$value.onLine}}</td>
+                <td>
+                   <button type="button" item='{{obj2Str($value)}}'  class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
+                   &nbsp;&nbsp;&nbsp;
+                   <button type="button" item='{{obj2Str($value)}}' class="btn btn-danger btn-xs del"><i class=" glyphicon glyphicon-remove"></i></button>
+                </td>
+            </tr>
+		{{/each}}
+
+   </script>
+<body>
+
+<div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="glyphicon glyphicon-th"></i> 打印机配置
+				</h3>
+			</div>
+			<div class="panel-body" >
+					<form class="form-inline" role="form" style="float: left;">
+						<div class="form-group has-feedback">
+							<div class="input-group">
+								<div class="input-group-addon">查询条件</div>
+								<input id="queryText" class="form-control has-success"
+									type="text" placeholder="请输入查询条件">
+							</div>
+						</div>
+						<button id="queryBtn" type="button" class="btn btn-warning">
+							<i class="glyphicon glyphicon-search"></i> 查询
+						</button>
+					</form>
+					<button type="button" id="addBtn" class="btn btn-primary"
+						style="float: right;">
+						<i class="glyphicon glyphicon-plus"></i> 新增
+					</button>
+					<br>
+					<hr style="clear: both;">
+					<div class="table-responsive">
+						<form id="queryListResult">
+							<table class="table  table-bordered ">
+								<thead>
+									<tr>
+										<th style="width: 5%;text-align: center;">序号</th>
+										<th style="width:30% ;text-align: center;">打印机名称</th>
+										<th style="width:20% ;text-align: center;">IP</th>
+										<th style="width:10% ;text-align: center;">状态</th>
+										<th style="width:10% ;text-align: center;">是否在线</th>
+										<th style="width:15%">操作</th>
+									</tr>
+								</thead>
+
+								<tbody >
+
+								</tbody>
+
+								<tfoot>
+									<tr>
+										<td colspan="9" align="center">
+											<ul class="pagination"></ul>
+										</td>
+									</tr>
+
+								</tfoot>
+							</table>
+						</form>
+					</div>
+				</div>
+			
+		</div>
+	</div>
+	<div id="printer_modal" style="z-index: 2000;" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" style="width: 48%;">
+            <form class="modal-content form-horizontal" id="printerForm" method="post" action="${APP_PATH}/printer/save">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+                <div class="modal-body">
+                        <input type="hidden" name="id" id="id" />
+                        <input type="hidden" name="state" id="state" />
+						<div class="form-group">
+							<label for="name" class="col-sm-3 control-label">打印机名称:</label> 
+							<div class="col-sm-6">
+							   <input autocomplete="off" type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空"
+								class="form-control" id="name" name="name"  placeholder="请输入打印机名称">
+							</div>
+							
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="ip">IP:</label> 
+							<div class="col-sm-6">
+							  <input autocomplete="off" type="text" class="form-control"  id="ip" name="ip"  placeholder="请输入打印机IP">
+							</div>
+							
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">开关:</label> 
+							<div class="col-sm-6">
+							  <input id="status" name="status" type="hidden">
+							  <input id="statusSwitch" type="checkbox" data-size="small">
+							</div>
+						</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="save_btn">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.qst.goldenarches.dao.PrinterMapper">
     <sql id="baseList">
-       s.id,s.name,s.ip,s.status
+       s.id,s.name,s.ip,s.status,s.state
    </sql>
     <insert id="insert" parameterType="com.qst.goldenarches.pojo.Printer">
         INSERT INTO t_printer (name,ip,status) VALUES (#{name},#{ip},#{status})
     </insert>
     <update id="update" parameterType="com.qst.goldenarches.pojo.Printer">
-        UPDATE t_printer SET name=#{name},ip=#{ip},status=#{status}
+        UPDATE t_printer SET name=#{name},ip=#{ip},status=#{status},state=#{state}
         WHERE id=#{id}
     </update>
     <delete id="deleteById">
@@ -20,15 +20,11 @@
         FROM t_printer s
         WHERE s.id=#{id}
     </select>   
-    <select id="query" resultType="com.qst.goldenarches.pojo.Printer" parameterType="java.util.HashMap">
+    <select id="query" resultType="com.qst.goldenarches.pojo.Printer" parameterType="com.qst.goldenarches.pojo.Printer">
          SELECT
-          @rownum:=@rownum + 1 as rowNo,
           <include refid="baseList"/>
-        FROM t_printer s,(select @rownum := 0) m
+        FROM t_printer s
         WHERE 1=1
-        <if test="queryText !=null and queryText !='' ">
-           and (s.ip like concat('%',#{queryText },'%') or s.name like concat('%',#{queryText},'%'))
-        </if>
         <if test="ip !=null and ip !='' ">
            and s.ip like concat('%',#{ip},'%')
         </if>
@@ -38,6 +34,10 @@
         <if test="status !=null and status !='' ">
            and s.status = #{status}
         </if>
+        <if test="state !=null and state !='' ">
+           and s.state = #{state}
+        </if>
+        
     </select>
     <select id="ckExitIp" parameterType="java.lang.String" resultType="java.lang.Integer">
      SELECT count(1)

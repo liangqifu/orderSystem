@@ -6,4 +6,8 @@ public interface SettingService {
 
 	Setting getSettingInfo();
 
+	void update(Setting setting);
+
+	void insert(Setting setting);
+
 }

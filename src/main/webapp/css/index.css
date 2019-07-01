@@ -23,3 +23,24 @@ td {
 
 table tbody tr:nth-child(odd){background:#F4F4F4;}
 table tbody td:nth-child(even){color:#C00;}
+
+#lunchNum .slider-selection {
+	background: green;
+}
+#lunchNum .slider-track-high {
+	background: #e0efe0;
+}
+
+#dinnerNum .slider-selection {
+	background: #6d4e18;
+}
+#dinnerNum .slider-track-high {
+	background: #e0d8ca;
+}
+
+#waitTime .slider-selection {
+	background: #862b10;
+}
+#waitTime .slider-track-high {
+	background: #b9b9a0;
+}

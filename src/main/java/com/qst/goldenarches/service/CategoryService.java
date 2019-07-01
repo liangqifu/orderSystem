@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface CategoryService {
 
-    List<Category> getAll(Map<String, Object> param);
+    List<Category> query(Category category);
 
     boolean addCategory(Category category);
 

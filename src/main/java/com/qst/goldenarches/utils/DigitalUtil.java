@@ -6,9 +6,6 @@
  */
 package com.qst.goldenarches.utils;
 
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
-import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
-
 public class DigitalUtil {
 
     /**

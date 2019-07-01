@@ -9,17 +9,30 @@
     <meta name="author" content="">
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrapValidator.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-switch.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-select.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-slider.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/ztree/zTreeStyle.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/doc.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/index.css">
 	
 	<script type="text/javascript" src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.serializejson.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.form.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.template.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.formautofill.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrapValidator.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-switch.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-select.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-paginator.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-slider.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/bootstrap/language/zh_CN.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/script/ajaxfileupload.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/script/docs.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/script/echarts.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/script/admin.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/layer/layer.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/laydate/laydate.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/ztree/jquery.ztree.all-3.5.min.js"></script>

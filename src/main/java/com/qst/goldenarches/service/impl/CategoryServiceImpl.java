@@ -21,8 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
-    public List<Category> getAll(Map<String, Object> param) {
-       return categoryMapper.selectAll(param);
+    public List<Category> query(Category category) {
+       return categoryMapper.query(category);
     }
 
     public boolean addCategory(Category category) {

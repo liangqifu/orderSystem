@@ -5,6 +5,8 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    
   </resultMap>
   <sql id="Base_Column_List">
     id, name, pwd
@@ -57,13 +59,32 @@
       <if test="pwd != null">
         pwd = #{pwd,jdbcType=VARCHAR},
       </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.qst.goldenarches.pojo.Area">
     update t_area
     set name = #{name,jdbcType=VARCHAR},
-      pwd = #{pwd,jdbcType=VARCHAR}
+      pwd = #{pwd,jdbcType=VARCHAR},
+      state=#{state,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="query" parameterType="com.qst.goldenarches.pojo.Area" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_area
+    where  1=1
+    
+     <if test="state != null">
+        and  state = #{state,jdbcType=VARCHAR}
+      </if>
+    
+    <if test="name !=null and name !='' ">
+       and name like concat('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+  
 </mapper>

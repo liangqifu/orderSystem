@@ -62,7 +62,6 @@
         		loadingIndex = layer.msg('处理中', {icon: 16});
         	},
         	success : function(result) {
-        		debugger
         		layer.close(loadingIndex);
         		
         		if (result.code==100) {

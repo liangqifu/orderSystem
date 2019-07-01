@@ -2,21 +2,23 @@ package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
 
-public class Area implements Serializable {
+public class Area extends BasePo implements Serializable {
     /**
      * 
      */
     private Integer id;
 
     /**
-     * ²ÍÇøÃû³Æ
+     * é¤åŒºåç§°
      */
     private String name;
 
     /**
-     * ²ÍÇøÃÜÂë
+     * é¤åŒºå¯†ç 
      */
     private String pwd;
+    
+    
 
     private static final long serialVersionUID = 1L;
 

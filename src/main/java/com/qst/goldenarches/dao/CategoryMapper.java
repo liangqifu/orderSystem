@@ -14,7 +14,7 @@ import java.util.Map;
 
 public interface CategoryMapper {
 
-    List<Category> selectAll(Map<String, Object> param);
+    List<Category> query(Category category);
 
     int insertCategory(Category category);
 

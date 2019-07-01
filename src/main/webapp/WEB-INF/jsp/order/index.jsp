@@ -1,126 +1,8 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	table tbody tr:nth-child(odd){background:#F4F4F4;}
-	</style>
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 订单数据列表</h3>
-			  </div>
-			  <div class="panel-body">
-<form class="form-inline" role="form" style="float:left;">
-  <div class="form-group has-feedback">
-    <div class="input-group">
-      <div class="input-group-addon">搜索条件</div>
-      <input id="queryText" class="form-control has-success" type="text" placeholder="关键词：会员手机号\会员名">
-    </div>
-  </div>
-  <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 搜索</button>
-</form>
-<br>
- <hr style="clear:both;">
-          <div class="table-responsive">
-            <form id="orderForm">
-            <table class="table table-bordered">
-              <thead>
-                <tr >
-                    <th width="50">#</th>
-                    <th>订单ID</th>
-                    <th>会员手机号</th>
-                    <th>会员名</th>
-                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="amountClick()">总金额</a></th>
-                    <th ><a class="btn" style="padding: 0px;font-weight: bold" onclick="createTimeClick()">订单时间</a></th>
-                    <th width="100">订单详情</th>
-                </tr>
-              </thead>
-              
-              <tbody id="orderData">
-                  
-              </tbody>
-              
-			  <tfoot>
-			     <tr >
-				     <td colspan="9" align="center">
-						<ul class="pagination"></ul>
-					 </td>
-				 </tr>
-
-			  </tfoot>
-            </table>
-            </form>
-          </div>
-			  </div>
-			</div>
-        </div>
-      </div>
-    </div>
-    <%--订单详情模态框--%>
-    <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="orderDetailTitle">New message</h4>
-                </div>
-                <div class="modal-body" style="padding-bottom: 0px;padding-top: 5px">
-                    <table class="table ">
-                        <thead>
-                        <tr >
-                            <th>#</th>
-                            <th>商品ID</th>
-                            <th>商品名</th>
-                            <th>价格</th>
-                            <th>数量</th>
-                            <th>金额</th>
-                        </tr>
-                        </thead>
-                        <tbody id="orderDetailData">
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer" id="all_money" style="padding: 10px">
-                    <%--<span class="glyphicon glyphicon-yen" aria-hidden="true">:</span>--%>
-                    <%--<p class="btn" style="padding: 0px;font-weight: bold;padding-right: 15px">总金额</p>--%>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js" ></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-	<script src="${APP_PATH}/script/docs.min.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-    <script type="text/javascript">
+  <%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+<script type="text/javascript">
         var searchFlag = false;
         var amountFlag=false;
         var cdescflag=true;
@@ -304,5 +186,96 @@
             return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
         }
     </script>
+  <body>
+
+	<div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="glyphicon glyphicon-th"></i> 订单数据列表
+				</h3>
+			</div>
+			<div class="panel-body">
+				<form class="form-inline" role="form" style="float: left;">
+					<div class="form-group has-feedback">
+						<div class="input-group">
+							<div class="input-group-addon">搜索条件</div>
+							<input id="queryText" class="form-control has-success"
+								type="text" placeholder="关键词：台号">
+						</div>
+					</div>
+					<button id="queryBtn" type="button" class="btn btn-warning">
+						<i class="glyphicon glyphicon-search"></i> 搜索
+					</button>
+				</form>
+				<br>
+				<hr style="clear: both;">
+				<div class="table-responsive">
+					<form id="orderForm">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th width="50">#</th>
+									<th>订单ID</th>
+									<th>会员手机号</th>
+									<th>会员名</th>
+									<th><a class="btn"
+										style="padding: 0px; font-weight: bold"
+										onclick="amountClick()">总金额</a></th>
+									<th><a class="btn"
+										style="padding: 0px; font-weight: bold"
+										onclick="createTimeClick()">订单时间</a></th>
+									<th width="100">订单详情</th>
+								</tr>
+							</thead>
+
+							<tbody id="orderData">
+
+							</tbody>
+
+							<tfoot>
+								<tr>
+									<td colspan="9" align="center">
+										<ul class="pagination"></ul>
+									</td>
+								</tr>
+
+							</tfoot>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<%--订单详情模态框--%>
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="orderDetailTitle">New message</h4>
+                </div>
+                <div class="modal-body" style="padding-bottom: 0px;padding-top: 5px">
+                    <table class="table ">
+                        <thead>
+                        <tr >
+                            <th>#</th>
+                            <th>商品ID</th>
+                            <th>商品名</th>
+                            <th>价格</th>
+                            <th>数量</th>
+                            <th>金额</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderDetailData">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer" id="all_money" style="padding: 10px">
+                </div>
+            </div>
+        </div>
+    </div>
+    
   </body>
 </html>

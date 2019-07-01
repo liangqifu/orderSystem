@@ -36,7 +36,7 @@ public class ChartServiceImpl implements ChartService {
 
     public List<Map> getEveryProTypeSaleNum() {
         //获得所有的商品类别
-        List<Category> categories =categoryMapper.selectAll(null);
+        List<Category> categories =categoryMapper.query(null);
         List<Map> datas =new ArrayList<Map>();
         for (Category c:categories){
             //根据cid 查询该类商品的销售数量 从订单详情表里面查询
@@ -56,7 +56,7 @@ public class ChartServiceImpl implements ChartService {
         List<Map> series =new ArrayList<Map>();
         List<String> itemList =new ArrayList<String>();
         //获取所有的类别
-        List<Category> categories =categoryMapper.selectAll(null);
+        List<Category> categories =categoryMapper.query(null);
         //遍历每个类别
         for (Category c:categories) {
             //用于保存该类别下的每个月份的销售情况
@@ -132,7 +132,7 @@ public class ChartServiceImpl implements ChartService {
         List<String> dataNameList =new ArrayList<String>();
         List<Double> dataValueList =new ArrayList<Double>();
         double sum=0;
-        List<Category> categories=categoryMapper.selectAll(null);
+        List<Category> categories=categoryMapper.query(null);
         for (Category c:categories){
             Map<String,Object> queryConditions=new HashMap<String,Object>();
             queryConditions.put("curDate",date);

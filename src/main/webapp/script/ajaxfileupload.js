@@ -97,6 +97,7 @@ jQuery.extend({
                     // Make sure that the request was successful or notmodified
                     if ( status != "error" )
                     {
+                    	debugger
                         // process the data (runs the xml through httpData regardless of callback)
                         var data = jQuery.uploadHttpData( xml, s.dataType );
                         // If a local callback was specified, fire it and pass it the data

@@ -1,8 +1,6 @@
 package com.qst.goldenarches.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,11 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Printer;
 import com.qst.goldenarches.service.PrinterService;
@@ -34,16 +30,24 @@ public class PrinterController {
     }
     
     @ResponseBody
-    @RequestMapping(value= "pagedGetAll",method=RequestMethod.POST,
+    @RequestMapping(value= "queryListByPage",method=RequestMethod.POST,
     	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg pagedGetAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn, String queryText){
-        PageHelper.startPage(pn,5);
-        Map<String, Object> param = new HashMap<String,Object>();
-        param.put("queryText", queryText);
-        List<Printer> list = printerService.query(param);
-        com.github.pagehelper.PageInfo<Printer> printerPageInfo =new com.github.pagehelper.PageInfo<Printer>(list,5);
-        return Msg.success().add("pageInfo",printerPageInfo);
+    public Msg queryListByPage(@RequestBody Printer printer ){
+    	PageHelper.startPage(printer.getPageNum(),printer.getPageSize());
+        List<Printer> list = printerService.query(printer);
+        com.github.pagehelper.PageInfo<Printer> printerPageInfo = new com.github.pagehelper.PageInfo<Printer>(list,printer.getPageSize());
+        return Msg.success().add("data",printerPageInfo);
+    }
+    
+    
+    @ResponseBody
+    @RequestMapping(value= "getList",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryList(@RequestBody Printer printer){
+        List<Printer> list = printerService.query(printer);
+        return Msg.success().add("data",list);
     }
     
     @RequestMapping("add")
@@ -52,10 +56,10 @@ public class PrinterController {
     }
     
     @ResponseBody
-    @RequestMapping(value= "doAdd",method=RequestMethod.POST,
+    @RequestMapping(value= "insert",method=RequestMethod.POST,
     consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doAdd(@RequestBody Printer printer){
+    public Msg insert(@RequestBody Printer printer){
     	int count = printerService.ckExitIp(printer.getIp());
     	if(count >0) {
     		Msg result =new Msg();
@@ -78,10 +82,10 @@ public class PrinterController {
     }
     
     @ResponseBody
-    @RequestMapping(value= "doEdit",method=RequestMethod.POST,
+    @RequestMapping(value= "update",method=RequestMethod.POST,
     consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doEdit(@RequestBody Printer printer){
+    public Msg update(@RequestBody Printer printer){
         try {
         	Printer printerOld = printerService.getById(printer.getId());
         	if(!printerOld.getIp().equals(printer.getIp())) {
@@ -101,6 +105,18 @@ public class PrinterController {
             return Msg.fail();
         }
         return Msg.success().add("printer",printer);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value= "save",method=RequestMethod.POST,
+    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg save(@RequestBody Printer printer){
+        if(printer.getId() > 0) {
+        	return this.update(printer);
+        }else {
+        	return this.insert(printer);
+        }
     }
     
     

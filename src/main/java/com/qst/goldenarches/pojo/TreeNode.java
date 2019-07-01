@@ -8,6 +8,7 @@ public class TreeNode {
 	private boolean open = false;  //是否默认打开
 	private boolean nocheck =false ; //是否可以选
 	private boolean checked = false; //是否默认选上
+    private boolean isParent = true;
 	
 	public TreeNode() {
 		super();
@@ -70,5 +71,15 @@ public class TreeNode {
 	public void setNocheck(boolean nocheck) {
 		this.nocheck = nocheck;
 	}
+
+	public boolean isParent() {
+		return isParent;
+	}
+
+	public void setParent(boolean isParent) {
+		this.isParent = isParent;
+	}
+	
+	
 
 }

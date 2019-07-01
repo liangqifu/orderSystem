@@ -1,97 +1,8 @@
 <%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
-	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
-	<style>
-	.tree li {
-        list-style-type: none;
-		cursor:pointer;
-	}
-	table tbody tr:nth-child(odd){background:#F4F4F4;}
-	table tbody td:nth-child(even){color:#C00;}
-	</style>
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		<%@include file="/WEB-INF/jsp/common/header.jsp"%>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-			<div class="tree">
-				<%@include file="/WEB-INF/jsp/common/menu.jsp"%>
-			</div>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title"><i class="glyphicon glyphicon-th"></i>角色数据</h3>
-			  </div>
-			  <div class="panel-body">
-			<form class="form-inline" role="form" style="float:left;">
-			  <div class="form-group has-feedback">
-			    <div class="input-group">
-			      <div class="input-group-addon">查询条件</div>
-			      <input id="queryText" class="form-control has-success" type="text" placeholder="请输入查询条件">
-			    </div>
-			  </div>
-			  <button id="queryBtn" type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
-			</form>
-			<button type="button" class="btn btn-danger" onclick="deleteRoles()" style="float:right;margin-left:10px;"><i class=" glyphicon glyphicon-remove"></i> 删除</button>
-			<button type="button" class="btn btn-primary" style="float:right;" onclick="window.location.href='${APP_PATH}/role/add'"><i class="glyphicon glyphicon-plus"></i> 新增</button>
-			<br>
-			 <hr style="clear:both;">
-          <div class="table-responsive">
-            <form id="roleForm">
-            <table class="table  table-bordered">
-              <thead>
-                <tr >
-                  <th width="30">#</th>
-				  <th width="30"><input type="checkbox" id="allSelBox"></th>
-                  <th>名称</th>
-                  <th width="100">操作</th>
-                </tr>
-              </thead>
-              
-              <tbody id="roleData">
-                  
-              </tbody>
-              
-			  <tfoot>
-			     <tr >
-				     <td colspan="6" align="center">
-						<ul class="pagination">
-
-							 </ul>
-					 </td>
-				 </tr>
-
-			  </tfoot>
-            </table>
-            </form>
-          </div>
-			  </div>
-			</div>
-        </div>
-      </div>
-    </div>
-    <script src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
-    <script src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
-	<script src="${APP_PATH}/script/docs.min.js"></script>
-	<script src="${APP_PATH}/layer/layer.js"></script>
-        <script type="text/javascript">
+<html>
+<%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
+<script type="text/javascript">
             var likeflg = false;
             $(function () {
 			   
@@ -114,6 +25,10 @@
 			    	$("#roleData :checkbox").each(function(){
 			    		this.checked = flg;
 			    	});
+			    });
+			    
+			    $("#addBtn").on('click',function(){
+			    	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/role/add")
 			    });
             });
             
@@ -182,10 +97,10 @@
             }
             
             function goAssignPage(id) {
-            	window.location.href = "${APP_PATH}/role/assign?id="+id;
+            	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/role/assign?id="+id);
             }
             function goUpdatePage(id) {
-                window.location.href = "${APP_PATH}/role/edit?id="+id;
+            	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/role/edit?id="+id);
             }
             /***批量删除角色***/
             function deleteRoles() {
@@ -237,5 +152,70 @@
                 });
             }
         </script>
-  </body>
+<body>
+
+	<div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="glyphicon glyphicon-th"></i>角色数据
+				</h3>
+			</div>
+			<div class="panel-body">
+				<form class="form-inline" role="form" style="float: left;">
+					<div class="form-group has-feedback">
+						<div class="input-group">
+							<div class="input-group-addon">查询条件</div>
+							<input id="queryText" class="form-control has-success"
+								type="text" placeholder="请输入查询条件">
+						</div>
+					</div>
+					<button id="queryBtn" type="button" class="btn btn-warning">
+						<i class="glyphicon glyphicon-search"></i> 查询
+					</button>
+				</form>
+				<button type="button" class="btn btn-danger" onclick="deleteRoles()"
+					style="float: right; margin-left: 10px;">
+					<i class=" glyphicon glyphicon-remove"></i> 删除
+				</button>
+				<button type="button" id="addBtn" class="btn btn-primary" style="float: right;" >
+					<i class="glyphicon glyphicon-plus"></i> 新增
+				</button>
+				<br>
+				<hr style="clear: both;">
+				<div class="table-responsive">
+					<form id="roleForm">
+						<table class="table  table-bordered">
+							<thead>
+								<tr>
+									<th width="30">#</th>
+									<th width="30"><input type="checkbox" id="allSelBox"></th>
+									<th>名称</th>
+									<th width="100">操作</th>
+								</tr>
+							</thead>
+
+							<tbody id="roleData">
+
+							</tbody>
+
+							<tfoot>
+								<tr>
+									<td colspan="6" align="center">
+										<ul class="pagination">
+
+										</ul>
+									</td>
+								</tr>
+
+							</tfoot>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+</body>
 </html>
