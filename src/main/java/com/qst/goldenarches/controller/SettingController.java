@@ -12,18 +12,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.pojo.Area;
-import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.service.AreaService;
 import com.qst.goldenarches.service.SettingService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-@Api(value="系统设置",description="系统设置接口")
+@ApiIgnore
 @Controller
 @RequestMapping("/setting")
 public class SettingController {
@@ -33,7 +30,6 @@ public class SettingController {
 	private AreaService areaService;
 	
 	
-	@ApiOperation(value="获取系统设置信息",response=Setting.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "info",method=RequestMethod.GET)
     public Msg getSetting(){

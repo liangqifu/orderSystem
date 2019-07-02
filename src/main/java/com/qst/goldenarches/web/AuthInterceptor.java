@@ -7,16 +7,18 @@
 package com.qst.goldenarches.web;
 
 
-import com.qst.goldenarches.pojo.Permission;
-import com.qst.goldenarches.service.PermissionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.qst.goldenarches.pojo.Permission;
+import com.qst.goldenarches.service.PermissionService;
 
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {

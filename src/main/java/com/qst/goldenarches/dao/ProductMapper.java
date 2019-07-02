@@ -51,4 +51,6 @@ public interface ProductMapper {
     @Select("select category_id id,category_name name from product_category")
     public List<Category> selAllCategory();
 
+	List<Product> query(Product product);
+
 }

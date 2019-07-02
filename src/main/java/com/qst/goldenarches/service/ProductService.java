@@ -15,6 +15,7 @@ import java.util.Map;
 
 public interface ProductService {
     List<Product> getAll(String text);
+    List<Product> query(Product product);
 
     boolean addProduct(Product product);
 
@@ -39,8 +40,9 @@ public interface ProductService {
     PageInfo showPage(String pageNumStr, Integer categoryId);
 
     /**
-     * 获取数据库中所有的类型，用于类型展示
+           * 获取数据库中所有的类型，用于类型展示
      * @return  返回类型的集合
      */
     List<Category> getCategory();
+
 }

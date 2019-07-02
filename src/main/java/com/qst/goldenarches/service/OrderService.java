@@ -8,6 +8,7 @@ package com.qst.goldenarches.service;
 
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
+import com.qst.goldenarches.pojo.OrderMsater;
 
 import java.util.List;
 import java.util.Map;
@@ -69,4 +70,6 @@ public interface OrderService {
      * @return 返回修改的行数
      */
     public int updVIP(Map<String,Integer> map,String phone);
+
+	void createOrderMaster(OrderMsater order);
 }

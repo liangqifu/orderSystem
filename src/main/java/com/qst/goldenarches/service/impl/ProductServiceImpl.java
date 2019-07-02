@@ -6,19 +6,19 @@
  */
 package com.qst.goldenarches.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.dao.ProductMapper;
 import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.PageInfo;
 import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.service.ProductService;
-import com.qst.goldenarches.utils.ImageUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -29,6 +29,11 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAll(String text) {
         return productMapper.selectAll(text);
     }
+
+	@Override
+	public List<Product> query(Product product) {
+		return productMapper.query(product);
+	}
 
     public boolean addProduct(Product product) {
         return productMapper.insertProduct(product)==1?true:false;
@@ -98,4 +103,5 @@ public class ProductServiceImpl implements ProductService {
     public List<Category> getCategory(){
         return productMapper.selAllCategory();
     }
+
 }

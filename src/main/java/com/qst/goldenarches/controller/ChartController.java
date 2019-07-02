@@ -6,19 +6,21 @@
  */
 package com.qst.goldenarches.controller;
 
-import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.service.ChartService;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import springfox.documentation.annotations.ApiIgnore;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.service.ChartService;
+
+import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
 @RequestMapping("chart")

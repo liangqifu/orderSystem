@@ -6,11 +6,10 @@
  */
 package com.qst.goldenarches.dao;
 
-import com.qst.goldenarches.pojo.Category;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import com.qst.goldenarches.pojo.Category;
 
 public interface CategoryMapper {
 

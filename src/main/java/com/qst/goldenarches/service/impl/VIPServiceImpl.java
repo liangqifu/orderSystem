@@ -1,14 +1,15 @@
 package com.qst.goldenarches.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
 
 import com.qst.goldenarches.dao.VIPMapper;
 import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.VIPService;
-import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service("vipService")
 public class VIPServiceImpl implements VIPService {

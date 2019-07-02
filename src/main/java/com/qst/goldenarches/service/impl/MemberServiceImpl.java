@@ -6,15 +6,16 @@
  */
 package com.qst.goldenarches.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.qst.goldenarches.dao.MemberMapper;
 import com.qst.goldenarches.dao.OrderMapper;
 import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class MemberServiceImpl implements MemberService {

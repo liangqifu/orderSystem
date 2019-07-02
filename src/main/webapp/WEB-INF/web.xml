@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  
+  <context-param>  
+    <param-name>webAppRootKey</param-name>  
+    <param-value>webApp.root</param-value>  
+  </context-param>  
+ 
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring/spring-context.xml</param-value>
   </context-param>
+
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-
+  
+  <!--log4j配置文件地址 -->
+    <context-param>
+        <param-name>log4jConfiguration</param-name>
+        <param-value>classpath:log4j2.xml</param-value>
+    </context-param>
+    <!-- Log4j的监听器要放在spring监听器前面 -->
+    <listener>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+    </listener>
+  
   <!--自定义监听器：监听服务启动获取项目路径-->
   <listener>
     <listener-class>com.qst.goldenarches.web.ServerStartupListener</listener-class>

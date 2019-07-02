@@ -6,25 +6,30 @@
  */
 package com.qst.goldenarches.service.impl;
 
-import com.qst.goldenarches.dao.OrderMapper;
-import com.qst.goldenarches.pojo.Detail;
-import com.qst.goldenarches.pojo.Order;
-import com.qst.goldenarches.pojo.VIP;
-import com.qst.goldenarches.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.qst.goldenarches.dao.OrderMapper;
+import com.qst.goldenarches.dao.OrderMsaterMapper;
+import com.qst.goldenarches.pojo.Detail;
+import com.qst.goldenarches.pojo.Order;
+import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.VIP;
+import com.qst.goldenarches.service.OrderService;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private OrderMsaterMapper orderMsaterMapper;
 
     public List<Order> getAll(Map<String, String> map) {
         return orderMapper.selectAll(map);
@@ -150,4 +155,11 @@ public class OrderServiceImpl implements OrderService {
         int index = orderMapper.updVIP(vip);
         return index;
     }
+
+
+	@Override
+	public void createOrderMaster(OrderMsater order) {
+		int orderId = orderMsaterMapper.insertSelective(order);
+		order.setOrderId(orderId);
+	}
 }

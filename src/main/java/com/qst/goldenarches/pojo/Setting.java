@@ -2,9 +2,12 @@ package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-@ApiModel
+@ApiModel(description="系统设置")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Setting implements Serializable {
 	private static final long serialVersionUID = 1L;
     /**
@@ -37,15 +40,25 @@ public class Setting implements Serializable {
 	@ApiModelProperty(value="每轮需要等的时间")
     private Integer waitTime;
 	 /**
-     * 每轮需要等的时间
+          * 每位成人午餐价格
      */
-	@ApiModelProperty(value="每位成人价格")
-    private Double adultPrice;
+	@ApiModelProperty(value="每位成人午餐价格")
+    private Double adultLunchPrice;
 	 /**
-     * 每轮需要等的时间
+	     * 每位成人晚餐价格
+	*/
+	@ApiModelProperty(value="每位成人晚餐价格")
+	private Double adultDinnerPrice;
+	 /**
+         * 每位小孩午餐价格
      */
-	@ApiModelProperty(value="每位小孩价格")
-    private Double childPrice;
+	@ApiModelProperty(value="每位小孩午餐价格")
+    private Double childLunchPrice;
+	 /**
+	     * 每位小孩晚餐价格
+	 */
+	@ApiModelProperty(value="每位小孩晚餐价格")
+	private Double childDinnerPrice;
     
 
     public Integer getId() {
@@ -88,21 +101,38 @@ public class Setting implements Serializable {
         this.waitTime = waitTime;
     }
 
-	public Double getAdultPrice() {
-		return adultPrice;
+	public Double getAdultLunchPrice() {
+		return adultLunchPrice;
 	}
 
-	public void setAdultPrice(Double adultPrice) {
-		this.adultPrice = adultPrice;
+	public void setAdultLunchPrice(Double adultLunchPrice) {
+		this.adultLunchPrice = adultLunchPrice;
 	}
 
-	public Double getChildPrice() {
-		return childPrice;
+	public Double getAdultDinnerPrice() {
+		return adultDinnerPrice;
 	}
 
-	public void setChildPrice(Double childPrice) {
-		this.childPrice = childPrice;
+	public void setAdultDinnerPrice(Double adultDinnerPrice) {
+		this.adultDinnerPrice = adultDinnerPrice;
 	}
-    
+
+	public Double getChildLunchPrice() {
+		return childLunchPrice;
+	}
+
+	public void setChildLunchPrice(Double childLunchPrice) {
+		this.childLunchPrice = childLunchPrice;
+	}
+
+	public Double getChildDinnerPrice() {
+		return childDinnerPrice;
+	}
+
+	public void setChildDinnerPrice(Double childDinnerPrice) {
+		this.childDinnerPrice = childDinnerPrice;
+	}
+
+	
     
 }

@@ -2,20 +2,27 @@ package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description="餐区信息")
 public class Area extends BasePo implements Serializable {
     /**
      * 
      */
+	@ApiModelProperty(value="主键id")
     private Integer id;
 
     /**
      * 餐区名称
      */
+	@ApiModelProperty(value="餐区名称")
     private String name;
 
     /**
      * 餐区密码
      */
+	@ApiModelProperty(value="餐区密码",hidden=true)
     private String pwd;
     
     

@@ -5,13 +5,16 @@
  * Description: 管理员控制类
  */
 package com.qst.goldenarches.controller;
-import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.pojo.*;
-import com.qst.goldenarches.service.AdminService;
-import com.qst.goldenarches.service.PermissionService;
-import com.qst.goldenarches.service.RoleService;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import springfox.documentation.annotations.ApiIgnore;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,9 +23,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.pojo.Admin;
+import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.pojo.Permission;
+import com.qst.goldenarches.pojo.Role;
+import com.qst.goldenarches.service.AdminService;
+import com.qst.goldenarches.service.PermissionService;
+import com.qst.goldenarches.service.RoleService;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 @ApiIgnore
 @Controller

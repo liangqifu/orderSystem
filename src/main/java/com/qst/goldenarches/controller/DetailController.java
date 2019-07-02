@@ -6,18 +6,18 @@
  */
 package com.qst.goldenarches.controller;
 
-import com.qst.goldenarches.pojo.Detail;
-import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.service.DetailService;
-
-import springfox.documentation.annotations.ApiIgnore;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import com.qst.goldenarches.pojo.Detail;
+import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.service.DetailService;
+
+import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
 @RequestMapping("detail")

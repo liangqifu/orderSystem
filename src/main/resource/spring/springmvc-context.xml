@@ -59,6 +59,7 @@
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
             <mvc:exclude-mapping path="/setting/info" />
+            <mvc:exclude-mapping path="/app/**" />
             <bean class="com.qst.goldenarches.web.LoginInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>
@@ -81,6 +82,7 @@
             <mvc:exclude-mapping path="/script/**" />
             <mvc:exclude-mapping path="/ztree/**" />
             <mvc:exclude-mapping path="/setting/info" />
+            <mvc:exclude-mapping path="/app/**" />
             <bean class="com.qst.goldenarches.web.AuthInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
@@ -106,4 +108,7 @@
         <property name="maxInMemorySize" value="4096"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" >
+    </bean>
+    <mvc:annotation-driven validator="validator" />
 </beans>

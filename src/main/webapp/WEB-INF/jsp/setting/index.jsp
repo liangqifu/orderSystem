@@ -249,7 +249,7 @@ function bindSettingForm(){
           　　　　　　　　validating: 'glyphicon glyphicon-refresh'
         },
         fields: {
-        	adultPrice:{
+        	adultLunchPrice:{
                 validators: {
                     notEmpty: {
                         message: '不能为空'
@@ -263,7 +263,35 @@ function bindSettingForm(){
                     }
                 }
             },
-        	childPrice: {
+            adultDinnerPrice:{
+                validators: {
+                    notEmpty: {
+                        message: '不能为空'
+                    },
+                    numeric:{
+                    	message: '必须是数值'
+                    },
+                    regexp: {
+                        regexp: /^\d+(\.\d{0,2})?$/,
+                        message: '请输入大于0的正数'
+                    }
+                }
+            },
+        	childLunchPrice: {
+                validators: {
+                    notEmpty: {
+                        message: '不能为空'
+                    },
+                    numeric:{
+                    	message: '必须是数值'
+                    },
+                    regexp: {
+                        regexp: /^\d+(\.\d{0,2})?$/,
+                        message: '请输入大于0的正数'
+                    }
+                }
+            },
+            childDinnerPrice: {
                 validators: {
                     notEmpty: {
                         message: '不能为空'
@@ -277,6 +305,7 @@ function bindSettingForm(){
                     }
                 }
             }
+            
         }
         
     }).on('success.form.bv', function(e) {//点击提交之后
@@ -348,21 +377,28 @@ function bindSettingForm(){
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="adultPrice" class="col-sm-2 control-label" >每位成年人价格:</label> 
+						<label class="col-sm-2 control-label" >每位成年人价格:</label> 
 						<div class="col-sm-4">
 							<div class="input-group">
-						         <span class="input-group-addon">￥</span> 
-					     		 <input type="text" class="form-control" id="adultPrice" style="width: 100%;" name="adultPrice" placeholder="请输入" autocomplete="off">
+						         <span class="input-group-addon">午餐￥</span> 
+					     		 <input type="text" class="form-control" id="adultLunchPrice" style="width: 100%;" name="adultLunchPrice" placeholder="请输入" autocomplete="off">
 							</div>
-						    
+							<div class="input-group">
+						         <span class="input-group-addon">晚餐￥</span> 
+					     		 <input type="text" class="form-control" id="adultDinnerPrice" style="width: 100%;" name="adultDinnerPrice" placeholder="请输入" autocomplete="off">
+							</div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="childPrice" class="col-sm-2 control-label" >每位小孩价格:</label> 
+						<label class="col-sm-2 control-label" >每位小孩价格:</label> 
 						<div class="col-sm-4">
 							<div class="input-group">
-							    <span class="input-group-addon">￥</span>
-					     		<input type="text" class="form-control" id="childPrice" style="width: 100%;" name="childPrice" placeholder="请输入" autocomplete="off">
+							    <span class="input-group-addon">午餐￥</span>
+					     		<input type="text" class="form-control" id="childLunchPrice" style="width: 100%;" name="childLunchPrice" placeholder="请输入" autocomplete="off">
+							</div>
+							<div class="input-group">
+							    <span class="input-group-addon">晚餐￥</span>
+					     		<input type="text" class="form-control" id="childDinnerPrice" style="width: 100%;" name="childDinnerPrice" placeholder="请输入" autocomplete="off">
 							</div>
 						</div>
 					</div>
@@ -418,7 +454,7 @@ function bindSettingForm(){
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 区域设置
+					<i class="glyphicon glyphicon-th"></i> 餐区设置
 				</h3>
 			</div>
 			<div class="panel-body" >

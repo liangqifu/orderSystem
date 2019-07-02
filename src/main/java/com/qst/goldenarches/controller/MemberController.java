@@ -6,25 +6,23 @@
  */
 package com.qst.goldenarches.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.pojo.Product;
-import com.qst.goldenarches.pojo.VIP;
-import com.qst.goldenarches.service.MemberService;
-import com.qst.goldenarches.utils.ImageUtil;
-import com.qst.goldenarches.utils.OrderByEnumUtil;
-
-import springfox.documentation.annotations.ApiIgnore;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.pojo.VIP;
+import com.qst.goldenarches.service.MemberService;
+import com.qst.goldenarches.utils.OrderByEnumUtil;
+
+import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
 @RequestMapping("/member")
