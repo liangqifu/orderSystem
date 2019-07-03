@@ -84,7 +84,7 @@ public class OrderMsater extends BasePo implements Serializable {
     /**
      * 订单状态 0未结账 1已结账
      */
-	@ApiModelProperty(value="订单状态 0未结账 1已结账")
+	@ApiModelProperty(value="订单状态 0未结账 1已结账 已取消")
     private String status;
 
     /**
@@ -221,6 +221,14 @@ public class OrderMsater extends BasePo implements Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public List<OrderRound> getOrderRounds() {
+		return orderRounds;
+	}
+
+	public void setOrderRounds(List<OrderRound> orderRounds) {
+		this.orderRounds = orderRounds;
 	}
 
     

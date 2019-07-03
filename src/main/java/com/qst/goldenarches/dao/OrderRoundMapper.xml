@@ -17,6 +17,20 @@
     from order_round
     where id = #{id,jdbcType=INTEGER}
   </select>
+   <select id="query" parameterType="com.qst.goldenarches.pojo.OrderRound" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_round
+    where 1=1
+    <if test="orderId !=null ">
+       and order_id = #{orderId}
+    </if>
+    <if test="state !=null and state !='' ">
+       and state = #{state}
+    </if>
+    order by num asc
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from order_round
     where id = #{id,jdbcType=INTEGER}

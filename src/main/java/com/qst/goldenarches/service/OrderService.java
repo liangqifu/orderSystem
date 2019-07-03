@@ -82,4 +82,8 @@ public interface OrderService {
 	void createOrderRound(OrderRound orderRound) throws BusException;
 
 	void needService(OrderPrinterLog printerLog) throws BusException;
+
+	OrderMsater getOrderInfoByOrderId(Integer orderId) throws BusException;
+
+	List<OrderDetail> queryOrderDetail(OrderDetail param);
 }

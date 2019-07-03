@@ -14,30 +14,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.qst.goldenarches.dao.OrderDetailMapper;
 import com.qst.goldenarches.dao.OrderMapper;
 import com.qst.goldenarches.dao.OrderMsaterMapper;
+import com.qst.goldenarches.dao.OrderPrinterLogMapper;
 import com.qst.goldenarches.dao.OrderRoundMapper;
 import com.qst.goldenarches.dao.SettingMapper;
-import com.qst.goldenarches.dao.OrderPrinterLogMapper;
 import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
 import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.OrderService;
+import com.qst.goldenarches.thread.EventStorage;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
+	private static Logger logger = LogManager.getLogger(OrderServiceImpl.class);
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -207,7 +212,21 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMsater == null) {
 			throw new BusException("订单主表数据不存在");
 		}
-		orderDetailMapper.insertBatch(orderDetails);
+		int ret = orderDetailMapper.insertBatch(orderDetails);
+		
+		OrderPrinterLog printerLog = new OrderPrinterLog();
+		printerLog.setOrderId(orderMsater.getOrderId());
+		printerLog.setContent(JSON.toJSONString(orderDetails));
+		printerLog.setPinterType("2");
+		printerLog.setStatus("0");
+		ret = orderPrinterLogMapper.insert(printerLog);
+		if(ret > 0) {
+			try {
+				EventStorage.getInstance().putEvent(printerLog);
+			} catch (InterruptedException e) {
+				logger.error("createOrderDrinks存放异常",e);
+			}
+		}
 	}
 
 
@@ -225,6 +244,7 @@ public class OrderServiceImpl implements OrderService {
 		orderRound.setNum(maxNum +1);
 		
 		int roundId =  orderRoundMapper.insert(orderRound);
+		orderRound.setId(roundId);
 		if(roundId == 0) {
 			throw new BusException("保存数据失败");
 		}
@@ -236,16 +256,56 @@ public class OrderServiceImpl implements OrderService {
 		if(ret == 0) {
 			throw new BusException("保存数据失败");
 		}
+		OrderPrinterLog printerLog = new OrderPrinterLog();
+		printerLog.setOrderId(orderMsater.getOrderId());
+		printerLog.setContent(JSON.toJSONString(orderRound));
+		printerLog.setPinterType("1");
+		printerLog.setStatus("0");
+		ret = orderPrinterLogMapper.insert(printerLog);
+		if(ret > 0) {
+			try {
+				EventStorage.getInstance().putEvent(printerLog);
+			} catch (InterruptedException e) {
+				logger.error("createOrderRound存放异常",e);
+			}
+		}
 	}
 
 
 	@Override
-	public void needService(com.qst.goldenarches.pojo.OrderPrinterLog printerLog) throws BusException {
+	public void needService(OrderPrinterLog printerLog) throws BusException {
 		printerLog.setPinterType("3");
 		Setting setting = settingMapper.getSettingInfo();
 		if(setting != null) {
 			printerLog.setPrinterId(setting.getServicePrinterId());
 		}
-		orderPrinterLogMapper.insert(printerLog);
+		int ret = orderPrinterLogMapper.insert(printerLog);
+		if(ret > 0) {
+			try {
+				EventStorage.getInstance().putEvent(printerLog);
+			} catch (InterruptedException e) {
+				logger.error("needService存放异常",e);
+			}
+		}
+		
+	}
+
+
+	@Override
+	public OrderMsater getOrderInfoByOrderId(Integer orderId) throws BusException {
+		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderId);
+		if(orderMsater == null) {
+			throw new BusException("订单数据不存在");
+		}
+		OrderRound param = new OrderRound();
+		param.setState("0");
+		List<OrderRound> orderRounds = orderRoundMapper.query(param);
+		orderMsater.setOrderRounds(orderRounds);
+		return orderMsater;
+	}
+
+	@Override
+	public List<OrderDetail> queryOrderDetail(OrderDetail param) {
+		return orderDetailMapper.queryOrderDetail(param);
 	}
 }

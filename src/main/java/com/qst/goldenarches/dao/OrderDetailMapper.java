@@ -18,4 +18,6 @@ public interface OrderDetailMapper {
     int updateByPrimaryKeySelective(OrderDetail record);
 
     int updateByPrimaryKey(OrderDetail record);
+
+	List<OrderDetail> queryOrderDetail(OrderDetail param);
 }

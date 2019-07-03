@@ -22,7 +22,7 @@ public class OrderDetail extends BasePo implements Serializable {
     private Integer detailId;
 
     /**
-     * 订单总表id
+            * 订单总表id
      */
 	@ApiModelProperty(value="订单主表id")
 	@NotNull(message="订单主表id不能为空")

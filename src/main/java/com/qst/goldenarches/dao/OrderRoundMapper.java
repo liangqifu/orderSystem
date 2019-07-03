@@ -1,5 +1,7 @@
 package com.qst.goldenarches.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.qst.goldenarches.pojo.OrderRound;
@@ -18,4 +20,6 @@ public interface OrderRoundMapper {
     int updateByPrimaryKey(OrderRound record);
 
 	Integer getMaxNumByOrderId(@Param("orderId") Integer orderId);
+
+	List<OrderRound> query(OrderRound param);
 }

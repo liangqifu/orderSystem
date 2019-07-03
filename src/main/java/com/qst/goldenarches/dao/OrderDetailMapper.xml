@@ -25,6 +25,24 @@
     from order_detail
     where detail_id = #{detailId,jdbcType=INTEGER}
   </select>
+  
+  <select id="queryOrderDetail" parameterType="com.qst.goldenarches.pojo.OrderDetail" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_detail
+    where 1=1
+    <if test="orderId !=null and roundId ==null ">
+       and order_id = #{orderId} and round_id is null
+    </if>
+    <if test="orderId !=null and roundId !=null ">
+       and order_id = #{orderId} and round_id=#{roundId}
+    </if>
+    <if test="state !=null and state !='' ">
+       and state = #{state}
+    </if>
+    order by create_time asc
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from order_detail
     where detail_id = #{detailId,jdbcType=INTEGER}

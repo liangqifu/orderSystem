@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 @RequestMapping("/app")
 public class AppController {
-	static Logger logger = LogManager.getLogger(AppController.class);
+	private static Logger logger = LogManager.getLogger(AppController.class);
 	
 	@Autowired
 	private SettingService settingService;
@@ -160,7 +161,41 @@ public class AppController {
         return Msg.success();
     }
 	
+	@ApiOperation(value="根据orderId/roundId分页查询订单详情列表",notes="注意：参数orderId必填,参数roundId选填",response=OrderDetail.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/queryOrderDetail",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryOrderDetail(@RequestBody OrderDetail param){
+		try {
+			PageHelper.startPage(param.getPageNum(),param.getPageSize());
+			param.setState("0");
+			List<OrderDetail> list = orderService.queryOrderDetail(param);
+	        com.github.pagehelper.PageInfo<OrderDetail> pageInfo = new com.github.pagehelper.PageInfo<OrderDetail>(list,param.getPageSize());
+			return Msg.success().add("data", pageInfo);
+		} catch (Exception e) {
+			logger.error("获取订单详情失败", e);
+			return Msg.fail("获取订单详情失败");
+		}
+    }
 	
+	@ApiOperation(value="根据orderId获取订单详情",response=OrderMsater.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/{orderId}/info",method=RequestMethod.GET,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg getOrderInfoByOrderId(@PathVariable("orderId") Integer orderId){
+		try {
+			OrderMsater order = orderService.getOrderInfoByOrderId(orderId);
+			return Msg.success().add("data", order);
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("获取订单详情失败", e);
+			return Msg.fail("获取订单详情失败");
+		}
+    }
 	
 	
 
