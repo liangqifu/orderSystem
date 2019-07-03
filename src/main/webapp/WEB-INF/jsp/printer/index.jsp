@@ -159,6 +159,18 @@
                                 message: '请输入正确的IP'
                             }
                         }
+                    },
+                    port: {
+                        message: '端口号格式不正确',
+                        validators: {
+                            notEmpty: {
+                                message: '端口号不能为空'
+                            },
+                            regexp: {
+                                regexp: /^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/,
+                                message: '请输入正确的端口号'
+                            }
+                        }
                     }
                 }
             }).on('success.form.bv', function(e) {//点击提交之后
@@ -219,6 +231,7 @@
                 <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
                 <td>{{$value.name}}</td>
                 <td>{{$value.ip}}</td>
+                <td>{{$value.port}}</td>
                 {{if $value.status == '0'}}
                   <td style="color: green">ON</td>
                 {{else}} 
@@ -268,8 +281,9 @@
 								<thead>
 									<tr>
 										<th style="width: 5%;text-align: center;">序号</th>
-										<th style="width:30% ;text-align: center;">打印机名称</th>
+										<th style="width:20% ;text-align: center;">打印机名称</th>
 										<th style="width:20% ;text-align: center;">IP</th>
+										<th style="width:8% ;text-align: center;">port</th>
 										<th style="width:10% ;text-align: center;">状态</th>
 										<th style="width:10% ;text-align: center;">是否在线</th>
 										<th style="width:15%">操作</th>
@@ -318,7 +332,12 @@
 							<div class="col-sm-6">
 							  <input autocomplete="off" type="text" class="form-control"  id="ip" name="ip"  placeholder="请输入打印机IP">
 							</div>
-							
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="port">port:</label> 
+							<div class="col-sm-6">
+							  <input autocomplete="off" type="text" class="form-control"  id="port" name="port"  placeholder="请输入打印机端口号">
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">开关:</label> 

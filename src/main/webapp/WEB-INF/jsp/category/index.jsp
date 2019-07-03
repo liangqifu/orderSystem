@@ -248,7 +248,7 @@
 
         function loadPinterdata(params){
             $.ajax({
-                 url : "${APP_PATH}/printer/getList",    //后台controller中的请求路径
+                 url : "${APP_PATH}/printer/getList",  
                  type : 'POST',
                  async : false,
                  datatype : 'json',
@@ -421,13 +421,13 @@
                         <input type="hidden" name="state" class="form-control" id="state">
                         <input type="hidden" name="parentId" class="form-control" id="parentId">
                         <div class="form-group">
-                            <label for="balance_update_input" class="col-sm-4 control-label">菜品类别名称:</label>
+                            <label for="name" class="col-sm-4 control-label">菜品类别名称:</label>
                             <div class="col-sm-6">
                                 <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="不能为空" name="name" class="form-control" id="name" placeholder="请输入菜品类别">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="balance_update_input" class="col-sm-4 control-label">关联打印机:</label>
+                            <label for="printid" class="col-sm-4 control-label">关联打印机:</label>
                             <div class="col-sm-6">
                                 <select data-size="6" id="printid" name="printid" class="form-control selectpicker"></select>
                             </div>

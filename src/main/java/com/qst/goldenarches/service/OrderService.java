@@ -6,9 +6,13 @@
  */
 package com.qst.goldenarches.service;
 
+import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
+import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderPrinterLog;
+import com.qst.goldenarches.pojo.OrderRound;
 
 import java.util.List;
 import java.util.Map;
@@ -72,4 +76,10 @@ public interface OrderService {
     public int updVIP(Map<String,Integer> map,String phone);
 
 	void createOrderMaster(OrderMsater order);
+
+	void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException;
+
+	void createOrderRound(OrderRound orderRound) throws BusException;
+
+	void needService(OrderPrinterLog printerLog) throws BusException;
 }

@@ -41,14 +41,14 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="order_detailee" mapperName="OrderDetailMapper"  
-           domainObjectName="OrderDetail" 
+        <table tableName="order_servicewww" mapperName="OrderServiceMapper"  
+           domainObjectName="OrderService" 
           enableCountByExample="false" 
           enableSelectByExample="false" 
           enableUpdateByExample="false" 
           enableDeleteByExample="false" 
           selectByExampleQueryId="false"  >
-             <generatedKey column="detail_id" sqlStatement="MySql" identity="true"/>
+             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>
 </generatorConfiguration>

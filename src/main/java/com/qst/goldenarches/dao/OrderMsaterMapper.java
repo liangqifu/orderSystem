@@ -14,4 +14,6 @@ public interface OrderMsaterMapper {
     int updateByPrimaryKeySelective(OrderMsater record);
 
     int updateByPrimaryKey(OrderMsater record);
+
+	
 }

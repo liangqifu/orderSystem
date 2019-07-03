@@ -4,10 +4,15 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:component-scan base-package="com.qst.*" >
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -32,20 +37,9 @@
         <property name="basePackage" value="com.qst.goldenarches.dao" />
         <property name="sqlSessionFactoryBeanName" value="factory"/>
     </bean>
-
-
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <!-- <tx:advice id="transactionAdvice" transaction-manager="txManager" >
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="java.lang.Exception" />
-            <tx:method name="select*" read-only="true" />
-            <tx:method name="login" read-only="true"/>
-        </tx:attributes>
-    </tx:advice>
-    <aop:config>
-        <aop:advisor advice-ref="transactionAdvice" pointcut="execution(* com.qst.goldenarches.service.impl.*.*(..))"/>
-    </aop:config> -->
-
+    <tx:annotation-driven transaction-manager="txManager"/>
+    
 </beans>

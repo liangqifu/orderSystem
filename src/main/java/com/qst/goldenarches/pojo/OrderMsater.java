@@ -98,7 +98,6 @@ public class OrderMsater extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="创建时间",hidden=true)
     private Date createTime;
-	
 	/**
 	 * 更新时间
 	 */

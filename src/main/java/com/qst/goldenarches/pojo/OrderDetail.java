@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description="订单明细")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderDetail implements Serializable {
+public class OrderDetail extends BasePo implements Serializable {
     
 
 	/**
@@ -38,44 +38,44 @@ public class OrderDetail implements Serializable {
      * 商品id
      */
 	@ApiModelProperty(value="菜品ID")
+	@NotNull(message="菜品ID不能为空")
     private Integer productId;
 
     /**
      * 商品�?
      */
 	@ApiModelProperty(value="菜品名称")
+	@NotNull(message="菜品名称不能为空")
     private String productName;
 
     /**
      * 
      */
 	@ApiModelProperty(value="菜品单价")
+	@NotNull(message="菜品单价不能为空")
     private Double productPrice;
 
     /**
      * 商品数量
      */
 	@ApiModelProperty(value="菜品数量")
+	@NotNull(message="菜品数量不能为空")
     private Integer productNumber;
 
     /**
      * 分类id
      */
 	@ApiModelProperty(value="菜品分类ID")
+	@NotNull(message="菜品分类ID不能为空")
     private Integer categoryId;
 
     /**
      * 分类名称
      */
 	@ApiModelProperty(value="菜品分类名称")
+	@NotNull(message="菜品分类名称不能为空")
     private String categoryName;
-
-    /**
-     * 删除状�?? 0正常 1删除
-     */
-	@ApiModelProperty(value="删除状�?? 0正常 1删除")
-    private String state;
-
+  
     /**
      * 创建时间
      */
@@ -162,13 +162,6 @@ public class OrderDetail implements Serializable {
         this.categoryName = categoryName == null ? null : categoryName.trim();
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state == null ? null : state.trim();
-    }
 
     public Date getCreateTime() {
         return createTime;

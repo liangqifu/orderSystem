@@ -11,7 +11,8 @@
     <result column="Setting_adult_dinner_price" jdbcType="DOUBLE" property="adultDinnerPrice" />
     <result column="Setting_child_lunch_price" jdbcType="DOUBLE" property="childLunchPrice" />
     <result column="Setting_child_dinner_price" jdbcType="DOUBLE" property="childDinnerPrice" />
-    
+    <result column="Setting_service_printer_id" jdbcType="DOUBLE" property="servicePrinterId" />
+    <association property="servicePrinter" column="Setting_service_printer_id" select="com.qst.goldenarches.dao.PrinterMapper.getById"/>
   </resultMap>
   <sql id="Base_Column_List">
     Setting.id as Setting_id, Setting.app_pwd as Setting_app_pwd, Setting.lunch_num as Setting_lunch_num, 
@@ -19,7 +20,8 @@
     Setting.adult_lunch_price as Setting_adult_lunch_price,
     Setting.adult_dinner_price as Setting_adult_dinner_price,
     Setting.child_lunch_price as Setting_child_lunch_price,
-    Setting.child_dinner_price as Setting_child_dinner_price 
+    Setting.child_dinner_price as Setting_child_dinner_price,
+    Setting.service_printer_id as Setting_service_printer_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -52,7 +54,8 @@
       #{adultLunchPrice,jdbcType=DOUBLE},
       #{adultDinnerPrice,jdbcType=DOUBLE},
       #{childLunchPrice,jdbcType=DOUBLE},
-      #{childDinnerPrice,jdbcType=DOUBLE})
+      #{childDinnerPrice,jdbcType=DOUBLE},
+      #{servicePrinterId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.qst.goldenarches.pojo.Setting">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -84,6 +87,9 @@
       <if test="childDinnerPrice != null">
         child_dinner_price,
       </if>
+      <if test="servicePrinterId != null">
+        service_printer_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="appPwd != null">
@@ -109,6 +115,9 @@
       </if>
       <if test="childDinnerPrice != null">
         #{childDinnerPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="servicePrinterId != null">
+        #{servicePrinterId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -139,6 +148,9 @@
       <if test="childDinnerPrice != null">
         child_dinner_price = #{childDinnerPrice,jdbcType=DOUBLE},
       </if>
+      <if test="servicePrinterId != null">
+        service_printer_id = #{servicePrinterId,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -151,7 +163,8 @@
       adult_lunch_price = #{adultLunchPrice,jdbcType=DOUBLE},
       adult_dinner_price = #{adultDinnerPrice,jdbcType=DOUBLE},
       child_lunch_price = #{childLunchPrice,jdbcType=DOUBLE},
-      child_dinner_price = #{childDinnerPrice,jdbcType=DOUBLE}
+      child_dinner_price = #{childDinnerPrice,jdbcType=DOUBLE},
+      service_printer_id = #{servicePrinterId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

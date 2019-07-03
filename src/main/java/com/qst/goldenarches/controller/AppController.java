@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderPrinterLog;
+import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.service.AreaService;
@@ -110,13 +113,54 @@ public class AppController {
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg createOrderDrinks(@RequestBody @Validated List<OrderDetail> orderDetail){
 		try {
-		    //orderService.createOrderDrinks(orderDetail);
-		} catch (Exception e) {
+		    orderService.createOrderDrinks(orderDetail);
+		}catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
 			logger.error("酒水分类确认下单失败", e);
-			 return Msg.fail("酒水分类确认下单失败");
+			return Msg.fail("酒水分类确认下单失败");
 		}
         return Msg.success();
     }
+	
+	@ApiOperation(value="每轮点餐确认下单,",response=OrderRound.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/round/confirm",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg createOrderRound(@RequestBody @Validated OrderRound orderRound){
+		try {
+		    orderService.createOrderRound(orderRound);
+		}catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("每轮点餐确认下单失败", e);
+			return Msg.fail("每轮点餐确认下单失败");
+		}
+        return Msg.success();
+    }
+	
+	@ApiOperation(value="点需要服务接口",response=OrderRound.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/needService",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg needService(@RequestBody @Validated OrderPrinterLog printerLog){
+		try {
+		    orderService.needService(printerLog);
+		}catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("需要服务接口失败", e);
+			return Msg.fail("失败");
+		}
+        return Msg.success();
+    }
+	
+	
 	
 	
 

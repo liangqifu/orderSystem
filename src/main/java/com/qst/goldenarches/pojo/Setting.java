@@ -59,6 +59,14 @@ public class Setting implements Serializable {
 	 */
 	@ApiModelProperty(value="每位小孩晚餐价格")
 	private Double childDinnerPrice;
+	
+	 /**
+             * 服务台打印机id
+     */
+	@ApiModelProperty(value="服务台打印机id")
+    private Integer servicePrinterId;
+	@ApiModelProperty(value="服务台打印机")
+	private Printer servicePrinter;
     
 
     public Integer getId() {
@@ -131,6 +139,14 @@ public class Setting implements Serializable {
 
 	public void setChildDinnerPrice(Double childDinnerPrice) {
 		this.childDinnerPrice = childDinnerPrice;
+	}
+
+	public Integer getServicePrinterId() {
+		return servicePrinterId;
+	}
+
+	public void setServicePrinterId(Integer servicePrinterId) {
+		this.servicePrinterId = servicePrinterId;
 	}
 
 	

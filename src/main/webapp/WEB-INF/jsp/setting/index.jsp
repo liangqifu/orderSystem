@@ -47,7 +47,14 @@ function getSettingInfo(){
             if ( result.code == 100 ) {
                 var settingInfo = result.extend.settingInfo;
                 $("#settingForm").autofill(settingInfo);
+                $("#settingForm #servicePrinterId").selectpicker({
+                    noneSelectedText : '请选择'   
+                });
+                loadPinterdata({status:"0",state:"0"});
                 if(settingInfo){
+                	if(settingInfo.servicePrinterId){
+                		$("#settingForm #servicePrinterId").selectpicker('val', settingInfo.servicePrinterId);
+                	}
                 	$("#id").val(settingInfo.id);
                 	$("#appPwd").val(settingInfo.appPwd);
                 	$("#lunchNum").slider({
@@ -77,6 +84,7 @@ function getSettingInfo(){
                 		value:1
                 	});
                 }
+                
                 
             } else {
                 layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
@@ -119,7 +127,7 @@ function queryAreaList() {
                         $("#areaForm").data('bootstrapValidator').destroy();
                         $('#areaForm').data('bootstrapValidator', null);
                         bindAreaForm();
-                    });;
+                    });
                 }).on('click','.del',function(){
                 	var params = {state:"1",id:$(this).attr('id'),name:$(this).attr('name')};
                 	delArea(params)
@@ -236,6 +244,37 @@ function bindAreaForm(){
     });
 	
 }
+
+function loadPinterdata(params){
+    $.ajax({
+         url : "${APP_PATH}/printer/getList",  
+         type : 'POST',
+         async : false,
+         datatype : 'json',
+         data : JSON.stringify(params),
+         contentType:"application/json",
+         success : function(result) {
+        	 
+        	 if ( result.code==100 ) {
+        		 var data = result.extend.data || [];
+        		 var options = [];
+        		 for(var i=0;i<data.length;i++){
+                     var item = data[i];
+　　　　　　　　　       　options.push('<option value="'+item.id+'">'+item.name+'</option>') 
+                 }
+                 $("#settingForm #servicePrinterId").html(options.join(' ')); 
+        		 $("#settingForm #servicePrinterId").selectpicker('refresh');
+             } else {
+                 layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+                 });
+             }
+         },
+         error : function() {
+        	 layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+             });
+         }
+     });
+ }
 
 function bindSettingForm(){
 	
@@ -437,6 +476,13 @@ function bindSettingForm(){
 						     data-slider-value="1"/>
 						</div>
 					</div>
+					
+					<div class="form-group">
+                            <label for="servicePrinterId" class="col-sm-2 control-label">服务台打印机:</label>
+                            <div class="col-sm-4">
+                                <select data-size="6" id="servicePrinterId" name="servicePrinterId" class="form-control selectpicker"></select>
+                            </div>
+                     </div>
 					
 					<div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">

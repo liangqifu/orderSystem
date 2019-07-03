@@ -9,17 +9,29 @@ package com.qst.goldenarches.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import com.qst.goldenarches.dao.OrderDetailMapper;
 import com.qst.goldenarches.dao.OrderMapper;
 import com.qst.goldenarches.dao.OrderMsaterMapper;
+import com.qst.goldenarches.dao.OrderRoundMapper;
+import com.qst.goldenarches.dao.SettingMapper;
+import com.qst.goldenarches.dao.OrderPrinterLogMapper;
+import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
+import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderRound;
+import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.OrderService;
 
@@ -30,6 +42,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     @Autowired
     private OrderMsaterMapper orderMsaterMapper;
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+    @Autowired
+    private OrderRoundMapper orderRoundMapper;
+    @Autowired
+    private OrderPrinterLogMapper orderPrinterLogMapper;
+    
+    @Autowired
+	private SettingMapper settingMapper;
+    
+    
 
     public List<Order> getAll(Map<String, String> map) {
         return orderMapper.selectAll(map);
@@ -161,5 +184,68 @@ public class OrderServiceImpl implements OrderService {
 	public void createOrderMaster(OrderMsater order) {
 		int orderId = orderMsaterMapper.insertSelective(order);
 		order.setOrderId(orderId);
+	}
+
+
+	@Override
+	public void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException {
+		if(CollectionUtils.isEmpty(orderDetails)) {
+			throw new BusException("参数为空");
+		}
+		Set<Integer> orderIds = new HashSet<Integer>();
+		for (OrderDetail orderDetail : orderDetails) {
+			if(orderDetail.getOrderId() == null || orderDetail.getOrderId().intValue() == 0) {
+				throw new BusException("订单OrderId参数不正确");
+			}
+			orderIds.add(orderDetail.getOrderId());
+		}
+		if(orderIds.size() >1 || orderIds.size() ==0) {
+			throw new BusException("订单OrderId参数不正确");
+		}
+		Integer orderId = orderIds.iterator().next();
+		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderId);
+		if(orderMsater == null) {
+			throw new BusException("订单主表数据不存在");
+		}
+		orderDetailMapper.insertBatch(orderDetails);
+	}
+
+
+	@Override
+	@Transactional(rollbackFor = {BusException.class,Exception.class})
+	public void createOrderRound(OrderRound orderRound) throws BusException {
+		if(CollectionUtils.isEmpty(orderRound.getOrderDetails())) {
+			throw new BusException("参数orderDetails为空");
+		}
+		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderRound.getOrderId());
+		if(orderMsater == null) {
+			throw new BusException("订单主表数据不存在");
+		}
+		Integer maxNum = orderRoundMapper.getMaxNumByOrderId(orderRound.getOrderId());
+		orderRound.setNum(maxNum +1);
+		
+		int roundId =  orderRoundMapper.insert(orderRound);
+		if(roundId == 0) {
+			throw new BusException("保存数据失败");
+		}
+		for (OrderDetail orderDetail : orderRound.getOrderDetails()) {
+			orderDetail.setOrderId(orderMsater.getOrderId());
+			orderDetail.setRoundId(roundId);
+		}
+		int ret = orderDetailMapper.insertBatch(orderRound.getOrderDetails());
+		if(ret == 0) {
+			throw new BusException("保存数据失败");
+		}
+	}
+
+
+	@Override
+	public void needService(com.qst.goldenarches.pojo.OrderPrinterLog printerLog) throws BusException {
+		printerLog.setPinterType("3");
+		Setting setting = settingMapper.getSettingInfo();
+		if(setting != null) {
+			printerLog.setPrinterId(setting.getServicePrinterId());
+		}
+		orderPrinterLogMapper.insert(printerLog);
 	}
 }
