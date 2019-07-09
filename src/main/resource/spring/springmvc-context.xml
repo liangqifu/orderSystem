@@ -52,6 +52,7 @@
             <mvc:exclude-mapping path="/addForm"/>
             <mvc:exclude-mapping path="/showBalance"/>
             <mvc:exclude-mapping path="/bootstrap/**" />
+            <mvc:exclude-mapping path="/i18n/**" />
             <mvc:exclude-mapping path="/css/**" />
             <mvc:exclude-mapping path="/fonts/**" />
             <mvc:exclude-mapping path="/img/**" />
@@ -75,6 +76,7 @@
             <mvc:exclude-mapping path="/addForm"/>
             <mvc:exclude-mapping path="/showBalance"/>
             <mvc:exclude-mapping path="/bootstrap/**" />
+            <mvc:exclude-mapping path="/i18n/**" />
             <mvc:exclude-mapping path="/css/**" />
             <mvc:exclude-mapping path="/fonts/**" />
             <mvc:exclude-mapping path="/img/**" />
@@ -92,6 +94,7 @@
     <mvc:resources mapping="/css/**" location="/css/"/>
     <mvc:resources mapping="/img/**" location="/img/"/>
     <mvc:resources mapping="/script/**" location="/script/"/>
+    <mvc:resources mapping="/i18n/**" location="/i18n/"/>
     <mvc:resources mapping="/layer/**" location="/layer/"/>
     <mvc:resources mapping="/bootstrap/**" location="/bootstrap/"/>
     <!-- Enables swgger ui-->

@@ -21,7 +21,7 @@ public class ImageUtil {
      * @param pictureFile
      * @throws IOException
      */
-    public static String upload(HttpServletRequest request, MultipartFile pictureFile) {
+    public static String upload(HttpServletRequest request,String folder, MultipartFile pictureFile) {
         //图片相对路径
         String imgName=null;
         if(!pictureFile.isEmpty()){
@@ -30,7 +30,7 @@ public class ImageUtil {
             // 获取文件的扩展名
             String ext = FilenameUtils.getExtension(pictureFile.getOriginalFilename());
             // 设置图片上传路径
-            String path=getRealPath(request);
+            String path=getRealPath(request,folder);
             //文件夹不存在则创建
             File fdir = new File(path);
             if (!fdir.exists()) {
@@ -49,18 +49,18 @@ public class ImageUtil {
         return imgName;
     }
 
-    public static void dropPic(HttpServletRequest request,String imgName) {
+    public static void dropPic(HttpServletRequest request,String folder,String imgName) {
         //取出文件的绝对路径，然后用File方法删除相应文件。
-        String absolutePath =getRealPath(request)+imgName;
+        String absolutePath =getRealPath(request,folder)+imgName;
         File file = new File(absolutePath);
         if (file.exists()) {
             file.delete();
         }
     }
 
-    private static String getRealPath(HttpServletRequest request){
+    private static String getRealPath(HttpServletRequest request,String folder){
         String rootPath =request.getSession().getServletContext().getRealPath("img");
-        String relatPath =  File.separator+"product"+ File.separator;
+        String relatPath =  File.separator+folder+ File.separator;
         return rootPath+relatPath;
     }
 }

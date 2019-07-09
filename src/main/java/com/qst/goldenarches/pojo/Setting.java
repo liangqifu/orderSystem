@@ -21,6 +21,8 @@ public class Setting implements Serializable {
      */
 	@ApiModelProperty(value="app开机密码")
     private String appPwd;
+	@ApiModelProperty(value="控制面板App登录密码")
+    private String ctlAppPwd;
 
     /**
      * 每轮午餐能点的数量
@@ -63,9 +65,9 @@ public class Setting implements Serializable {
 	 /**
              * 服务台打印机id
      */
-	@ApiModelProperty(value="服务台打印机id")
+	@ApiModelProperty(value="服务台打印机id",hidden =true)
     private Integer servicePrinterId;
-	@ApiModelProperty(value="服务台打印机")
+	@ApiModelProperty(value="服务台打印机",hidden =true)
 	private Printer servicePrinter;
     
 
@@ -147,6 +149,22 @@ public class Setting implements Serializable {
 
 	public void setServicePrinterId(Integer servicePrinterId) {
 		this.servicePrinterId = servicePrinterId;
+	}
+
+	public String getCtlAppPwd() {
+		return ctlAppPwd;
+	}
+
+	public void setCtlAppPwd(String ctlAppPwd) {
+		this.ctlAppPwd = ctlAppPwd;
+	}
+
+	public Printer getServicePrinter() {
+		return servicePrinter;
+	}
+
+	public void setServicePrinter(Printer servicePrinter) {
+		this.servicePrinter = servicePrinter;
 	}
 
 	

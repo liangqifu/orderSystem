@@ -10,9 +10,10 @@ import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
 import com.qst.goldenarches.pojo.OrderDetail;
-import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
+import com.qst.goldenarches.vo.OrderNeedServiceVo;
 
 import java.util.List;
 import java.util.Map;
@@ -75,15 +76,23 @@ public interface OrderService {
      */
     public int updVIP(Map<String,Integer> map,String phone);
 
-	void createOrderMaster(OrderMsater order);
+	void createOrderMaster(OrderMaster order);
 
 	void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException;
 
 	void createOrderRound(OrderRound orderRound) throws BusException;
 
-	void needService(OrderPrinterLog printerLog) throws BusException;
+	void needService(OrderNeedServiceVo needServiceVo) throws BusException;
 
-	OrderMsater getOrderInfoByOrderId(Integer orderId) throws BusException;
+	OrderMaster getOrderInfoByOrderId(Integer orderId) throws BusException;
 
 	List<OrderDetail> queryOrderDetail(OrderDetail param);
+
+	void updateOrderMaster(OrderMaster order) throws Exception;
+
+	/**
+	 * 更新订单总额
+	 * @param order
+	 */
+	void updateTotalAmount(OrderMaster order);
 }

@@ -11,21 +11,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.TreeNode;
 import com.qst.goldenarches.service.CategoryService;
+import com.qst.goldenarches.utils.ImageUtil;
 
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
@@ -81,8 +87,14 @@ public class CategoryController {
      */
     @ResponseBody
     @RequestMapping("doEdit")
-    public Msg doEdit(Category category){
+    public Msg doEdit(Category category,HttpServletRequest request){
         try {
+        	if(!StringUtils.isEmpty(category.getPic())) {
+        		Category categoryDB = categoryService.getById(category.getId());
+        		if(!StringUtils.isEmpty(categoryDB.getPic())) {
+        			ImageUtil.dropPic(request,"category",categoryDB.getPic());
+        		}
+        	}
             if(!categoryService.editCategory(category)){
                 return Msg.fail();
             }
@@ -95,11 +107,18 @@ public class CategoryController {
     
     @ResponseBody
     @RequestMapping(value= "save",method=RequestMethod.POST,
-    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg save(@RequestBody Category category){
+    public Msg save(Category category,HttpServletRequest request){
+    	 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+         MultipartFile mFile = multipartRequest.getFile("picture");
+         if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
+             String img = ImageUtil.upload(request,"category",mFile);
+             if (!StringUtils.isEmpty(img)) {
+            	 category.setPic(img);
+             }
+         }
     	if(category.getId()>0) {
-    		return this.doEdit(category);
+    		return this.doEdit(category,request);
     	}else {
     		return this.doAdd(category);
     	}
@@ -150,6 +169,11 @@ public class CategoryController {
     	model.addAttribute("category", category);
         return "category/add";
     }
+    @ResponseBody
+    @RequestMapping("deletePic")
+    public Msg deletePic(){
+    	return Msg.success();
+    }
     /**
      * 商品类别：分页查找
      * 查询全部商品类别并分页显示
@@ -160,11 +184,12 @@ public class CategoryController {
     @RequestMapping(value= "queryListByPage",method=RequestMethod.POST,
     	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg queryListByPage(@RequestBody Category category){
+    public Msg queryListByPage(@RequestBody Category category,HttpServletRequest request){
         PageHelper.startPage(category.getPageNum(),category.getPageSize());
         List<Category> categories =categoryService.query(category);
         com.github.pagehelper.PageInfo<Category> categoryPageInfo =new com.github.pagehelper.PageInfo<Category>(categories,category.getPageSize());
-        return Msg.success().add("data",categoryPageInfo);
+        String imgPath = request.getServletContext().getContextPath()+"/img/category/";
+        return Msg.success().add("data",categoryPageInfo).add("imgPath", imgPath);
     }
     
     @ResponseBody

@@ -1,5 +1,6 @@
 package com.qst.goldenarches.pojo;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -18,16 +19,16 @@ public class Category extends BasePo {
     private int id;
 	@ApiModelProperty(value="父级ID")
     private int parentId;
-	@ApiModelProperty(value="关联打印机ID")
+	@ApiModelProperty(value="关联打印机ID",hidden=true)
     private int printid;
-	@ApiModelProperty(value="关联打印机名称")
+	@ApiModelProperty(value="关联打印机名称",hidden=true)
     private String printerName;
-	@ApiModelProperty(value="关联打印机IP地址")
+	@ApiModelProperty(value="关联打印机IP地址",hidden=true)
     private String printIp;
-    /**
-     * 商品类型名
-     */
+	@ApiModelProperty(value="分类名称")
     private String name;
+	@ApiModelProperty(value="图片")
+    private String pic;
 
     public int getId() {
         return id;
@@ -84,9 +85,15 @@ public class Category extends BasePo {
 
 	@Override
     public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return JSON.toJSONString(this);
     }
+
+	public String getPic() {
+		return pic;
+	}
+
+	public void setPic(String pic) {
+		this.pic = pic;
+	}
+	
 }

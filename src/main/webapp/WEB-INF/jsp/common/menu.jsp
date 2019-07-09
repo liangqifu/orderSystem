@@ -40,6 +40,8 @@
 	    	 var url = $(this).attr('url');
 	    	 $("#mainIframe").attr('src',url);
 	     })
+	     
+	     
 	   });
 	</script>
 

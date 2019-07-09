@@ -20,6 +20,10 @@ public class OrderDetail extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="订单详情表id")
     private Integer detailId;
+	
+	@ApiModelProperty(value="明细类型 1 酒水类明细 2菜品类明细 3服务类明细")
+	@NotNull(message="明细类型 1 酒水类明细 2菜品类明细 3服务类明细 不能为空")
+	private String detailType;
 
     /**
             * 订单总表id
@@ -178,4 +182,14 @@ public class OrderDetail extends BasePo implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+	public String getDetailType() {
+		return detailType;
+	}
+
+	public void setDetailType(String detailType) {
+		this.detailType = detailType;
+	}
+    
+    
 }

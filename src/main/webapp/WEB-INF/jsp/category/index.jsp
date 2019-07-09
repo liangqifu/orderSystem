@@ -5,14 +5,49 @@
 <script type="text/javascript">
         var pageNum = 1;
         var pageSize = 10;
+        var options={};
+    	
         $(function () {
-            
+        	debugger
+        	var language = localStorage.currentLang;
+        	if(!language || language == ''){
+        		language = "zh_CN";
+        	}
+        	options = {
+        			language: language,
+            		dropZoneTitle:$.i18n.prop('fileinput-dropZoneTitle'),
+            		dropZoneClickTitle:$.i18n.prop('fileinput-dropZoneClickTitle'),
+            		uploadUrl: '#',
+            		allowedFileExtensions: ['jpg','jpeg','gif','png'],
+            		showUpload: false,
+            		showRemove: false,
+            		showPreview: true,
+            		showCaption:false,
+            		showBrowse:false,
+            		hideThumbnailContent:false,
+            		dropZoneEnabled: true,
+            		browseOnZoneClick:true,
+            		autoReplace:true,
+            		maxFileSize: 1024,
+            		minFileCount: 1,
+            		maxFileCount: 1,
+            		allowedPreviewTypes: ['image'],
+                    fileActionSettings:{
+                    	showRemove:true,
+                    	showUpload:false,   
+                    	showDrag:false,
+                    	showZoom:false
+                    },
+                    msgFilesTooMany: $.i18n.prop('fileinput-msgFilesTooMany'),
+                    overwriteInitial:false,
+        	};
         	$(".selectpicker").selectpicker({
-                noneSelectedText : '请选择'    //默认显示内容
+                noneSelectedText : $.i18n.prop('bootstrap-select-noneSelectedText')
             });
         	loadPinterdata({status:"0",state:"0"});
             loadCategoryTree();
             bindCategoryForm();
+            bindPictureFileInput(options);
             /**为查询按钮添加点击事件,判断内容是否为空，进行模糊查询**/
             $("#queryBtn").click(function(){
             	pageQuery();
@@ -32,6 +67,7 @@
                 var flag = $(".check_item:checked").length==$(".check_item").length;
                 $("#allSelBox").prop("checked",flag);
             }).on("click","#addBtn",function(){
+            	
             	goAddPage();
             });
             
@@ -102,15 +138,31 @@
                 data:JSON.stringify(params),
                 contentType:"application/json",
                 beforeSend : function(){
-                    loadingIndex = layer.msg('处理中', {icon: 16});
+                    loadingIndex = layer.msg($.i18n.prop('layer-loading-msg'), {icon: 16});
                 },
                 success : function(result) {
                     layer.close(loadingIndex);
                     if ( result.code == 100 ) {
                         var data = result.extend.data || [];
-                        $("#categoryListForm tbody").html(template("tpl-data",data));
+                        $("#categoryListForm tbody").html(template("tpl-data",$.extend(data, {imgPath:result.extend.imgPath})));
                         $("#categoryListForm tbody").on('click','.edit',function(){
                         	var data = JSON.parse($(this).attr('item'));
+                        	var imgPath = $(this).attr('imgPath');
+                        	var previewData = {};
+                        	if(data.pic){
+                        		previewData ={
+                        				initialPreviewFileType: 'image',
+                        	            initialPreviewAsData:true,
+                        	            initialPreview:[
+                        	            	imgPath+data.pic
+                        	            ],
+                        	            initialPreviewConfig:[
+                        	            	{type: "image", caption: data.pic,url:"${APP_PATH}/category/deletePic",key: 1}
+                        	            ]
+                        		}
+                        	}
+                        	$("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
+                    		bindPictureFileInput($.extend(true,{},options,previewData));
                         	$("#category_modal").autofill(data);
                       		$("#category_modal #printid").selectpicker('val', data.printid);
                          	//弹出模态框
@@ -119,7 +171,9 @@
                             }).on('hidden.bs.modal', function() {
                                 $("#categoryForm").data('bootstrapValidator').destroy();
                                 $('#categoryForm').data('bootstrapValidator', null);
-                                bindCategoryForm();
+                                $("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
+                            	bindCategoryForm();
+                            	bindPictureFileInput(options);
                             });;
                         }).on('click','.del',function(){
                         	var params = JSON.parse($(this).attr('item'));
@@ -127,7 +181,7 @@
                         });
                         setPage(data.pageNum,data.total, pageQuery)
                     } else {
-                        layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
+                        layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                         });
                     }
                 }
@@ -151,13 +205,13 @@
                 itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
                     switch (type) {
                         case "first":
-                            return "首页";
+                            return $.i18n.prop('bootstrap-paginator-first');
                         case "prev":
-                            return "上一页";
+                            return $.i18n.prop('bootstrap-paginator-prev');
                         case "next":
-                            return "下一页";
+                            return $.i18n.prop('bootstrap-paginator-next');
                         case "last":
-                            return "末页";
+                            return $.i18n.prop('bootstrap-paginator-last');
                         case "page":
                             return page;
                     }
@@ -173,6 +227,8 @@
         
        
         function goAddPage() {
+        	$("#picture").fileinput('clear').fileinput('clear').fileinput('destroy').fileinput('destroy');
+    		bindPictureFileInput(options);
         	var parentId = $("#queryBtn").attr("parentId");
         	 $("#category_modal").autofill({id:"0",parentId:parentId,name:"",printid:"",state:'0'});
         	 $("#category_modal #printid").selectpicker('val', "");
@@ -189,38 +245,47 @@
         	});
             var checkedlength = $(".check_item:checked").length;
             if ( params.length > 0 ) {
-            	layer.confirm("确认删除已选择的菜品类别信息, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
-                    // 删除已选择的菜品类别信息
-                    $.ajax({
-                        type : "POST",
-                        dataType : 'json',
-                        url  : "${APP_PATH}/category/deleteBatch",
-                        data:JSON.stringify(params),
-                        contentType:"application/json",
-                        success : function(result) {
-                        	layer.close(cindex);
-                            if ( result.code == 100 ) {
-                                layer.msg("菜品类别信息删除成功", {time:1000, icon:6}, function(){
-                                	loadCategoryTree()
-                                });
-                            } else {
-                                layer.msg("菜品类别信息删除失败", {time:2000, icon:5, shift:6}, function(){});
-                            }
-                        }
-                    });
+            	layer.confirm($.i18n.prop('layer-confirm-delete-choose-msg'), 
+            			{icon: 3, 
+            		    title:$.i18n.prop('layer-title'),
+            		      btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')]
+            	        }, 
+            	function(cindex){
+		                    // 删除已选择的菜品类别信息
+		                    $.ajax({
+		                        type : "POST",
+		                        dataType : 'json',
+		                        url  : "${APP_PATH}/category/deleteBatch",
+		                        data:JSON.stringify(params),
+		                        contentType:"application/json",
+		                        success : function(result) {
+		                        	layer.close(cindex);
+		                            if ( result.code == 100 ) {
+		                                layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){
+		                                	loadCategoryTree()
+		                                });
+		                            } else {
+		                                layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
+		                            }
+		                        }
+		                    });
                     
                 }, function(cindex){
                     layer.close(cindex);
                 });
                 
             } else{
-            	layer.msg("请选择需要删除的菜品类别信息", {time:2000, icon:5, shift:6}, function(){});
+            	layer.msg($.i18n.prop('layer-choose-delete-msg'), {time:2000, icon:5, shift:6}, function(){});
             }
             
         }
         /**删除单个菜品类别信息**/
         function delCategory(params) {
-        	layer.confirm("删除菜品类别信息【"+params.name+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+        	layer.confirm($.format($.i18n.prop('layer-confirm-delete-msg'), params.name),  
+        	  { icon: 3,
+        		title:$.i18n.prop('layer-title'),
+        		btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')]
+        	   }, function(cindex){
                 var param = [];
                 param.push(params.id);
         		$.ajax({
@@ -232,11 +297,11 @@
                     success : function(result) {
                     	layer.close(cindex);
                         if (result.code==100 ) {
-                            layer.msg("菜品类别信息删除成功", {time:1000, icon:6}, function(){
+                            layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){
                             	loadCategoryTree()
                             });
                         } else {
-                            layer.msg("菜品类别信息删除失败", {time:2000, icon:5, shift:6}, function(){});
+                            layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
                         }
                     }
                 });
@@ -266,12 +331,12 @@
                          $("#category_modal #printid").html(options.join(' ')); 
                 		 $("#category_modal #printid").selectpicker('refresh');
                      } else {
-                         layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+                         layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                          });
                      }
                  },
                  error : function() {
-                	 layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+                	 layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                      });
                  }
              });
@@ -295,27 +360,35 @@
                 // 获得bootstrap验证对象
                 var bv = $form.data('bootstrapValidator');
                 // Use Ajax to submit form data 提交至form标签中的action，result自定义
-                var params  = JSON.stringify($form.serializeJSON());
-                $.ajax({
-                    type : "POST",
+                var params  = $form.serializeJSON();
+                $.ajaxFileUpload({
+                    url : $form.attr('action'), //用于文件上传的服务器端请求地址
+                    fileElementId : 'picture',
+                    type : 'POST',
+                    data:params,
                     dataType : 'json',
-                    url  : $form.attr('action'),
-                    data : params,
-                    contentType:"application/json",
                     success : function(result) {
-                        if ( result.code==100 ) {
+                    	if ( result.code==100 ) {
                         	$("#category_modal").modal('hide');
-                            layer.msg("保存成功:", {time:1500, icon:6}, function(){
+                            layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                             	loadCategoryTree()
                             });
                         } else {
-                            layer.msg("保存失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
+                            layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
                             });
                         }
                     }
                 });
+                
             });
         	
+        	
+        }
+        
+        function bindPictureFileInput(options) {
+        	$("#pictureDIV").empty();
+        	$('<input id="picture"  name="picture" type="file"  >').appendTo("#pictureDIV");
+        	$("#picture").fileinput(options);
         }
         
     </script>
@@ -325,11 +398,16 @@
            	<tr>
                 <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
                 <td><input type="checkbox" value="{{$value.id}}" class="check_item"></td>
+                {{if $value.pic }}
+                   <td><img src="{{imgPath}}{{$value.pic}}" class="img-rounded" style="width:80px;height:45px"/></td>
+                {{else}} 
+                  <td><img src="/img/upload.png" class="img-rounded" style="width:80px;height:45px"/></td>
+                {{/if}}
                 <td>{{$value.name}}</td>
                 <td>{{$value.printerName}}</td>
                 <td>{{$value.printIp}}</td>
                 <td>
-                   <button type="button" item='{{obj2Str($value)}}' class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
+                   <button type="button" imgPath="{{imgPath}}" item='{{obj2Str($value)}}' class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
                    &nbsp;&nbsp;&nbsp;
                    <button type="button" item='{{obj2Str($value)}}' class="btn btn-danger btn-xs del"><i class=" glyphicon glyphicon-remove"></i></button>
                 </td>
@@ -343,7 +421,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 菜品类别列表
+					<i class="glyphicon glyphicon-th i18n" data-properties="category-panel-title" data-ptype="text" ></i> 
 				</h3>
 			</div>
 			<div>
@@ -354,23 +432,20 @@
 					<form class="form-inline" role="form"  style="float: left;">
 						<div class="form-group has-feedback">
 							<div class="input-group">
-								<div class="input-group-addon">查询条件</div>
-								<input id="queryText" class="form-control has-success"
-									type="text" placeholder="请输入查询条件">
+								<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text"></div>
+								<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="placeholder" type="text" placeholder="">
 							</div>
 						</div>
-						<button id="queryBtn" parentId="0" type="button"
-							class="btn btn-warning">
-							<i class="glyphicon glyphicon-search"></i> 查询
+						<button id="queryBtn" parentId="0" type="button" class="btn btn-warning">
+							<i class="glyphicon glyphicon-search i18n" data-properties="btn-search" data-ptype="text" >查询</i>
 						</button>
 					</form>
 					<button type="button" class="btn btn-danger"
 						onclick="deleteUsers()" style="float: right; margin-left: 10px;">
-						<i class=" glyphicon glyphicon-remove"></i> 删除
+						<i class=" glyphicon glyphicon-remove i18n" data-properties="btn-delete" data-ptype="text"></i>
 					</button>
-					<button type="button" id="addBtn" class="btn btn-primary"
-						style="float: right;">
-						<i class="glyphicon glyphicon-plus"></i> 新增
+					<button type="button" id="addBtn" class="btn btn-primary" style="float: right;">
+						<i class="glyphicon glyphicon-plus i18n" data-properties="btn-add" data-ptype="text"></i>
 					</button>
 					<br>
 					<hr style="clear: both;">
@@ -379,12 +454,13 @@
 							<table class="table  table-bordered ">
 								<thead>
 									<tr>
-										<th style="width: 1%;">#</th>
+										<th style="width: 5%;" class="i18n" data-properties="thead-serial-number" data-ptype="text" ></th>
 										<th style="width: 5%;"><input type="checkbox" id="allSelBox"></th>
-										<th style="width: 10%; text-align: center;">类别名称</th>
-										<th style="width: 14%; text-align: center;">关联打印机</th>
-										<th style="width: 14%; text-align: center;">打印机IP</th>
-										<th style="width: 18%">操作</th>
+										<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-pic" data-ptype="text" ></th>
+										<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-name" data-ptype="text" ></th>
+										<th style="width: 14%; text-align: center;" class="i18n" data-properties="category-printer" data-ptype="text" ></th>
+										<th style="width: 14%; text-align: center;" class="i18n" data-properties="thead-category-printer-ip" data-ptype="text" ></th>
+										<th style="width: 18%" class="i18n" data-properties="thead-opt" data-ptype="text" >操作</th>
 									</tr>
 								</thead>
 
@@ -421,21 +497,27 @@
                         <input type="hidden" name="state" class="form-control" id="state">
                         <input type="hidden" name="parentId" class="form-control" id="parentId">
                         <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">菜品类别名称:</label>
+                            <label for="name" class="col-sm-3 control-label i18n" data-properties="category-name" data-ptype="text" ></label>
                             <div class="col-sm-6">
-                                <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="不能为空" name="name" class="form-control" id="name" placeholder="请输入菜品类别">
+                                <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="" name="name" class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="name" placeholder="">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="printid" class="col-sm-4 control-label">关联打印机:</label>
+                            <label for="printid" class="col-sm-3 control-label i18n" data-properties="category-printer" data-ptype="text" ></label>
                             <div class="col-sm-6">
                                 <select data-size="6" id="printid" name="printid" class="form-control selectpicker"></select>
                             </div>
                         </div>
+                        <div class="form-group">
+							<label for="picture"  class="col-sm-3 control-label i18n" data-properties="upload-pic" data-ptype="text" >上传图片:</label> 
+							<div class="col-sm-8" id="pictureDIV">
+				                <input id="picture"  name="picture" type="file"  >
+				            </div>
+					    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="category_save_btn">保存</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary i18n" data-properties="btn-save" data-ptype="text" id="category_save_btn"></button>
+                    <button type="button" class="btn btn-default i18n" data-properties="btn-close" data-ptype="text" data-dismiss="modal"></button>
                 </div>
             </form>
         </div>

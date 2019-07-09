@@ -1,6 +1,7 @@
 package com.qst.goldenarches.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.qst.goldenarches.pojo.OrderDetail;
 
@@ -12,6 +13,7 @@ public interface OrderDetailMapper {
     int insertBatch(List<OrderDetail> list);
 
     int insertSelective(OrderDetail record);
+    
 
     OrderDetail selectByPrimaryKey(Integer detailId);
 
@@ -20,4 +22,6 @@ public interface OrderDetailMapper {
     int updateByPrimaryKey(OrderDetail record);
 
 	List<OrderDetail> queryOrderDetail(OrderDetail param);
+	
+	Double getTotalAmount(Map<String, Object> param);
 }

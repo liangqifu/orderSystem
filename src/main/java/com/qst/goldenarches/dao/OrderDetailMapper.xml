@@ -3,6 +3,7 @@
 <mapper namespace="com.qst.goldenarches.dao.OrderDetailMapper">
   <resultMap id="BaseResultMap" type="com.qst.goldenarches.pojo.OrderDetail">
     <id column="detail_id" jdbcType="INTEGER" property="detailId" />
+    <result column="detail_type" jdbcType="VARCHAR" property="detailType" />
     <result column="order_id" jdbcType="INTEGER" property="orderId" />
     <result column="round_id" jdbcType="INTEGER" property="roundId" />
     <result column="product_id" jdbcType="INTEGER" property="productId" />
@@ -16,7 +17,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    detail_id, order_id, round_id, product_id, product_name, product_price, product_number, 
+    detail_id, detail_type,order_id, round_id, product_id, product_name, product_price, product_number, 
     category_id, category_name, state, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -40,6 +41,9 @@
     <if test="state !=null and state !='' ">
        and state = #{state}
     </if>
+    <if test="detailType !=null and detailType !='' ">
+       and detail_type = #{detailType}
+    </if>
     order by create_time asc
   </select>
   
@@ -51,11 +55,11 @@
     <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into order_detail ( round_id, product_id, 
+    insert into order_detail (detail_type, round_id, product_id, 
       product_name, product_price, product_number, 
       category_id, category_name, state, 
       create_time, update_time)
-    values (#{roundId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
+    values (#{detailType,jdbcType=VARCHAR},#{roundId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
       #{productName,jdbcType=VARCHAR}, #{productPrice,jdbcType=DOUBLE}, #{productNumber,jdbcType=INTEGER}, 
       #{categoryId,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, '0', 
       CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -66,13 +70,14 @@
         <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
 		      SELECT LAST_INSERT_ID()
 		 </selectKey>
-         insert into order_detail ( round_id, product_id, 
+         insert into order_detail (detail_type, round_id, product_id, 
 	      product_name, product_price, product_number, 
 	      category_id, category_name, state, 
 	      create_time, update_time)
          values
           <foreach collection ="list" item="item" index= "index" separator =",">
               (
+               #{item.detailType,jdbcType=VARCHAR},
                #{item.roundId,jdbcType=INTEGER}, 
                #{item.productId,jdbcType=INTEGER}, 
                #{item.productName,jdbcType=VARCHAR},
@@ -91,6 +96,9 @@
     </selectKey>
     insert into order_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="detailType != null">
+        detail_type,
+      </if>
       <if test="roundId != null">
         round_id,
       </if>
@@ -117,6 +125,9 @@
         update_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="detailType != null">
+        #{detailType,jdbcType=VARCHAR},
+      </if>
       <if test="roundId != null">
         #{roundId,jdbcType=INTEGER},
       </if>
@@ -146,6 +157,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.qst.goldenarches.pojo.OrderDetail">
     update order_detail
     <set>
+      <if test="detailType != null">
+        detail_type = #{detailType,jdbcType=VARCHAR},
+      </if>
       <if test="orderId != null">
         order_id = #{orderId,jdbcType=INTEGER},
       </if>
@@ -181,6 +195,7 @@
     update order_detail
     set order_id = #{orderId,jdbcType=INTEGER},
       round_id = #{roundId,jdbcType=INTEGER},
+      detail_type = #{detailType,jdbcType=VARCHAR},
       product_id = #{productId,jdbcType=INTEGER},
       product_name = #{productName,jdbcType=VARCHAR},
       product_price = #{productPrice,jdbcType=DOUBLE},
@@ -191,4 +206,9 @@
       update_time = CURRENT_TIMESTAMP
     where detail_id = #{detailId,jdbcType=INTEGER}
   </update>
+  
+  <select id="getTotalAmountByOrderId" parameterType="java.util.HashMap" resultType="java.lang.Double">
+    SELECT SUM(t1.product_price*t1.product_number) as total FROM order_detail t1 WHERE (t1.state='0' or t1.state is NULL) and t1.detail_type='1' and t1.order_id=#{orderId} GROUP BY t1.order_id
+  </select>
+  
 </mapper>

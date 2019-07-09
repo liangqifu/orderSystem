@@ -50,7 +50,7 @@ jQuery.extend({
         return form;
     },
 
-    ajaxFileUpload: function(s) {
+    ajaxFileUpload: function(s) {debugger
         // TODO introduce global settings, allowing the client to modify them for all requests, not only timeout		
         s = jQuery.extend({}, jQuery.ajaxSettings, s);
         var id = new Date().getTime()
@@ -97,7 +97,7 @@ jQuery.extend({
                     // Make sure that the request was successful or notmodified
                     if ( status != "error" )
                     {
-                    	debugger
+                    	
                         // process the data (runs the xml through httpData regardless of callback)
                         var data = jQuery.uploadHttpData( xml, s.dataType );
                         // If a local callback was specified, fire it and pass it the data

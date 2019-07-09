@@ -92,7 +92,6 @@
         }
 
         /**选择图片，马上预览**/
-        //var image = '';
         function onupload(file) {
             if(!file.files || !file.files[0]){
                 return;
@@ -227,12 +226,11 @@
 							name="pic" onchange="onupload(this)" type="file"
 							accept="image/png, image/jpeg, image/gif, image/jpg"
 							class="btn-info"> <img style="padding-top: 2px;" id="Img"
-							width="376" height="213" src="${basePath}/img/upload.png">
+							width="376" height="213" src="${APP_PATH}/img/upload.png">
 						</div>
 						
 						<div>
-							<p class="help-block label label-warning">仅支持png gif jpg gif
-								jpeg格式</p>
+							<p class="help-block label label-warning" >仅支持png gif jpg gif jpeg格式</p>
 						</div>
 					</div>
 					<div style="display: block">

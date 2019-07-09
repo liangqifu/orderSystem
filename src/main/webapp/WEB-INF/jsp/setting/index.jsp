@@ -48,7 +48,7 @@ function getSettingInfo(){
                 var settingInfo = result.extend.settingInfo;
                 $("#settingForm").autofill(settingInfo);
                 $("#settingForm #servicePrinterId").selectpicker({
-                    noneSelectedText : '请选择'   
+                    noneSelectedText : $.i18n.prop('bootstrap-select-noneSelectedText')   
                 });
                 loadPinterdata({status:"0",state:"0"});
                 if(settingInfo){
@@ -87,7 +87,7 @@ function getSettingInfo(){
                 
                 
             } else {
-                layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
+                layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                 });
             }
         }
@@ -106,7 +106,7 @@ function queryAreaList() {
         data:params,
         contentType:"application/json",
         beforeSend : function(){
-            loadingIndex = layer.msg('处理中', {icon: 16});
+            loadingIndex = layer.msg($.i18n.prop('layer-loading-msg'), {icon: 16});
         },
         success : function(result) {
             layer.close(loadingIndex);
@@ -134,7 +134,7 @@ function queryAreaList() {
                 });
                 setPage(data.pageNum, data.total, queryAreaList)
             } else {
-                layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
+                layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                 });
             }
         }
@@ -158,13 +158,13 @@ function setPage(pageCurrent, total, callback) {
         itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
             switch (type) {
                 case "first":
-                    return "首页";
+                    return $.i18n.prop('bootstrap-paginator-first');
                 case "prev":
-                    return "上一页";
+                    return $.i18n.prop('bootstrap-paginator-prev');
                 case "next":
-                    return "下一页";
+                    return $.i18n.prop('bootstrap-paginator-next');
                 case "last":
-                    return "末页";
+                    return $.i18n.prop('bootstrap-paginator-last');
                 case "page":
                     return page;
             }
@@ -180,7 +180,11 @@ function setPage(pageCurrent, total, callback) {
 
 
 function delArea(params){
-	layer.confirm("删除【"+params.name+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+	layer.confirm($.format($.i18n.prop('layer-confirm-delete-msg'), params.name),  {
+		icon: 3, 
+		title:$.i18n.prop('layer-title'),
+		btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')] 
+		}, function(cindex){
         // 删除单个角色
         $.ajax({
             type : "POST",
@@ -190,10 +194,10 @@ function delArea(params){
             contentType:"application/json",
             success : function(result) {
                 if ( result.code==100 ) {
-                    layer.msg(result.extend.msg, {time:2000, icon:6}, function(){});
+                    layer.msg($.i18n.prop('delete-success'), {time:2000, icon:6}, function(){});
                     queryAreaList();
                 } else {
-                    layer.msg(result.extend.msg, {time:2000, icon:5, shift:6}, function(){});
+                    layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
                 }
             }
         });
@@ -232,11 +236,11 @@ function bindAreaForm(){
             success : function(result) {
                 if ( result.code==100 ) {
                 	$("#area_modal").modal('hide');
-                    layer.msg("保存成功:", {time:1500, icon:6}, function(){
+                    layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                     	queryAreaList();
                     });
                 } else {
-                    layer.msg("保存失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
+                    layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
                     });
                 }
             }
@@ -265,12 +269,12 @@ function loadPinterdata(params){
                  $("#settingForm #servicePrinterId").html(options.join(' ')); 
         		 $("#settingForm #servicePrinterId").selectpicker('refresh');
              } else {
-                 layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+                 layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                  });
              }
          },
          error : function() {
-        	 layer.msg("获取数据失败", {time:2000, icon:5, shift:6}, function(){
+        	 layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
              });
          }
      });
@@ -291,56 +295,56 @@ function bindSettingForm(){
         	adultLunchPrice:{
                 validators: {
                     notEmpty: {
-                        message: '不能为空'
+                        message: $.i18n.prop('notempty')
                     },
                     numeric:{
-                    	message: '必须是数值'
+                    	message: $.i18n.prop('numeric')
                     },
                     regexp: {
                         regexp: /^\d+(\.\d{0,2})?$/,
-                        message: '请输入大于0的正数'
+                        message: $.i18n.prop('number-greater-than-0')
                     }
                 }
             },
             adultDinnerPrice:{
                 validators: {
                     notEmpty: {
-                        message: '不能为空'
+                        message: $.i18n.prop('notempty')
                     },
                     numeric:{
-                    	message: '必须是数值'
+                    	message: $.i18n.prop('numeric')
                     },
                     regexp: {
                         regexp: /^\d+(\.\d{0,2})?$/,
-                        message: '请输入大于0的正数'
+                        message: $.i18n.prop('number-greater-than-0')
                     }
                 }
             },
         	childLunchPrice: {
                 validators: {
                     notEmpty: {
-                        message: '不能为空'
+                        message: $.i18n.prop('notempty')
                     },
                     numeric:{
-                    	message: '必须是数值'
+                    	message: $.i18n.prop('numeric')
                     },
                     regexp: {
                         regexp: /^\d+(\.\d{0,2})?$/,
-                        message: '请输入大于0的正数'
+                        message: $.i18n.prop('number-greater-than-0')
                     }
                 }
             },
             childDinnerPrice: {
                 validators: {
                     notEmpty: {
-                        message: '不能为空'
+                        message: $.i18n.prop('notempty')
                     },
                     numeric:{
-                    	message: '必须是数值'
+                    	message: $.i18n.prop('numeric')
                     },
                     regexp: {
                         regexp: /^\d+(\.\d{0,2})?$/,
-                        message: '请输入大于0的正数'
+                        message: $.i18n.prop('number-greater-than-0')
                     }
                 }
             }
@@ -363,13 +367,13 @@ function bindSettingForm(){
             contentType:"application/json",
             success : function(result) {
                 if ( result.code==100 ) {
-                    layer.msg("保存成功:", {time:1500, icon:6}, function(){
+                    layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                     	$("#settingForm").data('bootstrapValidator').destroy();
                         $('#settingForm').data('bootstrapValidator', null);
                         bindSettingForm();
                     });
                 } else {
-                    layer.msg("保存失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
+                    layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
                     });
                 }
             }
@@ -386,7 +390,6 @@ function bindSettingForm(){
            	<tr>
                 <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
                 <td>{{$value.name}}</td>
-                <td>{{$value.pwd}}</td>
                 <td>
                    <button type="button" id="{{$value.id}}" name="{{$value.name}}" pwd="{{$value.pwd}}" class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
                    &nbsp;&nbsp;&nbsp;
@@ -401,48 +404,56 @@ function bindSettingForm(){
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 系统设置
+					<i class="glyphicon glyphicon-th i18n" data-properties="setting-panel-title" data-ptype="text" ></i> 
 				</h3>
 		   </div>
 		   <div class="panel-body" >
 		        <form id="settingForm" class="form-horizontal" method="post" action="${APP_PATH}/setting/save" >
 		            <input type="hidden" id="id" name="id" />
 					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label" >App 登录密码:</label> 
+						<label for="name" class="col-sm-2 control-label i18n" data-properties="settingForm-appPwd" data-ptype="text" ></label> 
 						<div class="col-sm-4">
 					     	<input type="text"
-							data-bv-notempty="true" data-bv-notempty-message="不能为空"
-							class="form-control" id="appPwd" style="width: 100%;" name="appPwd" placeholder="请输入" autocomplete="off">
+							data-bv-notempty="true" data-bv-notempty-message=""
+							class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="appPwd" style="width: 100%;" name="appPwd" placeholder="" autocomplete="off">
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label" >每位成年人价格:</label> 
+						<label for="name" class="col-sm-2 control-label i18n" data-properties="settingForm-ctlAppPwd" data-ptype="text"></label> 
+						<div class="col-sm-4">
+					     	<input type="text"
+							data-bv-notempty="true" data-bv-notempty-message=""
+							class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty"  id="ctlAppPwd" style="width: 100%;" name="ctlAppPwd" placeholder="" autocomplete="off">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label i18n" data-properties="settingForm-adultLunchPrice" data-ptype="text"></label> 
 						<div class="col-sm-4">
 							<div class="input-group">
-						         <span class="input-group-addon">午餐￥</span> 
-					     		 <input type="text" class="form-control" id="adultLunchPrice" style="width: 100%;" name="adultLunchPrice" placeholder="请输入" autocomplete="off">
+						         <span class="input-group-addon i18n" data-properties="settingForm-lunchPrice-span" data-ptype="text"></span> 
+					     		 <input type="text" class="form-control i18n"  data-properties="pleaseEnter" data-ptype="placeholder" id="adultLunchPrice" style="width: 100%;" name="adultLunchPrice" placeholder="" autocomplete="off">
 							</div>
 							<div class="input-group">
-						         <span class="input-group-addon">晚餐￥</span> 
-					     		 <input type="text" class="form-control" id="adultDinnerPrice" style="width: 100%;" name="adultDinnerPrice" placeholder="请输入" autocomplete="off">
+						         <span class="input-group-addon i18n" data-properties="settingForm-dinnerPrice-span" data-ptype="text"></span> 
+					     		 <input type="text" class="form-control i18n" data-properties="pleaseEnter" data-ptype="placeholder" id="adultDinnerPrice" style="width: 100%;" name="adultDinnerPrice" placeholder="" autocomplete="off">
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label" >每位小孩价格:</label> 
+						<label class="col-sm-2 control-label i18n" data-properties="settingForm-childLunchPrice" data-ptype="text" ></label> 
 						<div class="col-sm-4">
 							<div class="input-group">
-							    <span class="input-group-addon">午餐￥</span>
-					     		<input type="text" class="form-control" id="childLunchPrice" style="width: 100%;" name="childLunchPrice" placeholder="请输入" autocomplete="off">
+							    <span class="input-group-addon i18n" data-properties="settingForm-lunchPrice-span" data-ptype="text"></span>
+					     		<input type="text" class="form-control i18n" data-properties="pleaseEnter" data-ptype="placeholder" id="childLunchPrice" style="width: 100%;" name="childLunchPrice" placeholder="" autocomplete="off">
 							</div>
 							<div class="input-group">
-							    <span class="input-group-addon">晚餐￥</span>
-					     		<input type="text" class="form-control" id="childDinnerPrice" style="width: 100%;" name="childDinnerPrice" placeholder="请输入" autocomplete="off">
+							    <span class="input-group-addon i18n" data-properties="settingForm-dinnerPrice-span" data-ptype="text"></span>
+					     		<input type="text" class="form-control i18n" data-properties="pleaseEnter" data-ptype="placeholder" id="childDinnerPrice" style="width: 100%;" name="childDinnerPrice" placeholder="" autocomplete="off">
 							</div>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="lunchNum" class="col-sm-2 control-label">每轮午餐能点的数量:</label> 
+						<label for="lunchNum" class="col-sm-2 control-label i18n" data-properties="settingForm-lunchNum" data-ptype="text"></label> 
 						<div class="col-sm-4">
 						    <input type="text" id="lunchNum" style="width: 100%" name="lunchNum"
 						     data-slider-id='lunchNum' 
@@ -454,7 +465,7 @@ function bindSettingForm(){
 						
 					</div>
 					<div class="form-group">
-						<label for="dinnerNum" class="col-sm-2 control-label">每轮晚餐能点的数量:</label> 
+						<label for="dinnerNum" class="col-sm-2 control-label i18n" data-properties="settingForm-dinnerNum" data-ptype="text" ></label> 
 						<div class="col-sm-4">
 						    <input type="text" id="dinnerNum"  name="dinnerNum" style="width: 100%;"
 						     data-slider-id='dinnerNum' 
@@ -466,7 +477,7 @@ function bindSettingForm(){
 						
 					</div>
 					<div class="form-group">
-						<label for="waitTime" class="col-sm-2 control-label">每轮需要等的时间:</label> 
+						<label for="waitTime" class="col-sm-2 control-label i18n" data-properties="settingForm-waitTime" data-ptype="text" ></label> 
 						<div class="col-sm-4">
 						    <input type="text" id="waitTime"  name="waitTime" style="width: 100%;"
 						     data-slider-id='waitTime' 
@@ -477,18 +488,18 @@ function bindSettingForm(){
 						</div>
 					</div>
 					
-					<div class="form-group">
+					<!-- <div class="form-group">
                             <label for="servicePrinterId" class="col-sm-2 control-label">服务台打印机:</label>
                             <div class="col-sm-4">
                                 <select data-size="6" id="servicePrinterId" name="servicePrinterId" class="form-control selectpicker"></select>
                             </div>
-                     </div>
+                     </div> -->
 					
 					<div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">
 						  <button type="submit" class="btn btn-success ">
-							<i class="glyphicon glyphicon-film"></i>保存
-						</button>
+							<i class="glyphicon glyphicon-film i18n" data-properties="btn-save" data-ptype="text"></i>
+						  </button>
 					   </div>
 					</div>
 					
@@ -500,25 +511,24 @@ function bindSettingForm(){
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 餐区设置
+					<i class="glyphicon glyphicon-th i18n"  data-properties="area-setting-title" data-ptype="text"></i> 
 				</h3>
 			</div>
 			<div class="panel-body" >
 					<form class="form-inline" role="form" style="float: left;">
 						<div class="form-group has-feedback">
 							<div class="input-group">
-								<div class="input-group-addon">查询条件</div>
-								<input id="queryText" autocomplete="off" class="form-control has-success"
-									type="text" placeholder="请输入查询条件">
+								<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text" ></div>
+								<input id="queryText" autocomplete="off" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="placeholder" type="text" placeholder="">
 							</div>
 						</div>
 						<button id="queryBtn" type="button" class="btn btn-warning">
-							<i class="glyphicon glyphicon-search"></i> 查询
+							<i class="glyphicon glyphicon-search i18n" data-properties="btn-search" data-ptype="text"></i> 
 						</button>
 						
 					</form>
 					<button type="button" id="addAreaBtn" style="float: right;" class="btn btn-primary btn-xs">
-						    <i class="glyphicon glyphicon-plus"></i> 新增
+						    <i class="glyphicon glyphicon-plus i18n" data-properties="btn-add" data-ptype="text" ></i>
 					</button>
 					<br>
 					<hr style="clear: both;">
@@ -527,10 +537,10 @@ function bindSettingForm(){
 							<table class="table  table-bordered ">
 								<thead>
 									<tr>
-										<th style="width:1%;text-align: center;">序号</th>
-										<th style="width:10% ;text-align: center;">名称</th>
-										<th style="width:20% ;text-align: center;">password</th>
-										<th style="width:15%">操作</th>
+										<th style="width:1%;text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
+										<th style="width:10% ;text-align: center;" class="i18n" data-properties="thead-name" data-ptype="text"></th>
+										<!-- <th style="width:20% ;text-align: center;">password</th> -->
+										<th style="width:15%" class="i18n" data-properties="thead-opt" data-ptype="text"></th>
 									</tr>
 								</thead>
 
@@ -567,21 +577,21 @@ function bindSettingForm(){
                 <div class="modal-body">
                         <input type="hidden" name="id" id="id">
                         <div class="form-group">
-                            <label for="balance_update_input" class="col-sm-4 control-label">区域名称:</label>
+                            <label for="name" class="col-sm-4 control-label i18n" data-properties="areaForm-name" data-ptype="text"></label>
                             <div class="col-sm-6">
-                                <input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空" name="name" class="form-control" id="name" placeholder="请输入区域名称" autocomplete="off" >
+                                <input type="text" data-bv-notempty="true" data-bv-notempty-message="" name="name" class="form-control" id="name" placeholder="" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" autocomplete="off" >
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="balance_update_input" class="col-sm-4 control-label">password:</label>
+                        <!-- <div class="form-group">
+                            <label for="pwd" class="col-sm-4 control-label">password:</label>
                             <div class="col-sm-6">
                                  <input type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空" name="pwd" class="form-control" id="pwd" placeholder="请输入password" autocomplete="off">
                             </div>
-                        </div>
+                        </div> -->
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="save_btn">保存</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary i18n"  data-properties="btn-save" data-ptype="text" id="save_btn"></button>
+                    <button type="button" class="btn btn-default i18n" data-properties="btn-close" data-ptype="text" data-dismiss="modal"></button>
                 </div>
             </form>
         </div>

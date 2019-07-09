@@ -83,7 +83,7 @@ public class ProductController {
     public Msg deleteOne(Integer id, HttpServletRequest request){
         try {
             Product product =productService.getProductById(id);
-            ImageUtil.dropPic(request,product.getPic());
+            ImageUtil.dropPic(request,"product",product.getPic());
             productService.removeProduct(id);
         }catch (Exception e){
             return Msg.fail();
@@ -101,13 +101,13 @@ public class ProductController {
     public Msg doUpdateProductPic(HttpServletRequest request){
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile mFile = multipartRequest.getFile("pic");
-        String img = ImageUtil.upload(request,mFile);
+        String img = ImageUtil.upload(request,"product",mFile);
         if (!StringUtils.isEmpty(img)){
             Product product =  productService.getProductById(Integer.parseInt(request.getParameter("id")));
             if(product !=null) {
             	String imgName=product.getPic();
                 if (!StringUtils.isEmpty(imgName)){
-                    ImageUtil.dropPic(request,imgName);
+                    ImageUtil.dropPic(request,"product",imgName);
                 }
                 try {
                 	product.setPic(img);
@@ -116,6 +116,7 @@ public class ProductController {
                         return Msg.success();
                     }
                 }catch (Exception e){
+                	ImageUtil.dropPic(request,"product",img);
                     return  Msg.fail();
                 }
             }
@@ -165,7 +166,7 @@ public class ProductController {
         product.setStatus(Integer.parseInt(request.getParameter("status")));
         product.setCid(Integer.parseInt(request.getParameter("cid")));
         if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
-            String img = ImageUtil.upload(request,mFile);
+            String img = ImageUtil.upload(request,"product",mFile);
             if (!StringUtils.isEmpty(img)) {
                 product.setPic(img);
             }

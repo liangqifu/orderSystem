@@ -6,9 +6,11 @@
  */
 package com.qst.goldenarches.service.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.qst.goldenarches.dao.OrderDetailMapper;
 import com.qst.goldenarches.dao.OrderMapper;
-import com.qst.goldenarches.dao.OrderMsaterMapper;
+import com.qst.goldenarches.dao.OrderMasterMapper;
 import com.qst.goldenarches.dao.OrderPrinterLogMapper;
 import com.qst.goldenarches.dao.OrderRoundMapper;
 import com.qst.goldenarches.dao.SettingMapper;
@@ -32,13 +34,16 @@ import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Order;
 import com.qst.goldenarches.pojo.OrderDetail;
-import com.qst.goldenarches.pojo.OrderMsater;
+import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.OrderService;
 import com.qst.goldenarches.thread.EventStorage;
+import com.qst.goldenarches.utils.DigitalUtil;
+import com.qst.goldenarches.utils.OrderNoUtil;
+import com.qst.goldenarches.vo.OrderNeedServiceVo;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -46,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
-    private OrderMsaterMapper orderMsaterMapper;
+    private OrderMasterMapper orderMasterMapper;
     @Autowired
     private OrderDetailMapper orderDetailMapper;
     @Autowired
@@ -186,19 +191,22 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public void createOrderMaster(OrderMsater order) {
-		int orderId = orderMsaterMapper.insertSelective(order);
+	public void createOrderMaster(OrderMaster order) {
+		order.setOrderNo(OrderNoUtil.getOrderNoByUUID());
+		int orderId = orderMasterMapper.insertSelective(order);
 		order.setOrderId(orderId);
 	}
 
 
 	@Override
+	@Transactional(rollbackFor = {BusException.class,Exception.class})
 	public void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException {
 		if(CollectionUtils.isEmpty(orderDetails)) {
 			throw new BusException("参数为空");
 		}
 		Set<Integer> orderIds = new HashSet<Integer>();
 		for (OrderDetail orderDetail : orderDetails) {
+			orderDetail.setDetailType("1");
 			if(orderDetail.getOrderId() == null || orderDetail.getOrderId().intValue() == 0) {
 				throw new BusException("订单OrderId参数不正确");
 			}
@@ -208,12 +216,13 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusException("订单OrderId参数不正确");
 		}
 		Integer orderId = orderIds.iterator().next();
-		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderId);
+		OrderMaster orderMsater = orderMasterMapper.selectByPrimaryKey(orderId);
 		if(orderMsater == null) {
 			throw new BusException("订单主表数据不存在");
 		}
 		int ret = orderDetailMapper.insertBatch(orderDetails);
 		
+		this.updateTotalAmount(orderMsater);
 		OrderPrinterLog printerLog = new OrderPrinterLog();
 		printerLog.setOrderId(orderMsater.getOrderId());
 		printerLog.setContent(JSON.toJSONString(orderDetails));
@@ -236,7 +245,7 @@ public class OrderServiceImpl implements OrderService {
 		if(CollectionUtils.isEmpty(orderRound.getOrderDetails())) {
 			throw new BusException("参数orderDetails为空");
 		}
-		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderRound.getOrderId());
+		OrderMaster orderMsater = orderMasterMapper.selectByPrimaryKey(orderRound.getOrderId());
 		if(orderMsater == null) {
 			throw new BusException("订单主表数据不存在");
 		}
@@ -249,6 +258,7 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusException("保存数据失败");
 		}
 		for (OrderDetail orderDetail : orderRound.getOrderDetails()) {
+			orderDetail.setDetailType("2");
 			orderDetail.setOrderId(orderMsater.getOrderId());
 			orderDetail.setRoundId(roundId);
 		}
@@ -273,13 +283,28 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public void needService(OrderPrinterLog printerLog) throws BusException {
-		printerLog.setPinterType("3");
-		Setting setting = settingMapper.getSettingInfo();
-		if(setting != null) {
-			printerLog.setPrinterId(setting.getServicePrinterId());
+	@Transactional(rollbackFor = {BusException.class,Exception.class})
+	public void needService(OrderNeedServiceVo needServiceVo) throws BusException {
+		
+		if(CollectionUtils.isEmpty(needServiceVo.getNeedServiceDetails())) {
+			throw new BusException("needServiceDetails 参数为空");
 		}
-		int ret = orderPrinterLogMapper.insert(printerLog);
+		
+		for (OrderDetail orderDetail : needServiceVo.getNeedServiceDetails()) {
+			orderDetail.setDetailType("3");
+			orderDetail.setOrderId(needServiceVo.getOrderId());
+		}
+		
+		int ret = orderDetailMapper.insertBatch(needServiceVo.getNeedServiceDetails());
+		if(ret == 0) {
+			throw new BusException("保存数据失败");
+		}
+		OrderPrinterLog printerLog = new OrderPrinterLog();
+		printerLog.setOrderId(needServiceVo.getOrderId());
+		printerLog.setContent(JSON.toJSONString(needServiceVo));
+		printerLog.setPinterType("3");
+		printerLog.setStatus("0");
+		ret = orderPrinterLogMapper.insert(printerLog);
 		if(ret > 0) {
 			try {
 				EventStorage.getInstance().putEvent(printerLog);
@@ -292,20 +317,81 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public OrderMsater getOrderInfoByOrderId(Integer orderId) throws BusException {
-		OrderMsater orderMsater = orderMsaterMapper.selectByPrimaryKey(orderId);
-		if(orderMsater == null) {
+	public OrderMaster getOrderInfoByOrderId(Integer orderId) throws BusException {
+		OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+		if(orderMaster == null) {
 			throw new BusException("订单数据不存在");
 		}
 		OrderRound param = new OrderRound();
 		param.setState("0");
 		List<OrderRound> orderRounds = orderRoundMapper.query(param);
-		orderMsater.setOrderRounds(orderRounds);
-		return orderMsater;
+		orderMaster.setOrderRounds(orderRounds);
+		return orderMaster;
 	}
 
 	@Override
 	public List<OrderDetail> queryOrderDetail(OrderDetail param) {
 		return orderDetailMapper.queryOrderDetail(param);
+	}
+
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void updateOrderMaster(OrderMaster order) throws Exception {
+		orderMasterMapper.updateByPrimaryKeySelective(order);
+		//更新订单总额
+		this.updateTotalAmount(order);
+	}
+
+
+	@Override
+	public void updateTotalAmount(OrderMaster order) {
+		OrderMaster orderMaster =orderMasterMapper.selectByPrimaryKey(order.getOrderId());
+		if(orderMaster != null) {
+			Setting setting = settingMapper.getSettingInfo();
+			if(setting != null) {
+				double adultTotalAmount = 0l;
+				double childTotalAmount = 0l;
+				Integer adult = orderMaster.getAdult();
+				Integer child = orderMaster.getChild();
+				String orderType = orderMaster.getOrderType();
+				if("1".equals(orderType)) {//午餐
+					if(adult != null) {
+						adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
+					}
+					if(child != null) {
+						childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
+					}
+				}else {//晚餐
+					if(adult != null) {
+						adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
+					}
+					if(child != null) {
+						childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
+					}
+				}
+				double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
+				
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("orderId", order.getOrderId());
+				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmount(param);
+				if(orderDetailTotalAmount != null) {
+					totalAmount = DigitalUtil.add(totalAmount, orderDetailTotalAmount);
+				}
+				BigDecimal b = new BigDecimal(totalAmount);
+				totalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				OrderMaster record = new OrderMaster();
+				record.setOrderId(orderMaster.getOrderId());
+				record.setTotalAmount(totalAmount);
+				orderMasterMapper.updateByPrimaryKeySelective(record);
+			}
+			
+			
+		}
+		
+		
+		
+		// TODO Auto-generated method stub
+		
 	}
 }
