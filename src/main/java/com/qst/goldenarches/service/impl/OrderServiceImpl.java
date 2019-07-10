@@ -386,12 +386,23 @@ public class OrderServiceImpl implements OrderService {
 				orderMasterMapper.updateByPrimaryKeySelective(record);
 			}
 			
-			
 		}
 		
-		
-		
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public List<OrderMaster> queryOrderList(OrderMaster queryParam) {
+		return orderMasterMapper.queryOrderList(queryParam);
+	}
+
+	@Override
+	public void orderSettlement(Integer orderId) throws BusException{
+		OrderMaster orderMaster = new OrderMaster();
+		orderMaster.setOrderId(orderId);
+		orderMaster.setStatus("2");
+		int ret = orderMasterMapper.updateByPrimaryKeySelective(orderMaster);
+		if(ret == 0) {
+			throw new BusException("订单结账失败，更新数据不存在");
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package com.qst.goldenarches.dao;
 
+import java.util.List;
+
 import com.qst.goldenarches.pojo.OrderMaster;
 
 public interface OrderMasterMapper {
@@ -14,6 +16,8 @@ public interface OrderMasterMapper {
     int updateByPrimaryKeySelective(OrderMaster record);
 
     int updateByPrimaryKey(OrderMaster record);
+
+	List<OrderMaster> queryOrderList(OrderMaster queryParam);
 
 	
 }

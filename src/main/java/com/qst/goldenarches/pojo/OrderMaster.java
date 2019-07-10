@@ -88,6 +88,8 @@ public class OrderMaster extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="订单状态 0未结账 1结账中 2已结账 3已取消")
     private String status;
+	@ApiModelProperty(value="订单状态，查询使用逗号隔开",hidden=true)
+	private String statusStr;
 
     /**
      * 开台时间
@@ -239,6 +241,14 @@ public class OrderMaster extends BasePo implements Serializable {
 
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+
+	public String getStatusStr() {
+		return statusStr;
+	}
+
+	public void setStatusStr(String statusStr) {
+		this.statusStr = statusStr;
 	}
 
     

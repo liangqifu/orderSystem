@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
@@ -24,7 +25,6 @@ import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMaster;
-import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.pojo.Setting;
@@ -59,28 +59,32 @@ public class AppController {
     private OrderService orderService;
 	
 	
-	
 	@ApiOperation(value="App登录接口",response=Setting.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/signin",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg signin(@RequestBody @Validated SignInVo vo,HttpServletRequest request){
-		Setting setting = settingService.getSettingInfo();
-		if(setting == null) {
-			return Msg.fail("系统未授权App登录");
+		try {
+			Setting setting = settingService.getSettingInfo();
+			if(setting == null) {
+				return Msg.fail("系统未授权App登录");
+			}
+			if(!vo.getPwd().equals(setting.getAppPwd())) {
+				return Msg.fail("登录密码不正确");
+			}
+			Category category = new Category();
+			category.setState("0");
+			Area area = new Area();
+			area.setState("0");
+			String imgPath = request.getServletContext().getContextPath()+"/img/category/";
+			return Msg.success().add("setting",setting)
+					.add("categorys", categoryService.query(category))
+					.add("areas", areaService.query(area)).add("imgPath", imgPath);
+		} catch (Exception e) {
+			logger.error("App登录异常",e);
+			return Msg.fail(e.getMessage());
 		}
-		if(!vo.getPwd().equals(setting.getAppPwd())) {
-			return Msg.fail("登录密码不正确");
-		}
-		Category category = new Category();
-		category.setState("0");
-		Area area = new Area();
-		area.setState("0");
-		String imgPath = request.getServletContext().getContextPath()+"/img/category/";
-        return Msg.success().add("setting",setting)
-        		.add("categorys", categoryService.query(category))
-        		.add("areas", areaService.query(area)).add("imgPath", imgPath);
     }
 	
 	@ApiOperation(value="分页查询菜品列表",response=Product.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
@@ -89,12 +93,17 @@ public class AppController {
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg queryProductListByPage(@RequestBody @Validated Product product,HttpServletRequest request){
-		PageHelper.startPage(product.getPageNum(),product.getPageSize());
-		product.setStatus(1);
-        List<Product> list = productService.query(product);
-        com.github.pagehelper.PageInfo<Product> pageInfo = new com.github.pagehelper.PageInfo<Product>(list,product.getPageSize());
-        String imgPath = request.getServletContext().getContextPath()+"/img/product/";
-        return Msg.success().add("data",pageInfo).add("imgPath", imgPath);
+		try {
+			PageHelper.startPage(product.getPageNum(),product.getPageSize());
+			product.setStatus(1);
+			List<Product> list = productService.query(product);
+			com.github.pagehelper.PageInfo<Product> pageInfo = new com.github.pagehelper.PageInfo<Product>(list,product.getPageSize());
+			String imgPath = request.getServletContext().getContextPath()+"/img/product/";
+			return Msg.success().add("data",pageInfo).add("imgPath", imgPath);
+		} catch (Exception e) {
+			logger.error("分页查询菜品列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
     }
 	
 	@ApiOperation(value="午餐/晚餐确认,",response=OrderMaster.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
@@ -222,8 +231,49 @@ public class AppController {
     }
 	
 	
+	@ApiOperation(value="控制面板--获取餐区信息，每个餐区包含多个订单",response=Area.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/ctl/getAreaList",method=RequestMethod.GET,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg getAreaList(){
+		try {
+			Area param = new Area();
+			param.setState("0");
+			List<Area> areaList = areaService.query(param);
+			for (Area area : areaList) {
+				OrderMaster queryParam = new OrderMaster();
+				queryParam.setBuyerId(area.getId());
+				queryParam.setStatusStr("0,1");
+				queryParam.setState("0");
+				List<OrderMaster> orders = orderService.queryOrderList(queryParam);
+				area.setOrders(orders);
+			}
+			return Msg.success().add("data", areaList);
+		} catch (Exception e) {
+			logger.error("获取餐区信息失败", e);
+			return Msg.fail("获取餐区信息失败");
+		}
+    }
 	
 	
+	@ApiOperation(value="控制面板--订单确认结账",response=Msg.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/ctl/order/settlement",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg orderSettlement(@RequestParam Integer orderId){
+		try {
+			orderService.orderSettlement(orderId);
+			return Msg.success();
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		} catch (Exception e) {
+			logger.error("获取餐区信息失败", e);
+			return Msg.fail("获取餐区信息失败");
+		}
+    }
 	
 
 }

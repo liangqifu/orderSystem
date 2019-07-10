@@ -95,4 +95,8 @@ public interface OrderService {
 	 * @param order
 	 */
 	void updateTotalAmount(OrderMaster order);
+
+	List<OrderMaster> queryOrderList(OrderMaster queryParam);
+
+	void orderSettlement(Integer orderId) throws BusException;
 }

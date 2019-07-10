@@ -1,30 +1,27 @@
 package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description="餐区信息")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Area extends BasePo implements Serializable {
-    /**
-     * 
-     */
+
 	@ApiModelProperty(value="主键id")
     private Integer id;
-
     /**
-     * 餐区名称
+             * 餐区名称
      */
 	@ApiModelProperty(value="餐区名称")
     private String name;
 
-    /**
-     * 餐区密码
-     */
-	@ApiModelProperty(value="餐区密码",hidden=true)
-    private String pwd;
-    
+	@ApiModelProperty(value="订单信息")
+    private List<OrderMaster> orders;
     
 
     private static final long serialVersionUID = 1L;
@@ -45,11 +42,15 @@ public class Area extends BasePo implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getPwd() {
-        return pwd;
-    }
+	public List<OrderMaster> getOrders() {
+		return orders;
+	}
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd == null ? null : pwd.trim();
-    }
+	public void setOrders(List<OrderMaster> orders) {
+		this.orders = orders;
+	}
+    
+    
 }
+
+   

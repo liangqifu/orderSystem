@@ -15,28 +15,52 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Order;
+import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.service.OrderService;
 import com.qst.goldenarches.utils.OrderByEnumUtil;
 
+import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
 @RequestMapping("order")
 public class OrderController {
-
+	private static Logger logger = LogManager.getLogger(OrderController.class);
     @Autowired
     private OrderService orderService;
 
+    
+	@ResponseBody
+    @RequestMapping(value= "/queryOrderList",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryOrderList(@RequestBody OrderMaster queryParam){
+		 try {
+			PageHelper.startPage(queryParam.getPageNum(),queryParam.getPageSize());
+			 List<OrderMaster> list = orderService.queryOrderList(queryParam);
+			 com.github.pagehelper.PageInfo<OrderMaster> orders = new com.github.pagehelper.PageInfo<OrderMaster>(list,queryParam.getPageSize());
+			 return Msg.success().add("data", orders);
+		} catch (Exception e) {
+			logger.error("查询订单列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
+    }
     /**
      * 订单后台：分页查找
      * 查询全部订单并分页显示
