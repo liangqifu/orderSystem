@@ -37,7 +37,7 @@
         </div>
         <div >
           
-          <iframe id="mainIframe" src="${APP_PATH}/admin/dataAnalysis" style="height: 95%;" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></iframe>
+          <iframe id="mainIframe" src="${APP_PATH}/order/index" style="height: 95%;" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></iframe>
                  
         
         </div>

@@ -72,19 +72,23 @@
         select <include refid="Base_Column_List"/>
         from product_info
         <where>
+             product_status=1
+             and state='0'
             <if test="categoryId!=null">
-                category_id = #{categoryId}
+              and  category_id = #{categoryId}
             </if>
-            and product_status=1
+             
         </where>
     </select>
     <select id="selCount" resultType="java.lang.Integer">
         select count(*) from product_info
         <where>
+            product_status=1
+            and state='0'
             <if test="categoryId!=null">
-                category_id = #{categoryId}
+               and category_id = #{categoryId}
             </if>
-            and product_status=1
+             
         </where>
     </select>
     
@@ -93,7 +97,7 @@
         FROM product_info p
         LEFT JOIN  product_category ca
         ON p.category_id=ca.category_id
-        where 1=1
+        where p.state='0'
             <if test="searchKey!=null and searchKey !=''">
             and (  p.product_name LIKE CONCAT('%',#{searchKey},'%')
                 OR ca.category_name LIKE CONCAT('%',#{searchKey},'%')
@@ -102,7 +106,7 @@
              <if test="status!=null and status !=''">
                and  p.product_status = #{status}
              </if>
-             <if test="cid!=null and cid >0">
+             <if test="cid != null">
                and p.category_id = #{cid}
              </if>
         

@@ -27,6 +27,8 @@ public class OrderMaster extends BasePo implements Serializable {
 	@ApiModelProperty(value="餐区ID")
 	@NotNull(message="餐区ID不能为空")
     private Integer buyerId;
+	@ApiModelProperty(value="所属餐区")
+	private Area area;
 	@ApiModelProperty(value="订单编号")
 	private String orderNo;
 
@@ -249,6 +251,14 @@ public class OrderMaster extends BasePo implements Serializable {
 
 	public void setStatusStr(String statusStr) {
 		this.statusStr = statusStr;
+	}
+
+	public Area getArea() {
+		return area;
+	}
+
+	public void setArea(Area area) {
+		this.area = area;
 	}
 
     

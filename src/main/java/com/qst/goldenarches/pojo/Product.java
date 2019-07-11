@@ -15,7 +15,7 @@ public class Product extends BasePo {
      * 商品id
      */
 	@ApiModelProperty(value="主键ID")
-    private int id;
+    private Integer id;
     /**
      * 商品名
      */
@@ -30,17 +30,17 @@ public class Product extends BasePo {
      * 商品库存
      */
 	@ApiModelProperty(value="库存")
-    private int inventory;
+    private Integer inventory;
     /**
      * 商品状态
      */
 	@ApiModelProperty(value="状态 1上架 0下架")
-    private int status;
+    private Integer status;
     /**
      * 商品类型id
      */
 	@ApiModelProperty(value="菜品类型ID")
-    private int cid;
+    private Integer cid;
     /**
      * 商品类型id
      */
@@ -54,11 +54,11 @@ public class Product extends BasePo {
     /**
      * 商品图片
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,27 +78,27 @@ public class Product extends BasePo {
         this.price = price;
     }
 
-    public int getInventory() {
+    public Integer getInventory() {
         return inventory;
     }
 
-    public void setInventory(int inventory) {
+    public void setInventory(Integer inventory) {
         this.inventory = inventory;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public int getCid() {
+    public Integer getCid() {
         return cid;
     }
 
-    public void setCid(int cid) {
+    public void setCid(Integer cid) {
         this.cid = cid;
     }
 

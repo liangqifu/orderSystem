@@ -79,7 +79,7 @@ var execI18n = function(){
         console.log("未找到页面名称元素，请在页面写入\n <meta id=\"i18n_pagename\" content=\"页面名(对应语言包的语言文件名)\">");
         return false;
     };
-    /*debugger
+    /*
     if (getCookie("userLanguage")) {
         i18nLanguage = getCookie("userLanguage");
     } else {
@@ -99,7 +99,6 @@ var execI18n = function(){
         }
     }*/
     /* 需要引入 i18n 文件*/
-    debugger
     i18nLanguage = localStorage.currentLang
     if ($.i18n == undefined) {
         console.log("请引入i18n js 文件")

@@ -76,7 +76,7 @@ public interface OrderService {
      */
     public int updVIP(Map<String,Integer> map,String phone);
 
-	void createOrderMaster(OrderMaster order);
+    OrderMaster createOrderMaster(OrderMaster order);
 
 	void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException;
 

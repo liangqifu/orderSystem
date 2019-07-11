@@ -38,6 +38,7 @@ public class Permission {
      * 许可的图标
      */
     private String icon;
+    private String no;
     /**
      * 该许可下的子菜单
      */
@@ -106,4 +107,14 @@ public class Permission {
     public void setChildren(List<Permission> children) {
         this.children = children;
     }
+
+	public String getNo() {
+		return no;
+	}
+
+	public void setNo(String no) {
+		this.no = no;
+	}
+    
+    
 }

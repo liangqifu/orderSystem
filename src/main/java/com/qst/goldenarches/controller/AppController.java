@@ -73,18 +73,26 @@ public class AppController {
 			if(!vo.getPwd().equals(setting.getAppPwd())) {
 				return Msg.fail("登录密码不正确");
 			}
-			Category category = new Category();
-			category.setState("0");
 			Area area = new Area();
 			area.setState("0");
 			String imgPath = request.getServletContext().getContextPath()+"/img/category/";
 			return Msg.success().add("setting",setting)
-					.add("categorys", categoryService.query(category))
 					.add("areas", areaService.query(area)).add("imgPath", imgPath);
 		} catch (Exception e) {
 			logger.error("App登录异常",e);
 			return Msg.fail(e.getMessage());
 		}
+    }
+	@ApiOperation(value="根据父级分类id获取子分类",response=Setting.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "getCategorysByPid",method=RequestMethod.GET,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryListByPage(@RequestParam Integer parentId,HttpServletRequest request){
+		Category param = new Category();
+		param.setParentId(parentId);
+        List<Category> categories = categoryService.query(param);
+        String imgPath = request.getServletContext().getContextPath()+"/img/category/";
+        return Msg.success().add("data",categories).add("imgPath", imgPath);
     }
 	
 	@ApiOperation(value="分页查询菜品列表",response=Product.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
@@ -113,7 +121,7 @@ public class AppController {
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg createOrderMaster(@RequestBody @Validated OrderMaster order){
 		try {
-			orderService.createOrderMaster(order);
+			order = orderService.createOrderMaster(order);
 		} catch (Exception e) {
 			logger.error("午餐/晚餐确认失败", e);
 			 return Msg.fail("午餐/晚餐确认失败");
@@ -212,10 +220,9 @@ public class AppController {
 		}
     }
 	
-	@ApiOperation(value="根据orderId获取订单详情",response=OrderMaster.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ApiOperation(value="根据orderId获取订单详情",response=OrderMaster.class,produces="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/order/{orderId}/info",method=RequestMethod.GET,
-            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg getOrderInfoByOrderId(@PathVariable("orderId") Integer orderId){
 		try {
@@ -231,10 +238,9 @@ public class AppController {
     }
 	
 	
-	@ApiOperation(value="控制面板--获取餐区信息，每个餐区包含多个订单",response=Area.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ApiOperation(value="控制面板--获取餐区信息，每个餐区包含多个订单",response=Area.class,produces="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/ctl/getAreaList",method=RequestMethod.GET,
-            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg getAreaList(){
 		try {
@@ -257,10 +263,9 @@ public class AppController {
     }
 	
 	
-	@ApiOperation(value="控制面板--订单确认结账",response=Msg.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ApiOperation(value="控制面板--订单确认结账",response=Msg.class,produces="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/ctl/order/settlement",method=RequestMethod.POST,
-            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg orderSettlement(@RequestParam Integer orderId){
 		try {

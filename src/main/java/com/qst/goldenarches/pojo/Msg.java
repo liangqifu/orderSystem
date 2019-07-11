@@ -9,14 +9,20 @@ package com.qst.goldenarches.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+@ApiModel(value="返回JSON对象",description="返回JSON对象")
 public class Msg {
 
     //状态码，
+	@ApiModelProperty(value="状态码:100成功，其他未失败")
     private int code;
     //提示信息
+	@ApiModelProperty(value="提示信息")
     private String msg;
 
     //用户要返回给浏览器的数据
+	@ApiModelProperty(value="返回的数据")
     private Map<String,Object> extend =new HashMap<String, Object>();
 
     public static Msg success(){

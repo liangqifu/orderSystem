@@ -18,6 +18,7 @@
     <result column="open_time" jdbcType="TIMESTAMP" property="openTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="area" column="buyer_id" select="com.qst.goldenarches.dao.AreaMapper.selectByPrimaryKey"/>
   </resultMap>
   <sql id="Base_Column_List">
     order_id, buyer_id, order_type,order_no, total_amount, table_num, adult, child, lunch_num, 

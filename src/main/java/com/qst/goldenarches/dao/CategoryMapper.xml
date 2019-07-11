@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.qst.goldenarches.dao.CategoryMapper">
+   
+   <resultMap id="BaseResultMap" type="com.qst.goldenarches.pojo.Category">
+    <id column="category_id" jdbcType="INTEGER" property="id" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="category_name" jdbcType="VARCHAR" property="name" />
+    <result column="printid" jdbcType="INTEGER" property="printid" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <association property="printer" column="printid" select="com.qst.goldenarches.dao.PrinterMapper.getById"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    category_id, parent_id, category_name,printid, state, pic
+  </sql>
    <sql id="baseCategoryList">
-       category_id id,parent_id parentId,category_name name,printid,
-       (SELECT t1.ip from t_printer t1 where t1.id=printid) as printIp,
-       (SELECT t1.name from t_printer t1 where t1.id=printid) as printerName,
-       state,
-       pic
+       category_id id,parent_id parentId,category_name name,printid,state, pic
    </sql>
     <insert id="insertCategory">
         INSERT INTO product_category(parent_id,category_name,printid,pic,create_time,update_time)
@@ -38,15 +48,15 @@
             #{categoryid}
         </foreach>
     </delete>
-    <select id="query" resultType="com.qst.goldenarches.pojo.Category" parameterType="com.qst.goldenarches.pojo.Category">
-        SELECT <include refid="baseCategoryList"/>
+    <select id="query" resultMap="BaseResultMap" parameterType="com.qst.goldenarches.pojo.Category">
+        SELECT <include refid="Base_Column_List"/>
         FROM product_category
         <where>
             1=1
             <if test="state !=null">
                 AND state = #{state}
             </if>
-            <if test="parentId !=null and parentId !=0 ">
+            <if test="parentId !=null">
                 AND parent_id = #{parentId}
             </if>
             <if test="name!=null and name !='' ">

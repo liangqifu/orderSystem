@@ -32,6 +32,7 @@ import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Order;
 import com.qst.goldenarches.pojo.OrderMaster;
+import com.qst.goldenarches.service.AreaService;
 import com.qst.goldenarches.service.OrderService;
 import com.qst.goldenarches.utils.OrderByEnumUtil;
 
@@ -44,13 +45,15 @@ public class OrderController {
 	private static Logger logger = LogManager.getLogger(OrderController.class);
     @Autowired
     private OrderService orderService;
+    @Autowired
+	private AreaService areaService;
 
     
 	@ResponseBody
-    @RequestMapping(value= "/queryOrderList",method=RequestMethod.POST,
+    @RequestMapping(value= "/queryOrderListByPage",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg queryOrderList(@RequestBody OrderMaster queryParam){
+    public Msg queryOrderListByPage(@RequestBody OrderMaster queryParam){
 		 try {
 			PageHelper.startPage(queryParam.getPageNum(),queryParam.getPageSize());
 			 List<OrderMaster> list = orderService.queryOrderList(queryParam);
@@ -61,6 +64,22 @@ public class OrderController {
 			return Msg.fail(e.getMessage());
 		}
     }
+	
+	@ResponseBody
+    @RequestMapping(value= "/queryAreaList",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryAreaList(@RequestBody Area queryParam){
+		 try {
+			 List<Area> list = areaService.query(queryParam);
+			 return Msg.success().add("data", list);
+		} catch (Exception e) {
+			logger.error("查询餐区列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
+    }
+	
+	
     /**
      * 订单后台：分页查找
      * 查询全部订单并分页显示

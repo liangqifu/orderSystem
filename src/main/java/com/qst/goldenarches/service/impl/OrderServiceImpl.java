@@ -191,10 +191,10 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public void createOrderMaster(OrderMaster order) {
+	public OrderMaster createOrderMaster(OrderMaster order) {
 		order.setOrderNo(OrderNoUtil.getOrderNoByUUID());
-		int orderId = orderMasterMapper.insertSelective(order);
-		order.setOrderId(orderId);
+		orderMasterMapper.insertSelective(order);
+		return order;
 	}
 
 

@@ -26,7 +26,7 @@
                 data:JSON.stringify(params),
                 contentType:"application/json",
                 beforeSend : function(){
-                    loadingIndex = layer.msg('处理中', {icon: 16});
+                    loadingIndex = layer.msg($.i18n.prop('layer-loading-msg'), {icon: 16});
                 },
                 success : function(result) {
                     layer.close(loadingIndex);
@@ -56,7 +56,7 @@
                         });
                         setPage(data.pageNum, data.total, queryListByPage)
                     } else {
-                        layer.msg("加载数据失败", {time:2000, icon:5, shift:6}, function(){
+                        layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                         });
                     }
                 }
@@ -81,13 +81,13 @@
                 itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
                     switch (type) {
                         case "first":
-                            return "首页";
+                            return $.i18n.prop('bootstrap-paginator-first');
                         case "prev":
-                            return "上一页";
+                            return $.i18n.prop('bootstrap-paginator-prev');
                         case "next":
-                            return "下一页";
+                            return $.i18n.prop('bootstrap-paginator-next');
                         case "last":
-                            return "末页";
+                            return $.i18n.prop('bootstrap-paginator-last');
                         case "page":
                             return page;
                     }
@@ -115,18 +115,22 @@
         
         function delPrinter(params) {
         	params.state ='1';
-        	layer.confirm("删除打印机信息【"+params.name+"】, 是否继续",  {icon: 3, title:'提示'}, function(cindex){
+        	layer.confirm($.format($.i18n.prop('layer-confirm-delete-msg'), params.name),  {
+        		icon: 3, 
+        		title:$.i18n.prop('layer-title'),
+        		btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')] 
+        		}, function(cindex){
                 $.ajax({
                     type : "POST",
                     url  : "${APP_PATH}/printer/update",
                     data : JSON.stringify(params),
                     success : function(result) {
                         if ( result.code==100 ) {
-                            layer.msg("打印机信息删除成功", {time:1000, icon:6}, function(){
+                            layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){
                             	queryListByPage();
                             });
                         } else {
-                            layer.msg("打印机信息删除失败", {time:2000, icon:5, shift:6}, function(){});
+                            layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
                         }
                     }
                 });
@@ -149,26 +153,26 @@
                 },
                 fields: {
                 	ip: {
-                        message: 'ip地址格式不正确',
+                        message: $.i18n.prop('ip-Invalid'),
                         validators: {
                             notEmpty: {
-                                message: 'ip地址不能为空'
+                                message: $.i18n.prop('notEmpty')
                             },
                             regexp: {
                                 regexp: /^(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$/,
-                                message: '请输入正确的IP'
+                                message:$.i18n.prop('enter-ip')
                             }
                         }
                     },
                     port: {
-                        message: '端口号格式不正确',
+                        message: $.i18n.prop('port-Invalid'),
                         validators: {
                             notEmpty: {
-                                message: '端口号不能为空'
+                                message:$.i18n.prop('notEmpty')
                             },
                             regexp: {
                                 regexp: /^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/,
-                                message: '请输入正确的端口号'
+                                message: $.i18n.prop('enter-port')
                             }
                         }
                     }
@@ -191,11 +195,11 @@
                     success : function(result) {
                         if ( result.code==100 ) {
                         	$("#printer_modal").modal('hide');
-                            layer.msg("修改成功:"+result.extend.printer.name, {time:1500, icon:6}, function(){
+                            layer.msg( $.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                             	queryListByPage();
                             });
                         } else {
-                            layer.msg("修改失败："+result.msg, {time:2000, icon:5, shift:6}, function(){
+                            layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
                             });
                         }
                     }
@@ -253,25 +257,24 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 打印机配置
+					<i class="glyphicon glyphicon-th i18n" data-properties="printer-setting-title" data-ptype="text"></i>
 				</h3>
 			</div>
 			<div class="panel-body" >
 					<form class="form-inline" role="form" style="float: left;">
 						<div class="form-group has-feedback">
 							<div class="input-group">
-								<div class="input-group-addon">查询条件</div>
-								<input id="queryText" class="form-control has-success"
-									type="text" placeholder="请输入查询条件">
+								<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text" ></div>
+								<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="pleaseEnter" type="text" placeholder="请输入查询条件">
 							</div>
 						</div>
 						<button id="queryBtn" type="button" class="btn btn-warning">
-							<i class="glyphicon glyphicon-search"></i> 查询
+							<i class="glyphicon glyphicon-search i18n" data-properties="btn-search" data-ptype="text"></i>
 						</button>
 					</form>
 					<button type="button" id="addBtn" class="btn btn-primary"
 						style="float: right;">
-						<i class="glyphicon glyphicon-plus"></i> 新增
+						<i class="glyphicon glyphicon-plus i18n" data-properties="btn-add" data-ptype="text" ></i>
 					</button>
 					<br>
 					<hr style="clear: both;">
@@ -280,13 +283,13 @@
 							<table class="table  table-bordered ">
 								<thead>
 									<tr>
-										<th style="width: 5%;text-align: center;">序号</th>
-										<th style="width:20% ;text-align: center;">打印机名称</th>
-										<th style="width:20% ;text-align: center;">IP</th>
-										<th style="width:8% ;text-align: center;">port</th>
-										<th style="width:10% ;text-align: center;">状态</th>
-										<th style="width:10% ;text-align: center;">是否在线</th>
-										<th style="width:15%">操作</th>
+										<th style="width: 5%;text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
+										<th style="width:20% ;text-align: center;" class="i18n" data-properties="printerForm-name" data-ptype="text"></th>
+										<th style="width:20% ;text-align: center;" class="i18n" data-properties="printerForm-ip" data-ptype="text"></th>
+										<th style="width:8% ;text-align: center;" class="i18n" data-properties="printerForm-port" data-ptype="text"></th>
+										<th style="width:10% ;text-align: center;" class="i18n" data-properties="printerForm-status" data-ptype="text"></th>
+										<th style="width:10% ;text-align: center;" class="i18n" data-properties="printerForm-onLine" data-ptype="text"></th>
+										<th style="width:15%" class="i18n" data-properties="thead-opt" data-ptype="text"></th>
 									</tr>
 								</thead>
 
@@ -320,27 +323,26 @@
                         <input type="hidden" name="id" id="id" />
                         <input type="hidden" name="state" id="state" />
 						<div class="form-group">
-							<label for="name" class="col-sm-3 control-label">打印机名称:</label> 
+							<label for="name" class="col-sm-3 control-label i18n" data-properties="printerForm-name" data-ptype="text" ></label> 
 							<div class="col-sm-6">
-							   <input autocomplete="off" type="text" data-bv-notempty="true" data-bv-notempty-message="不能为空"
-								class="form-control" id="name" name="name"  placeholder="请输入打印机名称">
-							</div>
-							
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label" for="ip">IP:</label> 
-							<div class="col-sm-6">
-							  <input autocomplete="off" type="text" class="form-control"  id="ip" name="ip"  placeholder="请输入打印机IP">
+							   <input autocomplete="off" type="text" data-bv-notempty="true" data-bv-notempty-message=""
+								class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="name" name="name"  placeholder="">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label" for="port">port:</label> 
+							<label class="col-sm-3 control-label i18n" data-properties="printerForm-ip" data-ptype="text" for="ip"></label> 
 							<div class="col-sm-6">
-							  <input autocomplete="off" type="text" class="form-control"  id="port" name="port"  placeholder="请输入打印机端口号">
+							  <input autocomplete="off" type="text" class="form-control i18n"  data-properties="pleaseEnter" data-ptype="placeholder" id="ip" name="ip"  placeholder="">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label">开关:</label> 
+							<label class="col-sm-3 control-label i18n" data-properties="printerForm-port" data-ptype="text" for="port"></label> 
+							<div class="col-sm-6">
+							  <input autocomplete="off" type="text" class="form-control i18n"  data-properties="pleaseEnter" data-ptype="placeholder" id="port" name="port"  placeholder="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label i18n" data-properties="printerForm-status" data-ptype="text" ></label> 
 							<div class="col-sm-6">
 							  <input id="status" name="status" type="hidden">
 							  <input id="statusSwitch" type="checkbox" data-size="small">
@@ -348,8 +350,8 @@
 						</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="save_btn">保存</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary i18n"  data-properties="btn-save" data-ptype="text" id="save_btn">保存</button>
+                    <button type="button" class="btn btn-default i18n"  data-properties="btn-close" data-ptype="text" data-dismiss="modal">关闭</button>
                 </div>
             </form>
         </div>

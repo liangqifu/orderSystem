@@ -404,8 +404,16 @@
                   <td><img src="/img/upload.png" class="img-rounded" style="width:80px;height:45px"/></td>
                 {{/if}}
                 <td>{{$value.name}}</td>
-                <td>{{$value.printerName}}</td>
-                <td>{{$value.printIp}}</td>
+                <td>
+                  {{if $value.printer }}
+                      {{$value.printer.name}}
+                  {{/if}}
+                </td>
+                <td>
+                  {{if $value.printer }}
+                      {{$value.printer.ip}}
+                  {{/if}}
+                 </td>
                 <td>
                    <button type="button" imgPath="{{imgPath}}" item='{{obj2Str($value)}}' class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
                    &nbsp;&nbsp;&nbsp;

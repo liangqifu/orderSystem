@@ -18,13 +18,11 @@ public class Category extends BasePo {
 	@ApiModelProperty(value="主键ID")
     private int id;
 	@ApiModelProperty(value="父级ID")
-    private int parentId;
+    private Integer parentId;
 	@ApiModelProperty(value="关联打印机ID",hidden=true)
-    private int printid;
-	@ApiModelProperty(value="关联打印机名称",hidden=true)
-    private String printerName;
-	@ApiModelProperty(value="关联打印机IP地址",hidden=true)
-    private String printIp;
+    private Integer printid;
+	@ApiModelProperty(value="关联打印机",hidden=true)
+	private Printer printer;
 	@ApiModelProperty(value="分类名称")
     private String name;
 	@ApiModelProperty(value="图片")
@@ -47,40 +45,33 @@ public class Category extends BasePo {
     }
     
 
-    public int getParentId() {
+   
+	
+
+	public Integer getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(int parentId) {
+	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
 	}
 
-	
-	public int getPrintid() {
+	public Integer getPrintid() {
 		return printid;
 	}
 
-	public void setPrintid(int printid) {
+	public void setPrintid(Integer printid) {
 		this.printid = printid;
 	}
-	
-	
 
-	public String getPrintIp() {
-		return printIp;
-	}
-
-	public void setPrintIp(String printIp) {
-		this.printIp = printIp;
-	}
 	
 
-	public String getPrinterName() {
-		return printerName;
+	public Printer getPrinter() {
+		return printer;
 	}
 
-	public void setPrinterName(String printerName) {
-		this.printerName = printerName;
+	public void setPrinter(Printer printer) {
+		this.printer = printer;
 	}
 
 	@Override
