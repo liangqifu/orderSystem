@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.qst.goldenarches.dao.OrderDetailMapper;
@@ -375,12 +376,13 @@ public class OrderServiceImpl implements OrderService {
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("orderId", order.getOrderId());
 				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmount(param);
+				OrderMaster record = new OrderMaster();
 				if(orderDetailTotalAmount != null) {
+					record.setDrinksTotalAmount(orderDetailTotalAmount);
 					totalAmount = DigitalUtil.add(totalAmount, orderDetailTotalAmount);
 				}
 				BigDecimal b = new BigDecimal(totalAmount);
 				totalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-				OrderMaster record = new OrderMaster();
 				record.setOrderId(orderMaster.getOrderId());
 				record.setTotalAmount(totalAmount);
 				orderMasterMapper.updateByPrimaryKeySelective(record);
@@ -397,12 +399,31 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public void orderSettlement(Integer orderId) throws BusException{
+		
 		OrderMaster orderMaster = new OrderMaster();
 		orderMaster.setOrderId(orderId);
 		orderMaster.setStatus("2");
 		int ret = orderMasterMapper.updateByPrimaryKeySelective(orderMaster);
 		if(ret == 0) {
 			throw new BusException("订单结账失败，更新数据不存在");
+		}
+		
+	}
+
+
+	@Override
+	@Transactional(rollbackFor = {BusException.class,Exception.class} )
+	public void delOrder(Map<String, Object> param) throws BusException {
+		if(StringUtils.isEmpty(param.get("orderId"))) {
+			throw new BusException("orderId 参数为空");
+		}
+		Integer orderId = (Integer)param.get("orderId");
+		try {
+			orderMasterMapper.delete(orderId);
+			orderRoundMapper.deleteByOrderId(orderId);
+			orderDetailMapper.deleteByOrderId(orderId);
+		} catch (Exception e) {
+			throw new BusException(e);
 		}
 	}
 }

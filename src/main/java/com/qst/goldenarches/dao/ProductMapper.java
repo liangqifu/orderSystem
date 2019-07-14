@@ -24,14 +24,12 @@ public interface ProductMapper {
 
     Product selectProductById(Integer id);
 
-    int updateProductByProduct(Product product);
-
-    int updateProductPicByProduct(Product product);
+    int updateBySelective(Product product);
 
     @Delete("DELETE FROM product_info WHERE product_id =#{0}")
     void deleteProductById(Integer id);
 
-    void deleteProducts(Map<String, Object> map);
+    void deleteProducts(List<Integer> ids);
 
     @Select("SELECT COUNT(*) FROM product_info WHERE category_id =#{cid}")
     int countProductByCid(Integer id);

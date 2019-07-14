@@ -19,5 +19,7 @@ public interface OrderMasterMapper {
 
 	List<OrderMaster> queryOrderList(OrderMaster queryParam);
 
+	int delete(Integer orderId);
+
 	
 }

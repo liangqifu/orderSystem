@@ -21,7 +21,7 @@ public interface CategoryService {
 
     boolean reomveCategory(Integer id);
 
-    boolean deleteProducts(Map<String, Object> map);
+    boolean deleteByIds(List<Integer> ids);
 
     List<Category> getHaveProductCategories(Map<String, Object> map);
 

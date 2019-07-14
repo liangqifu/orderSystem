@@ -42,12 +42,12 @@
         WHERE category_id=#{id}
     </select>
     
-    <delete id="deleteCategories">
+    <update id="deleteByIds">
         update  product_category set state ='1' WHERE category_id IN
-        <foreach collection="categoryids" item="categoryid" open="(" close=")" separator=",">
+        <foreach collection="list" item="categoryid" open="(" close=")" separator=",">
             #{categoryid}
         </foreach>
-    </delete>
+    </update>
     <select id="query" resultMap="BaseResultMap" parameterType="com.qst.goldenarches.pojo.Category">
         SELECT <include refid="Base_Column_List"/>
         FROM product_category

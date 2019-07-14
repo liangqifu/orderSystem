@@ -15,6 +15,9 @@
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-switch.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-select.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-slider.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-datepicker3.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/bootstrap-datepicker3.standalone.min.css">
+	<link rel="stylesheet" href="${APP_PATH}/bootstrap/css/daterangepicker.css">
 	<link rel="stylesheet" media="all" href="${APP_PATH}/bootstrap/css/fileinput.min.css">
 	<link rel="stylesheet" href="${APP_PATH}/ztree/zTreeStyle.css">
 	<link rel="stylesheet" href="${APP_PATH}/css/font-awesome.min.css">
@@ -33,6 +36,9 @@
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-select.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-paginator.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-slider.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-datepicker.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/daterangepicker.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/moment.min.js"></script>
 	<script type="text/javascript" src="${APP_PATH}/bootstrap/js/fileinput.js"></script>
     <script type="text/javascript" src="${APP_PATH}/jquery/jquery.i18n.properties.js"></script>
     <script type="text/javascript" src="${APP_PATH}/script/language.js"></script>

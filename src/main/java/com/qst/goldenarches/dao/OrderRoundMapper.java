@@ -22,4 +22,6 @@ public interface OrderRoundMapper {
 	Integer getMaxNumByOrderId(@Param("orderId") Integer orderId);
 
 	List<OrderRound> query(OrderRound param);
+
+	int deleteByOrderId(Integer orderId);
 }

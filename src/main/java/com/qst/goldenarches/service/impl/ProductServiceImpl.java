@@ -44,19 +44,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public boolean editProductData(Product product) {
-        return productMapper.updateProductByProduct(product)==1?true:false;
+        return productMapper.updateBySelective(product)==1?true:false;
     }
 
     public boolean editProductPic(Product product) {
-        return productMapper.updateProductPicByProduct(product)==1?true:false;
+        return productMapper.updateBySelective(product)==1?true:false;
     }
 
     public void removeProduct(Integer id) {
         productMapper.deleteProductById(id);
     }
 
-    public void deleteProducts(Map<String, Object> map) {
-        productMapper.deleteProducts(map);
+    public void deleteProducts(List<Integer> ids) {
+        productMapper.deleteProducts(ids);
     }
 
     public boolean isTypeHaveProduct(Integer id) {
@@ -103,5 +103,10 @@ public class ProductServiceImpl implements ProductService {
     public List<Category> getCategory(){
         return productMapper.selAllCategory();
     }
+
+	@Override
+	public void update(Product product) {
+		productMapper.updateBySelective(product);
+	}
 
 }

@@ -117,6 +117,10 @@ var execI18n = function(){
     var script3 = $('<script><\/script>');
     script3.attr('src', appPath+'/bootstrap/language/fileinput/'+i18nLanguage+'.js');
     $('head').append(script3);
+    var script4 = $('<script><\/script>');
+    script4.attr('src', appPath+'/bootstrap/language/datepicker/bootstrap-datepicker.'+i18nLanguage+'.min.js');
+    $('head').append(script4);
+    
 
     /*
     这里需要进行i18n的翻译

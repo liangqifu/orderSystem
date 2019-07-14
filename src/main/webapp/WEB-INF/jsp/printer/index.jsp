@@ -18,7 +18,7 @@
         
         function queryListByPage( ) {
         	var loadingIndex = null;
-        	var params  = {state:"0",pageNum:pageNum,pageSize:pageSize,name:$("#queryText").val()};
+        	var params  = {state:"0",pageNum:pageNum,name:$("#queryText").val()};
         	$.ajax({
                 type : "POST",
                 dataType : 'json',
@@ -48,13 +48,14 @@
                             }).on('hidden.bs.modal', function() {
                                 $("#printerForm").data('bootstrapValidator').destroy();
                                 $('#printerForm').data('bootstrapValidator', null);
+                                $('#printerForm').clearForm(true);
                                 bindPrinterForm();
                             });;
                         }).on('click','.del',function(){
                         	var params = JSON.parse($(this).attr('item'));
                         	delPrinter(params)
                         });
-                        setPage(data.pageNum, data.total, queryListByPage)
+                        setPage(data.pageNum, data.total,data.pageSize, queryListByPage)
                     } else {
                         layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                         });
@@ -64,10 +65,12 @@
         	
         }
         
-        function setPage(pageCurrent, total, callback) {
-        	$(".pagination").html('');
+        function setPage(pageCurrent, total,pageSize, callback) {
+        	
+        	$("#queryListResult .pagination").html('');
+        	$("#queryListResult .total").text($.format($.i18n.prop('query-result-total'),total));
         	if(total<1) return;
-        	$(".pagination").bootstrapPaginator({
+        	$("#queryListResult .pagination").bootstrapPaginator({
                 //设置版本号
                 bootstrapMajorVersion: 3,
                 // 显示第几页
@@ -75,7 +78,7 @@
                 numberOfPages: 5,
                 // 总页数
                 total: total,
-                pageSize:10,
+                pageSize:pageSize,
                 size:"mini",
                 alignment:"center",
                 itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
@@ -109,6 +112,7 @@
             }).on('hidden.bs.modal', function() {
                 $("#printerForm").data('bootstrapValidator').destroy();
                 $('#printerForm').data('bootstrapValidator', null);
+                $('#printerForm').clearForm(true);
                 bindPrinterForm();
             });
         }
@@ -210,7 +214,9 @@
         function bindSwitch(){
         	$('#statusSwitch').bootstrapSwitch({  
                 onColor:"success",  
-                offColor:"info",  
+                offColor:"info", 
+                onText:$.i18n.prop('printerForm-status-0'),
+                offText:$.i18n.prop('printerForm-status-1'),
                 size:"small",  
                   onSwitchChange:function(event,state){  
                     if(state==true){  
@@ -237,9 +243,9 @@
                 <td>{{$value.ip}}</td>
                 <td>{{$value.port}}</td>
                 {{if $value.status == '0'}}
-                  <td style="color: green">ON</td>
+                  <td style="color: green">{{convertPrinterStatus($value.status)}}</td>
                 {{else}} 
-                  <td style="color: red" >OFF</td>
+                  <td style="color: red" >{{convertPrinterStatus($value.status)}}</td>
                 {{/if}}
                 <td>{{$value.onLine}}</td>
                 <td>
@@ -251,6 +257,8 @@
 		{{/each}}
 
    </script>
+   
+   
 <body>
 
 <div>
@@ -265,7 +273,7 @@
 						<div class="form-group has-feedback">
 							<div class="input-group">
 								<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text" ></div>
-								<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="pleaseEnter" type="text" placeholder="请输入查询条件">
+								<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="pleaseEnter" type="text" placeholder="">
 							</div>
 						</div>
 						<button id="queryBtn" type="button" class="btn btn-warning">
@@ -299,8 +307,9 @@
 
 								<tfoot>
 									<tr>
-										<td colspan="9" align="center">
+										<td colspan="7" align="center">
 											<ul class="pagination"></ul>
+											<span class="total"></span>
 										</td>
 									</tr>
 

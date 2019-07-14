@@ -38,8 +38,8 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.deleteCategory(id)==1?true:false;
     }
 
-    public boolean deleteProducts(Map<String, Object> map) {
-        return categoryMapper.deleteCategories(map)==0?false:true;
+    public boolean deleteByIds(List<Integer> ids) {
+        return categoryMapper.deleteByIds(ids)==0?false:true;
     }
 
     public List<Category> getHaveProductCategories(Map<String, Object> map) {

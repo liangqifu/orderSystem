@@ -3,30 +3,24 @@
 <html>
 <%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
 <script type="text/javascript">
-	var searchFlag = false;
+	var pageNum = 1;
 	$(function() {
 		$("#addProductBtn").click(function() {
 	    	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/add");
 		});
 		/**分页查询**/
-		pageQuery(1);
+		queryListByPage();
 
 		/**为查询按钮添加点击事件,判断内容是否为空，进行模糊查询**/
 		$("#queryBtn").click(function() {
-			var queryText = $("#queryText").val();
-			if (queryText == "") {
-				searchFlag = false;
-			} else {
-				searchFlag = true;
-			}
-			pageQuery(1);
+			queryListByPage();
 		});
 		
 
 		/***为总单选按钮添加check 选择则全部选中**/
 		$("#allSelBox").click(function() {
 			var flg = this.checked;
-			$("#productData :checkbox").each(function() {
+			$("#queryListResult :checkbox").each(function() {
 				this.checked = flg;
 			});
 		});
@@ -43,228 +37,252 @@
 	});
 
 	/***分页查询构建表格***/
-	function pageQuery(pageno) {
+	function queryListByPage() {
 		var loadingIndex = null;
-
-		var jsonData = {
-			"pageno" : pageno
-		};
-		if (searchFlag == true) {
-			jsonData.queryText = $("#queryText").val();
-		}
-
-		$.ajax({
-			type : "POST",
-			url : "${APP_PATH}/product/getAll",
-			data : jsonData,
-			beforeSend : function() {
-				loadingIndex = layer.msg('处理中', {
-					icon : 16
-				});
-			},
-			success : function(result) {
-				layer.close(loadingIndex);
-				console.log(result.extend.pageInfo); ///测试，t
-				if (result.code == 100) {
-					// 局部刷新页面数据
-					var tableContent = "";
-					var pageContent = "";
-					var pages = result.extend.pageInfo.pages;
-					var products = result.extend.pageInfo.list;
-					$.each(
-						products,
-						function(i, product) {
-							tableContent += '<tr>';
-							tableContent += '  <td>'+ (i + 1) + '</td>';
-							tableContent += '  <td><input type="checkbox" name="productid" value="'+product.id+'" class="check_item"></td>';
-							tableContent += '  <td><img src="${APP_PATH}/img/product/'+product.pic+'" class="img-rounded" style="width:80px;height:45px"/></td>';
-							tableContent += '  <td>'+ product.name+ '</td>';
-							tableContent += '  <td>'+ product.price+ '</td>';
-							tableContent += '  <td>'+ product.inventory+ '</td>';
-							if (product.status == 1) {
-								tableContent += '  <td>上架</td>';
-							} else {
-								tableContent += '  <td>下架</td>';
-							}
-							tableContent += '  <td>'+ (product.category? product.category.name:"")+ '</td>';
-							tableContent += '  <td>';
-							tableContent += '     <button type="button" onclick="goUpdatePage('+ product.id+ ')" class="btn btn-primary btn-xs"><i class=" glyphicon glyphicon-pencil"></i></button>';
-							tableContent += '	  <button type="button" onclick="deleteProduct(' + product.id + ', \'' + product.name + '\')" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>';
-							tableContent += '  </td>';
-							tableContent += '</tr>';
-					});
-
-					if (pageno > 1) {
-						pageContent += '<li><a href="#" onclick="pageQuery('+ (pageno - 1) + ')">上一页</a></li>';
-					}
-
-					for (var i = 1; i <= pages; i++) {
-						if (i == pageno) {
-							pageContent += '<li class="active"><a  href="#">'+ i + '</a></li>';
-						} else {
-							pageContent += '<li ><a href="#" onclick="pageQuery('+ i + ')">' + i + '</a></li>';
-						}
-					}
-
-					if (pageno < pages) {
-						pageContent += '<li><a href="#" onclick="pageQuery('+ (pageno + 1) + ')">下一页</a></li>';
-					}
-
-					$("#productData").html(tableContent);
-					$(".pagination").html(pageContent);
-				} else {
-					layer.msg("菜品信息查询失败", {
-						time : 2000,
-						icon : 5,
-						shift : 6
-					}, function() {
-
-					});
-				}
-			}
-		});
+    	var params  = {pageNum:pageNum,name:$("#queryText").val()};
+    	$.ajax({
+            type : "POST",
+            dataType : 'json',
+            url  : "${APP_PATH}/product/queryListByPage",
+            data:JSON.stringify(params),
+            contentType:"application/json",
+            beforeSend : function(){
+                loadingIndex = layer.msg($.i18n.prop('layer-loading-msg'), {icon: 16});
+            },
+            success : function(result) {
+                layer.close(loadingIndex);
+                if ( result.code == 100 ) {
+                    var data = result.extend.data || [];
+                    $("#queryListResult tbody").html(template("tpl-data",$.extend(data, {imgPath:result.extend.imgPath})));
+                    $("#queryListResult tbody").on('click','.edit',function(){
+                    	var data = JSON.parse($(this).attr('item'));
+                    	$("#printerForm").autofill(data);
+                    	if(data.status == "0"){
+                            $("#statusSwitch").bootstrapSwitch('state',true,false);
+                        }else{
+                            $("#statusSwitch").bootstrapSwitch('state',false,true);
+                        }
+                     	//弹出模态框
+                        $("#printer_modal").modal({
+                            backdrop:"static"
+                        }).on('hidden.bs.modal', function() {
+                            $("#printerForm").data('bootstrapValidator').destroy();
+                            $('#printerForm').data('bootstrapValidator', null);
+                            $('#printerForm').clearForm(true);
+                            bindPrinterForm();
+                        });;
+                    }).on('click','.del',function(){
+                    	var params = JSON.parse($(this).attr('item'));
+                    	delProduct({id:params.id,name:params.name})
+                    });
+                    setPage(data.pageNum, data.total,data.pageSize, queryListByPage)
+                } else {
+                    layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
+                    });
+                }
+            }
+        });
+		
 	}
+	function setPage(pageCurrent, total,pageSize, callback) {
+    	
+    	$("#queryListResult .pagination").html('');
+    	$("#queryListResult .total").text($.format($.i18n.prop('query-result-total'),total));
+    	if(total<1) return;
+    	$("#queryListResult .pagination").bootstrapPaginator({
+            //设置版本号
+            bootstrapMajorVersion: 3,
+            // 显示第几页
+            currentPage: pageCurrent,
+            numberOfPages: 5,
+            // 总页数
+            total: total,
+            pageSize:pageSize,
+            size:"mini",
+            alignment:"center",
+            itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
+                switch (type) {
+                    case "first":
+                        return $.i18n.prop('bootstrap-paginator-first');
+                    case "prev":
+                        return $.i18n.prop('bootstrap-paginator-prev');
+                    case "next":
+                        return $.i18n.prop('bootstrap-paginator-next');
+                    case "last":
+                        return $.i18n.prop('bootstrap-paginator-last');
+                    case "page":
+                        return page;
+                }
+            },
+            //当单击操作按钮的时候, 执行该函数, 调用ajax渲染页面
+            onPageClicked: function (event,originalEvent,type,page) {
+                // 把当前点击的页码赋值给currentPage, 调用ajax,渲染页面
+                pageNum = page
+                callback && callback()
+            }
+        })
+    }
 	/**跳转到菜品修改页**/
 	function goUpdatePage(id) {
 		$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/edit?id=" + id)
 	}
+	
 	/***批量删除菜品信息***/
 	function deleteProducts() {
-		var checkedlength = $(".check_item:checked").length;
-		if (checkedlength == 0) {
-			layer.msg("请选择需要删除的菜品信息", {
-				time : 2000,
-				icon : 5,
-				shift : 6
-			}, function() {
-			});
-		} else {
-			layer.confirm("确认删除已选择的菜品信息, 是否继续", {
-				icon : 3,
-				title : '提示'
-			}, function(cindex) {
-				// 删除已选择的菜品信息
-				$.ajax({
-					type : "POST",
-					url : "${APP_PATH}/product/deleteBatch",
-					data : $("#productForm").serialize(),
-					success : function(result) {
-						if (result.code == 100) {
-							layer.msg("菜品信息删除成功", {
-								time : 2000,
-								icon : 6
-							}, function() {
-							});
-							pageQuery(1);
-						} else {
-							layer.msg("菜品信息删除失败", {
-								time : 2000,
-								icon : 5,
-								shift : 6
-							}, function() {
-							});
-						}
-					}
-				});
-
-				layer.close(cindex);
-			}, function(cindex) {
-				layer.close(cindex);
-			});
-		}
+		var params = [];
+    	$("#queryListResult .check_item:checked").each(function(i,e){
+    		params.push($(e).val())
+    	});
+    	if ( params.length > 0 ) {
+        	layer.confirm($.i18n.prop('layer-confirm-delete-choose-msg'), 
+        			{icon: 3, 
+        		    title:$.i18n.prop('layer-title'),
+        		      btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')]
+        	        }, 
+        	function(cindex){
+	                    $.ajax({
+	                        type : "POST",
+	                        dataType : 'json',
+	                        url  : "${APP_PATH}/product/deleteBatch",
+	                        data:JSON.stringify(params),
+	                        contentType:"application/json",
+	                        success : function(result) {
+	                        	layer.close(cindex);
+	                            if ( result.code == 100 ) {
+	                                layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){
+	                                	queryListByPage()
+	                                });
+	                            } else {
+	                                layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
+	                            }
+	                        }
+	                    });
+                
+            }, function(cindex){
+                layer.close(cindex);
+            });
+            
+        } else{
+        	layer.msg($.i18n.prop('layer-choose-delete-msg'), {time:2000, icon:5, shift:6}, function(){});
+        }
+    	
 	}
 	/**删除单个菜品信息**/
-	function deleteProduct(id, proName) {
-		layer.confirm("删除菜品信息【" + proName + "】, 是否继续", {
-			icon : 3,
-			title : '提示'
-		}, function(cindex) {
-			// 删除单个菜品信息
-			$.ajax({
-				type : "POST",
-				url : "${APP_PATH}/product/deleteOne",
-				data : {
-					id : id
-				},
-				success : function(result) {
-					if (result.code == 100) {
-						layer.msg("菜品信息删除成功", {
-							time : 2000,
-							icon : 6
-						}, function() {
-						});
-						pageQuery(1);
-					} else {
-						layer.msg("菜品信息删除失败", {
-							time : 2000,
-							icon : 5,
-							shift : 6
-						}, function() {
-						});
-					}
-				}
-			});
-			layer.close(cindex);
-		}, function(cindex) {
-			layer.close(cindex);
-		});
+	function delProduct(params) {
+		params.state ='1';
+    	layer.confirm($.format($.i18n.prop('layer-confirm-delete-msg'), params.name),  {
+    		icon: 3, 
+    		title:$.i18n.prop('layer-title'),
+    		btn: [$.i18n.prop('layer-ok'),$.i18n.prop('layer-cancel')] 
+    		}, function(cindex){
+            $.ajax({
+                type : "POST",
+                url  : "${APP_PATH}/product/update",
+                data : JSON.stringify(params),
+                contentType:"application/json",
+                success : function(result) {
+                    if ( result.code==100 ) {
+                        layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){
+                        	queryListByPage();
+                        });
+                    } else {
+                        layer.msg($.i18n.prop('delete-fail'), {time:2000, icon:5, shift:6}, function(){});
+                    }
+                }
+            });
+            layer.close(cindex);
+        }, function(cindex){
+            layer.close(cindex);
+        });
+    	
 	}
 </script>
+
+<script type="text/html"  id="tpl-data">
+
+		{{each list}}
+
+           	<tr>
+                <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
+                <td style="text-align: center;"><input type="checkbox" name="productid" value="{{$value.id}}" class="check_item"></td>
+                {{if $value.pic }}
+                   <td><img src="{{imgPath}}{{$value.pic}}" class="img-rounded" style="width:80px;height:45px"/></td>
+                {{else}} 
+                  <td><img src="/img/upload.png" class="img-rounded" style="width:80px;height:45px"/></td>
+                {{/if}}                
+                <td>{{$value.name}}</td>
+                <td style="text-align: right;">{{$value.price}}</td>
+                <td style="text-align: center;">{{convertProductStatus($value.status)}}</td>
+                <td>
+                  {{if $value.category }}
+                      {{$value.category.name }}
+                  {{/if}} 
+               </td>
+                <td>
+                   <button type="button" item='{{obj2Str($value)}}'  class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
+                   &nbsp;&nbsp;&nbsp;
+                   <button type="button" item='{{obj2Str($value)}}' class="btn btn-danger btn-xs del"><i class=" glyphicon glyphicon-remove"></i></button>
+                </td>
+            </tr>
+		{{/each}}
+
+   </script>
+   
 <body>
 	<div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<i class="glyphicon glyphicon-th"></i> 菜品列表
+					<i class="glyphicon glyphicon-th i18n" data-properties="product-panel-title" data-ptype="text" ></i>
 				</h3>
 			</div>
 			<div class="panel-body">
 				<form class="form-inline" role="form" style="float: left;">
 					<div class="form-group has-feedback">
 						<div class="input-group">
-							<div class="input-group-addon">查询条件</div>
-							<input id="queryText" class="form-control has-success"
-								type="text" placeholder="请输入查询条件">
+							<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text"></div>
+							<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="pleaseEnter" type="text" placeholder="">
 						</div>
 					</div>
 					<button id="queryBtn" type="button" class="btn btn-warning">
-						<i class="glyphicon glyphicon-search"></i> 查询
+						<i class="glyphicon glyphicon-search i18n" data-properties="btn-search" data-ptype="text"></i> 
 					</button>
 				</form>
 				<button type="button" class="btn btn-danger"
 					onclick="deleteProducts()" style="float: right; margin-left: 10px;">
-					<i class=" glyphicon glyphicon-remove"></i> 删除
+					<i class=" glyphicon glyphicon-remove i18n" data-properties="btn-delete" data-ptype="text" ></i>
 				</button>
 				<button id="addProductBtn" type="button"  class="btn btn-primary" style="float: right;">
-					<i class="glyphicon glyphicon-plus"></i> 新增
+					<i class="glyphicon glyphicon-plus i18n" data-properties="btn-add" data-ptype="text" ></i>
 				</button>
 				<br>
 				<hr style="clear: both;">
 				<div class="table-responsive">
-					<form id="productForm">
+					<form id="queryListResult">
 						<table class="table table-bordered">
 							<thead>
 								<tr>
-									<th width="30">#</th>
-									<th width="30"><input type="checkbox" id="allSelBox"></th>
-									<th width="45">菜品图片</th>
-									<th>菜品名称</th>
-									<th>菜品价格</th>
-									<th>菜品库存</th>
-									<th>菜品状态</th>
-									<th>菜品类别</th>
-									<th width="100">操作</th>
+							        <th style="width: 4%;text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
+									<th style="width:3% ;text-align: center;" ><input type="checkbox" id="allSelBox"></th>
+									<th style="width:10% ;text-align: center;" class="i18n" data-properties="product-pic" data-ptype="text"></th>
+									<th style="width:30% ;text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
+									<th style="width:6% ;text-align: center;" class="i18n" data-properties="product-price" data-ptype="text"></th>
+									<th style="width:5% ;text-align: center;" class="i18n" data-properties="product-status" data-ptype="text"></th>
+									<th style="width:10% ;text-align: center;" class="i18n" data-properties="product-category" data-ptype="text"></th>
+									<th style="width:10%" class="i18n" data-properties="thead-opt" data-ptype="text"></th>
+								
 								</tr>
 							</thead>
 
-							<tbody id="productData">
+							<tbody >
 
 							</tbody>
 
 							<tfoot>
 								<tr>
-									<td colspan="9" align="center">
+									<td colspan="8" align="center">
 										<ul class="pagination"></ul>
+										<span class="total"></span>
 									</td>
 								</tr>
 

@@ -18,9 +18,37 @@ $(function () {
     		return '';
     	}
     });
+    template.helper('convertOrderRound', function (val) {
+    	if(val && val !=''){
+    		return $.format($.i18n.prop('order-round'), val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    template.helper('convertOrderDrinks', function () {
+    	return $.i18n.prop('order-drinks-detail');
+    });
+    
     template.helper('formatDateTime', function (val) {
     	if(val && val !=''){
     		return jQuery.formatDateTime('yy-mm-dd hh:ii', new Date(val))
+    	}else{
+    		return '';
+    	}
+    });
+    
+    template.helper('convertProductStatus', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('product-status-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    template.helper('convertPrinterStatus', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('printerForm-status-'+val);
     	}else{
     		return '';
     	}

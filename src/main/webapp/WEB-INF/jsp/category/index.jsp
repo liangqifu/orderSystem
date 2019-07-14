@@ -126,7 +126,6 @@
         	var params = {
         			state:"0",
         			pageNum:pageNum,
-        			pageSize:pageSize,
         			name:$("#queryText").val(),
         			parentId:$("#queryBtn").attr("parentId")
         		};
@@ -171,15 +170,16 @@
                             }).on('hidden.bs.modal', function() {
                                 $("#categoryForm").data('bootstrapValidator').destroy();
                                 $('#categoryForm').data('bootstrapValidator', null);
+                                $('#categoryForm').clearForm(true);
                                 $("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
                             	bindCategoryForm();
                             	bindPictureFileInput(options);
-                            });;
+                            });
                         }).on('click','.del',function(){
                         	var params = JSON.parse($(this).attr('item'));
                         	delCategory(params)
                         });
-                        setPage(data.pageNum,data.total, pageQuery)
+                        setPage(data.pageNum,data.total,data.pageSize, pageQuery)
                     } else {
                         layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                         });
@@ -188,10 +188,11 @@
             });
         }
         
-        function setPage(pageCurrent, total, callback) {
-        	$(".pagination").html('');
+        function setPage(pageCurrent, total,pageSize, callback) {
+        	$("#categoryListForm .pagination").html('');
+        	$("#categoryListForm .total").text($.format($.i18n.prop('query-result-total'),total));
         	if(total<1) return;
-        	$(".pagination").bootstrapPaginator({
+        	$("#categoryListForm .pagination").bootstrapPaginator({
                 //设置版本号
                 bootstrapMajorVersion: 3,
                 // 显示第几页
@@ -199,7 +200,7 @@
                 numberOfPages: 5,
                 // 总页数
                 total: total,
-                pageSize:10,
+                pageSize:pageSize,
                 size:"mini",
                 alignment:"center",
                 itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
@@ -235,6 +236,13 @@
          	//弹出模态框
             $("#category_modal").modal({
                 backdrop:"static"
+            }).on('hidden.bs.modal', function() {
+                $("#categoryForm").data('bootstrapValidator').destroy();
+                $('#categoryForm').data('bootstrapValidator', null);
+                $('#categoryForm').clearForm(true);
+                $("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
+            	bindCategoryForm();
+            	bindPictureFileInput(options);
             });
         }
         /***批量删除菜品类别信息***/
@@ -243,7 +251,6 @@
         	$("#categoryListForm .check_item:checked").each(function(i,e){
         		params.push($(e).val())
         	});
-            var checkedlength = $(".check_item:checked").length;
             if ( params.length > 0 ) {
             	layer.confirm($.i18n.prop('layer-confirm-delete-choose-msg'), 
             			{icon: 3, 
@@ -478,8 +485,9 @@
 
 								<tfoot>
 									<tr>
-										<td colspan="9" align="center">
+										<td colspan="7" align="center">
 											<ul class="pagination"></ul>
+											<span class="total"></span>
 										</td>
 									</tr>
 

@@ -27,7 +27,7 @@ public interface ProductService {
 
     void removeProduct(Integer id);
 
-    void deleteProducts(Map<String, Object> map);
+    void deleteProducts(List<Integer> ids);
 
     boolean isTypeHaveProduct(Integer id);
 
@@ -44,5 +44,7 @@ public interface ProductService {
      * @return  返回类型的集合
      */
     List<Category> getCategory();
+    
+	void update(Product product);
 
 }

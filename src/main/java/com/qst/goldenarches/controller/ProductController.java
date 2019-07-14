@@ -14,11 +14,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,12 +37,13 @@ import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.service.ProductService;
 import com.qst.goldenarches.utils.ImageUtil;
 
+import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
 @RequestMapping("/product")
 public class ProductController {
-
+	private static Logger logger = LogManager.getLogger(ProductController.class);
     @Autowired
     private ProductService productService;
 
@@ -62,31 +67,15 @@ public class ProductController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("deleteBatch")
-    public Msg deleteBatch(Integer[] productid) {
+    @RequestMapping(value = "deleteBatch",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg deleteBatch(@RequestBody List<Integer> ids) {
         try {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("productids", productid);
-            productService.deleteProducts(map);
+            productService.deleteProducts(ids);
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error("批量删除商品异常", e);
            return Msg.fail();
-        }
-        return Msg.success();
-    }
-    /**
-     * 商品后台：单个商品删除
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("deleteOne")
-    public Msg deleteOne(Integer id, HttpServletRequest request){
-        try {
-            Product product =productService.getProductById(id);
-            ImageUtil.dropPic(request,"product",product.getPic());
-            productService.removeProduct(id);
-        }catch (Exception e){
-            return Msg.fail();
         }
         return Msg.success();
     }
@@ -190,20 +179,39 @@ public class ProductController {
     public String add(){
         return "product/add";
     }
-    /**
-     * 商品后台：分页查找
-     * 查询全部商品并分页显示
-     * @param pn 页码
-     * @return json数据 Msg
-     */
-    @ResponseBody
-    @RequestMapping("/getAll")
-    public Msg getAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn,String queryText){
-        PageHelper.startPage(pn,10);
-        List<Product> products =productService.getAll(queryText);
-        com.github.pagehelper.PageInfo<Product> productPageInfo =new com.github.pagehelper.PageInfo<Product>(products,5);
-        return Msg.success().add("pageInfo",productPageInfo);
+    
+	@ResponseBody
+    @RequestMapping(value= "/queryListByPage",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryProductListByPage(@RequestBody Product product,HttpServletRequest request){
+		try {
+			PageHelper.startPage(product.getPageNum(),product.getPageSize());
+			List<Product> list = productService.query(product);
+			com.github.pagehelper.PageInfo<Product> pageInfo = new com.github.pagehelper.PageInfo<Product>(list,product.getPageSize());
+			String imgPath = request.getServletContext().getContextPath()+"/img/product/";
+			return Msg.success().add("data",pageInfo).add("imgPath", imgPath);
+		} catch (Exception e) {
+			logger.error("分页查询菜品列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
     }
+	
+	@ResponseBody
+    @RequestMapping(value= "/update",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg update(@RequestBody Product product,HttpServletRequest request){
+		try {
+			productService.update(product);
+			return Msg.success();
+		} catch (Exception e) {
+			logger.error("更新菜品异常",e);
+			return Msg.fail(e.getMessage());
+		}
+    }
+	
+	
     /**
      * 商品后台：跳转方法
      * 跳转至商品显示主界面

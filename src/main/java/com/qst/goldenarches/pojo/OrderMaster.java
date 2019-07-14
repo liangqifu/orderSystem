@@ -44,6 +44,9 @@ public class OrderMaster extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="订单总金额")
     private Double totalAmount;
+	@ApiModelProperty(value="酒水总金额")
+    private Double drinksTotalAmount;
+	
 
     /**
      * 台号
@@ -259,6 +262,14 @@ public class OrderMaster extends BasePo implements Serializable {
 
 	public void setArea(Area area) {
 		this.area = area;
+	}
+
+	public Double getDrinksTotalAmount() {
+		return drinksTotalAmount;
+	}
+
+	public void setDrinksTotalAmount(Double drinksTotalAmount) {
+		this.drinksTotalAmount = drinksTotalAmount;
 	}
 
     

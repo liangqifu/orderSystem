@@ -99,4 +99,6 @@ public interface OrderService {
 	List<OrderMaster> queryOrderList(OrderMaster queryParam);
 
 	void orderSettlement(Integer orderId) throws BusException;
+
+	void delOrder(Map<String, Object> param) throws BusException;;
 }

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Msg;
@@ -55,7 +56,8 @@ public class OrderController {
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg queryOrderListByPage(@RequestBody OrderMaster queryParam){
 		 try {
-			PageHelper.startPage(queryParam.getPageNum(),queryParam.getPageSize());
+			 PageHelper.startPage(queryParam.getPageNum(),queryParam.getPageSize());
+			 queryParam.setState("0");
 			 List<OrderMaster> list = orderService.queryOrderList(queryParam);
 			 com.github.pagehelper.PageInfo<OrderMaster> orders = new com.github.pagehelper.PageInfo<OrderMaster>(list,queryParam.getPageSize());
 			 return Msg.success().add("data", orders);
@@ -79,24 +81,27 @@ public class OrderController {
 		}
     }
 	
-	
-    /**
-     * 订单后台：分页查找
-     * 查询全部订单并分页显示
-     * @param pn 页码
-     * @return json数据 Msg
-     */
-    @ResponseBody
-    @RequestMapping("/getAll")
-    public Msg getAll(@RequestParam(value = "pageno",defaultValue = "1") Integer pn, Integer orderIndex,String queryText){
-        Map<String,String> map =new HashMap<String, String>();
-        map.put("orderText", OrderByEnumUtil.getCondition(orderIndex));
-        map.put("queryText",queryText);
-        PageHelper.startPage(pn,10);
-        List<Order> orders =orderService.getAll(map);
-        com.github.pagehelper.PageInfo<Order> orderPageInfo =new com.github.pagehelper.PageInfo<Order>(orders,5);
-        return Msg.success().add("pageInfo",orderPageInfo);
+	@ResponseBody
+    @RequestMapping(value= "/delOrder",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg delOrder(@RequestBody Map<String, Object> param){
+		try {
+			 orderService.delOrder(param);
+			 return Msg.success();
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		} catch (Exception e) {
+			logger.error("查询餐区列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
     }
+	
+	
+	
+	
+    
 
     /***
      * 订单后台：跳转方法
@@ -108,76 +113,4 @@ public class OrderController {
         return "order/index";
     }
 
-
-
-    @RequestMapping("vipPay")
-    public String vipPay(String jsonStr, String phone, HttpServletRequest request, HttpServletResponse response){
-        try {
-            jsonStr =URLDecoder.decode(jsonStr, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Map<String,Integer> map = (Map<String, Integer>) com.alibaba.fastjson.JSON.parse(jsonStr);
-
-        //最开始先判断手机号是否是vip
-        if(orderService.judgeVip(phone) == true){
-            //再判断库存是否充足，返回库存不充足商品的name
-            String name = orderService.judgeInventory(map, phone);
-            if(name == "nomal"){
-                //再判断余额是否充足
-                if(orderService.judgeBalance(map, phone) == true){
-                    //再从会员卡中扣钱
-                    int vipIndex = orderService.updVIP(map,phone);
-                    //然后创建订单表，返回创建的订单表id
-                    int lastInsId = orderService.insOrder(map, phone);
-                    //最后创建订单详细表
-                    List<Detail> list = orderService.insDetail(map,phone,lastInsId);
-                    request.setAttribute("successDetail",list);
-                    return "forward:/paySuccess.jsp";
-                }else{
-                    //System.out.println("余额不足！");
-                    request.setAttribute("message","您余额不足！");
-                    return "forward:/product/show";
-                }
-            }else{
-                //System.out.println(name+"库存不足！");
-                request.setAttribute("message",name+"库存不足！");
-                return "forward:/product/show";
-            }
-        }else{
-            //System.out.println("用户不是vip！");
-            request.setAttribute("message","您不是vip！");
-            return "forward:/product/show";
-        }
-    }
-    @RequestMapping("userPay")
-    public String userPay(String jsonStr, String phone, HttpServletRequest request, HttpServletResponse response){
-        try {
-           jsonStr =URLDecoder.decode(jsonStr, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Map<String,Integer> map = (Map<String, Integer>) com.alibaba.fastjson.JSON.parse(jsonStr);
-
-        //先判断库存是否充足，返回库存不充足商品的name
-        String name = orderService.judgeInventory(map, phone);
-        if(name == "nomal"){
-            //弹出一个页面付款，获取其是否付款成功
-            int paySuccess = 1;//是否付款成功的参数，先定义为成功
-            if(paySuccess == 1){
-                //然后创建订单表，返回创建的订单表id
-                int lastInsId = orderService.insOrder(map, phone);
-                //最后创建订单详细表
-                List<Detail> list = orderService.insDetail(map,phone,lastInsId);
-                request.setAttribute("successDetail",list);
-                return "forward:/paySuccess.jsp";
-            }else{
-                request.setAttribute("message","付款失败！");
-                return "forward:/product/show";
-            }
-        }else{
-            request.setAttribute("message",name+"库存不足！");
-            return "forward:/product/show";
-        }
-    }
 }

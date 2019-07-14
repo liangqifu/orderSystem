@@ -66,15 +66,10 @@ public class CategoryController {
     @RequestMapping(value = "deleteBatch",method=RequestMethod.POST,
     	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg deleteBatch(@RequestBody Integer[] categoryid){
+    public Msg deleteBatch(@RequestBody List<Integer> ids){
         try {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("categoryids", categoryid);
-            if (!categoryService.deleteProducts(map)){
-                return Msg.fail();
-            }
+            categoryService.deleteByIds(ids);
         } catch (Exception e) {
-            e.printStackTrace();
             return Msg.fail();
         }
         return Msg.success();

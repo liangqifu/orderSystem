@@ -21,7 +21,7 @@ public interface CategoryMapper {
 
     int deleteCategory(Integer id);
 
-    int deleteCategories(Map<String, Object> map);
+    int deleteByIds(List<Integer> ids);
 
     List<Category> selectHaveProductCategories(Map<String, Object> map);
 

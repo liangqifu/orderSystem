@@ -5,7 +5,6 @@
 
 <script type="text/javascript">
 var pageNum = 1;
-var pageSize = 10;
 $(function () {
 	queryAreaList();
 	bindAreaForm();
@@ -25,6 +24,7 @@ $(function () {
             }).on('hidden.bs.modal', function() {
                 $("#areaForm").data('bootstrapValidator').destroy();
                 $('#areaForm').data('bootstrapValidator', null);
+                $('#areaForm').clearForm(true);
                 bindAreaForm();
             });
 	});
@@ -98,7 +98,7 @@ function getSettingInfo(){
 
 function queryAreaList() {
 	var loadingIndex = null;
-	var params  = JSON.stringify({state:"0",pageNum:pageNum,pageSize:pageSize,name:$("#queryText").val()});
+	var params  = JSON.stringify({state:"0",pageNum:pageNum,name:$("#queryText").val()});
 	$.ajax({
         type : "POST",
         dataType : 'json',
@@ -126,13 +126,14 @@ function queryAreaList() {
                     }).on('hidden.bs.modal', function() {
                         $("#areaForm").data('bootstrapValidator').destroy();
                         $('#areaForm').data('bootstrapValidator', null);
+                        $('#areaForm').clearForm(true);
                         bindAreaForm();
                     });
                 }).on('click','.del',function(){
                 	var params = {state:"1",id:$(this).attr('id'),name:$(this).attr('name')};
                 	delArea(params)
                 });
-                setPage(data.pageNum, data.total, queryAreaList)
+                setPage(data.pageNum, data.total, data.pageSize,queryAreaList)
             } else {
                 layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                 });
@@ -141,10 +142,11 @@ function queryAreaList() {
     });
 }
 
-function setPage(pageCurrent, total, callback) {
-	$(".pagination").html('');
+function setPage(pageCurrent, total,pageSize, callback) {
+	$("#areaListForm .pagination").html('');
+	$("#areaListForm .total").text($.format($.i18n.prop('query-result-total'),total));
 	if(total<1) return;
-	$(".pagination").bootstrapPaginator({
+	$("#areaListForm .pagination").bootstrapPaginator({
         //设置版本号
         bootstrapMajorVersion: 3,
         // 显示第几页
@@ -152,7 +154,7 @@ function setPage(pageCurrent, total, callback) {
         numberOfPages: 5,
         // 总页数
         total: total,
-        pageSize:10,
+        pageSize:pageSize,
         size:"mini",
         alignment:"center",
         itemTexts: function (type, page, current) {//设置显示的样式，默认是箭头
@@ -550,8 +552,9 @@ function bindSettingForm(){
 
 								<tfoot>
 									<tr>
-										<td colspan="9" align="center">
+										<td colspan="3" align="center">
 											<ul class="pagination"></ul>
+											<span class="total"></span>
 										</td>
 									</tr>
 
