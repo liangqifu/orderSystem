@@ -14,6 +14,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -22,7 +24,7 @@ import com.qst.goldenarches.service.PermissionService;
 
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {
-
+	private static Logger logger = LogManager.getLogger(AuthInterceptor.class);
 	@Autowired
 	private PermissionService permissionService;
 	
@@ -32,26 +34,35 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		// 获取用户的请求地址
 		String uri = request.getRequestURI();
 		String path = request.getSession().getServletContext().getContextPath();
-		//System.out.println(" AuthInterceptor path---------------------->"+path);
-		// 判断当前路径是否需要进行权限验证。
 		// 查询所有需要验证的路径集合
-		List<Permission> permissions = permissionService.getAllPermissions();
 		Set<String> uriSet = new HashSet<String>();
-		for ( Permission permission : permissions ) {
-			if ( permission.getUrl() != null && !"".equals(permission.getUrl()) ) {
-				uriSet.add(path + permission.getUrl());
+		try {
+			List<Permission> permissions = permissionService.getAllPermissions();
+			for ( Permission permission : permissions ) {
+				if ( permission.getUrl() != null && !"".equals(permission.getUrl()) ) {
+					uriSet.add(path + permission.getUrl());
+				}
 			}
+		} catch (Exception e) {
+			logger.error("preHandle 异常",e);
+			String context = path + "/admin/login";
+			response.getWriter().write("<script>window.top.location.href=\""+context+"\";</script>");
+			return false;
 		}
-		
 		if (uriSet.contains(uri) ) {
 			// 权限验证
 			// 判断当前用户是否拥有对应的权限
 			Set<String> authUriSet = (Set<String>)request.getSession().getAttribute("authUriSet");
-			if ( authUriSet.contains(uri) ) {
+			if(authUriSet == null) {
+				String context = path + "/admin/login";
+				response.getWriter().write("<script>window.top.location.href=\""+context+"\";</script>");
+				return false;
+			}
+			if (authUriSet.contains(uri) ) {
 				return true;
 			} else {
-				//需要 '/error'
-				response.sendRedirect(path + "/admin/error");
+				String context = path + "/admin/error";
+				response.getWriter().write("<script>window.top.location.href=\""+context+"\";</script>");
 				return false;
 			}
 		} else {

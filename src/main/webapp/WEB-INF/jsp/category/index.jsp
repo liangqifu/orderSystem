@@ -8,7 +8,6 @@
         var options={};
     	
         $(function () {
-        	debugger
         	var language = localStorage.currentLang;
         	if(!language || language == ''){
         		language = "zh_CN";
@@ -160,7 +159,6 @@
                         	            ]
                         		}
                         	}
-                        	$("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
                     		bindPictureFileInput($.extend(true,{},options,previewData));
                         	$("#category_modal").autofill(data);
                       		$("#category_modal #printid").selectpicker('val', data.printid);
@@ -171,7 +169,6 @@
                                 $("#categoryForm").data('bootstrapValidator').destroy();
                                 $('#categoryForm').data('bootstrapValidator', null);
                                 $('#categoryForm').clearForm(true);
-                                $("#picture").fileinput('clear').fileinput('destroy').fileinput('destroy').fileinput('destroy');
                             	bindCategoryForm();
                             	bindPictureFileInput(options);
                             });
@@ -228,7 +225,6 @@
         
        
         function goAddPage() {
-        	$("#picture").fileinput('clear').fileinput('clear').fileinput('destroy').fileinput('destroy');
     		bindPictureFileInput(options);
         	var parentId = $("#queryBtn").attr("parentId");
         	 $("#category_modal").autofill({id:"0",parentId:parentId,name:"",printid:"",state:'0'});

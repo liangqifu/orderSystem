@@ -32,4 +32,13 @@
         </where>
         ORDER BY create_time DESC
     </select>
+    <update id="updateAdmin" parameterType="com.qst.goldenarches.pojo.Admin">
+        update t_admin set 
+        <if test="password !=null and password !=''">
+           password=#{password},
+        </if>
+        account=#{account},
+        name=#{name}
+        where id=#{id}
+    </update>
 </mapper>

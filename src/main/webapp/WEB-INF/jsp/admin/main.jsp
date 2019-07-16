@@ -19,6 +19,11 @@
 	<link rel="stylesheet" href="${APP_PATH}/css/main.css">
 	
 	<script type="text/javascript" src="${APP_PATH}/jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.serializejson.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.form.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.template.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.formautofill.min.js"></script>
+	<script type="text/javascript" src="${APP_PATH}/jquery/jquery.formatDateTime.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrapValidator.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/bootstrap/js/bootstrap-select.min.js"></script>

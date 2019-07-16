@@ -21,10 +21,6 @@ public interface ProductService {
 
     Product getProductById(Integer id);
 
-    boolean editProductData(Product product);
-
-    boolean editProductPic(Product product);
-
     void removeProduct(Integer id);
 
     void deleteProducts(List<Integer> ids);
@@ -45,6 +41,6 @@ public interface ProductService {
      */
     List<Category> getCategory();
     
-	void update(Product product);
+    int update(Product product);
 
 }

@@ -49,6 +49,7 @@ import com.qst.goldenarches.vo.OrderNeedServiceVo;
 @Service
 public class OrderServiceImpl implements OrderService {
 	private static Logger logger = LogManager.getLogger(OrderServiceImpl.class);
+	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -193,9 +194,57 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderMaster createOrderMaster(OrderMaster order) {
-		order.setOrderNo(OrderNoUtil.getOrderNoByUUID());
+		order.setOrderNo(this.getOrderNo());
+		Setting setting = settingMapper.getSettingInfo();
+		if(setting != null) {
+			double adultTotalAmount = 0l;
+			double childTotalAmount = 0l;
+			Integer adult = order.getAdult();
+			Integer child = order.getChild();
+			String orderType = order.getOrderType();
+			if("1".equals(orderType)) {//午餐
+				if(adult != null) {
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
+				}
+				if(child != null) {
+					childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
+				}
+			}else {//晚餐
+				if(adult != null) {
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
+				}
+				if(child != null) {
+					childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
+				}
+			}
+			double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
+			BigDecimal b = new BigDecimal(totalAmount);
+			totalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			order.setTotalAmount(totalAmount);
+		}
 		orderMasterMapper.insertSelective(order);
 		return order;
+	}
+	
+	private String getOrderNo() {
+		String result = "";
+		String dateStr = simpleDateFormat.format(new Date());
+		String maxOrderNo = orderMasterMapper.queryMaxOrderNo(dateStr);
+		if(StringUtils.isEmpty(maxOrderNo)) {
+			result = "0001";
+		}else {
+			Integer code = Integer.valueOf(maxOrderNo)+1;
+			if(code<10) {
+				result = "000"+String.valueOf(code);
+			} else if (code>=10 && code<100) {
+				result = "00"+String.valueOf(code);
+			}else if (code>=100) {
+				result = "0"+String.valueOf(code);
+			}else {
+				result =String.valueOf(code);
+			}
+		}
+		return dateStr+result;
 	}
 
 
@@ -253,17 +302,16 @@ public class OrderServiceImpl implements OrderService {
 		Integer maxNum = orderRoundMapper.getMaxNumByOrderId(orderRound.getOrderId());
 		orderRound.setNum(maxNum +1);
 		
-		int roundId =  orderRoundMapper.insert(orderRound);
-		orderRound.setId(roundId);
-		if(roundId == 0) {
+		int ret =  orderRoundMapper.insert(orderRound);
+		if(ret == 0) {
 			throw new BusException("保存数据失败");
 		}
 		for (OrderDetail orderDetail : orderRound.getOrderDetails()) {
 			orderDetail.setDetailType("2");
 			orderDetail.setOrderId(orderMsater.getOrderId());
-			orderDetail.setRoundId(roundId);
+			orderDetail.setRoundId(orderRound.getId());
 		}
-		int ret = orderDetailMapper.insertBatch(orderRound.getOrderDetails());
+		ret = orderDetailMapper.insertBatch(orderRound.getOrderDetails());
 		if(ret == 0) {
 			throw new BusException("保存数据失败");
 		}
@@ -325,6 +373,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 		OrderRound param = new OrderRound();
 		param.setState("0");
+		param.setOrderId(orderId);
 		List<OrderRound> orderRounds = orderRoundMapper.query(param);
 		orderMaster.setOrderRounds(orderRounds);
 		return orderMaster;
@@ -372,10 +421,12 @@ public class OrderServiceImpl implements OrderService {
 					}
 				}
 				double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
-				
+				if(totalAmount == 0) {
+					totalAmount = orderMaster.getTotalAmount()==null?0l:orderMaster.getTotalAmount();
+				}
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("orderId", order.getOrderId());
-				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmount(param);
+				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmountByOrderId(param);
 				OrderMaster record = new OrderMaster();
 				if(orderDetailTotalAmount != null) {
 					record.setDrinksTotalAmount(orderDetailTotalAmount);

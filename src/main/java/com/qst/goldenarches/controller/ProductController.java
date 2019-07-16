@@ -7,9 +7,7 @@
 package com.qst.goldenarches.controller;
 
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,9 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +33,6 @@ import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.service.ProductService;
 import com.qst.goldenarches.utils.ImageUtil;
 
-import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
@@ -79,106 +74,39 @@ public class ProductController {
         }
         return Msg.success();
     }
-    /**
-     * 商品后台：商品图片修改
-     * @param request
-     * @return
-     */
+    
     @ResponseBody
-    @RequestMapping(value="doUpdateProductPic",method=RequestMethod.POST,
-    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doUpdateProductPic(HttpServletRequest request){
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        MultipartFile mFile = multipartRequest.getFile("pic");
-        String img = ImageUtil.upload(request,"product",mFile);
-        if (!StringUtils.isEmpty(img)){
-            Product product =  productService.getProductById(Integer.parseInt(request.getParameter("id")));
-            if(product !=null) {
-            	String imgName=product.getPic();
-                if (!StringUtils.isEmpty(imgName)){
-                    ImageUtil.dropPic(request,"product",imgName);
-                }
-                try {
-                	product.setPic(img);
-                    boolean flag=productService.editProductPic(product);
-                    if(flag){
-                        return Msg.success();
-                    }
-                }catch (Exception e){
-                	ImageUtil.dropPic(request,"product",img);
-                    return  Msg.fail();
-                }
-            }
-            
-        }
-        return Msg.fail();
+    @RequestMapping(value= "save",method=RequestMethod.POST,
+    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg save(Product product,HttpServletRequest request){
+    	 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+         MultipartFile mFile = multipartRequest.getFile("picture");
+         if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
+             String img = ImageUtil.upload(request,"product",mFile);
+             if (!StringUtils.isEmpty(img)) {
+            	 product.setPic(img);
+             }
+         }
+    	 try {
+			if(product.getId()>0) {
+				if(!StringUtils.isEmpty(product.getPic())) {
+					Product productDB = productService.getProductById(product.getId());
+					if(!StringUtils.isEmpty(productDB.getPic())) {
+						ImageUtil.dropPic(request,"product",productDB.getPic());
+					}
+				}
+				productService.update(product);
+				return Msg.success();
+			 }else {
+				productService.addProduct(product);
+				return Msg.success();
+			 }
+		} catch (Exception e) {
+			logger.error("save product 异常",e);
+			return Msg.fail(e.getMessage());
+		}
     }
-    /**
-     * 商品后台：商品数据修改
-     * @param product
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("doUpdateProductData")
-    public Msg doUpdateProductData(Product product){
-        boolean flag =productService.editProductData(product);
-        if (flag){
-            return Msg.success();
-        }
-        return Msg.fail();
-    }
-    /**
-     * 商品后台：跳转方法
-     * 跳转至商品商品修改界面,并回显
-     * @return 页面地址 product/add
-     */
-    @RequestMapping("edit")
-    public String goEdit(Integer id, Model model){
-        Product product =productService.getProductById(id);
-        //将原节点数据传递
-        model.addAttribute("product", product);
-        return "product/edit";
-    }
-    /**
-     * 商品后台：商品添加方法
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "doAdd", method = RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg doAdd(HttpServletRequest request){
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        MultipartFile mFile = multipartRequest.getFile("pic");
-        Product product =new Product();
-        product.setName(request.getParameter("name"));
-        product.setPrice(Double.parseDouble(request.getParameter("price")));
-        product.setInventory(Integer.parseInt(request.getParameter("inventory")));
-        product.setStatus(Integer.parseInt(request.getParameter("status")));
-        product.setCid(Integer.parseInt(request.getParameter("cid")));
-        if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
-            String img = ImageUtil.upload(request,"product",mFile);
-            if (!StringUtils.isEmpty(img)) {
-                product.setPic(img);
-            }
-        }
-        try {
-            boolean flag =productService.addProduct(product);
-            if (flag){
-                return Msg.success();
-            }else return Msg.fail();
-        }catch (Exception e){
-            e.printStackTrace();
-            return Msg.fail().add("msg","服务器异常");
-        }
-    }
-    /**
-     * 商品后台：跳转方法
-     * 跳转至商品商品添加
-     * @return 页面地址 product/add
-     */
-    @RequestMapping("/add")
-    public String add(){
-        return "product/add";
-    }
+    
     
 	@ResponseBody
     @RequestMapping(value= "/queryListByPage",method=RequestMethod.POST,

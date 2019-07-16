@@ -43,14 +43,6 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.selectProductById(id);
     }
 
-    public boolean editProductData(Product product) {
-        return productMapper.updateBySelective(product)==1?true:false;
-    }
-
-    public boolean editProductPic(Product product) {
-        return productMapper.updateBySelective(product)==1?true:false;
-    }
-
     public void removeProduct(Integer id) {
         productMapper.deleteProductById(id);
     }
@@ -105,8 +97,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
 	@Override
-	public void update(Product product) {
-		productMapper.updateBySelective(product);
+	public int update(Product product) {
+		return productMapper.updateBySelective(product);
 	}
 
 }

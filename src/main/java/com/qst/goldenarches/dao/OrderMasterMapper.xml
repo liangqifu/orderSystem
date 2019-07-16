@@ -235,4 +235,8 @@
       update_time = CURRENT_TIMESTAMP
     where order_id = #{orderId,jdbcType=INTEGER}
   </update>
+  <select id="queryMaxOrderNo" parameterType="java.lang.String" resultType="java.lang.String" >
+    SELECT SUBSTR(max(s.order_no),9, 4) as maxOrderNo from order_master s where SUBSTR(s.order_no,1, 8)=#{dateStr} 
+  </select>
+  
 </mapper>

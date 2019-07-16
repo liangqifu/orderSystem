@@ -168,7 +168,7 @@
                          $("#orderDetailModal").autofill(data);
                          $("#orderDetailModal #openTime").text(jQuery.formatDateTime('hh:ii', new Date(data.openTime)));
                          
-                         $("#orderDetailModal .left ul li").on('click',function(){
+                         $("#orderDetailModal .left ul li").off().on('click',function(){
                         	 $("#orderDetailModal .left ul li").removeClass('active');
                         	 $(this).addClass('active');
                         	 pageOrderDetailNum = 1;
@@ -301,6 +301,7 @@
                 <td style="text-align: right;">{{$value.productPrice}}</td>
                 <td style="text-align: right;">{{$value.productNumber}}</td>
                 <td>{{$value.categoryName}}</td>
+                <td style='white-space: nowrap;'>{{formatDateTime($value.createTime)}}</td>
             </tr>
 		{{/each}}
 
@@ -451,8 +452,9 @@
 														<th style="width: 5%; text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
 														<th style="width: 20%; text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
 														<th style="width: 8%; text-align: center;" class="i18n" data-properties="product-price" data-ptype="text"></th>
-														<th style="width: 8%; text-align: center;" class="i18n" data-properties="product-number" data-ptype="text"></th>
-														<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-name" data-ptype="text"></th>
+														<th style="width: 5%; text-align: center;" class="i18n" data-properties="product-number" data-ptype="text"></th>
+														<th style="width: 6%; text-align: center;" class="i18n" data-properties="category-name" data-ptype="text"></th>
+														<th style="width: 3%; text-align: center;" class="i18n" data-properties="order-detail-create-time" data-ptype="text"></th>
 													</tr>
 												</thead>
 
@@ -462,7 +464,7 @@
 
 												<tfoot>
 													<tr>
-														<td colspan="5" align="center">
+														<td colspan="6" align="center">
 															<ul class="pagination"></ul>
 															<span class="total"></span>
 														</td>

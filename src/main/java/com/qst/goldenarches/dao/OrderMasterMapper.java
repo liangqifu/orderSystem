@@ -2,6 +2,8 @@ package com.qst.goldenarches.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.qst.goldenarches.pojo.OrderMaster;
 
 public interface OrderMasterMapper {
@@ -20,6 +22,8 @@ public interface OrderMasterMapper {
 	List<OrderMaster> queryOrderList(OrderMaster queryParam);
 
 	int delete(Integer orderId);
+
+	String queryMaxOrderNo(@Param("dateStr")String dateStr);
 
 	
 }

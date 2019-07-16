@@ -44,7 +44,7 @@
     <if test="detailType !=null and detailType !='' ">
        and detail_type = #{detailType}
     </if>
-    order by create_time asc
+    order by create_time DESC
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -58,11 +58,11 @@
     <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into order_detail (detail_type, round_id, product_id, 
+    insert into order_detail (detail_type,order_id, round_id, product_id, 
       product_name, product_price, product_number, 
       category_id, category_name, state, 
       create_time, update_time)
-    values (#{detailType,jdbcType=VARCHAR},#{roundId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
+    values (#{detailType,jdbcType=VARCHAR},#{orderId,jdbcType=INTEGER},#{roundId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
       #{productName,jdbcType=VARCHAR}, #{productPrice,jdbcType=DOUBLE}, #{productNumber,jdbcType=INTEGER}, 
       #{categoryId,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, '0', 
       CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -73,7 +73,7 @@
         <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
 		      SELECT LAST_INSERT_ID()
 		 </selectKey>
-         insert into order_detail (detail_type, round_id, product_id, 
+         insert into order_detail (detail_type, order_id,round_id, product_id, 
 	      product_name, product_price, product_number, 
 	      category_id, category_name, state, 
 	      create_time, update_time)
@@ -81,6 +81,7 @@
           <foreach collection ="list" item="item" index= "index" separator =",">
               (
                #{item.detailType,jdbcType=VARCHAR},
+                #{item.orderId,jdbcType=INTEGER}, 
                #{item.roundId,jdbcType=INTEGER}, 
                #{item.productId,jdbcType=INTEGER}, 
                #{item.productName,jdbcType=VARCHAR},
@@ -101,6 +102,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="detailType != null">
         detail_type,
+      </if>
+      <if test="orderId != null">
+        order_id,
       </if>
       <if test="roundId != null">
         round_id,
@@ -130,6 +134,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="detailType != null">
         #{detailType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
       </if>
       <if test="roundId != null">
         #{roundId,jdbcType=INTEGER},

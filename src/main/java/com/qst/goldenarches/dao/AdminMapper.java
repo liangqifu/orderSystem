@@ -84,6 +84,5 @@ public interface AdminMapper {
      * 更新管理员信息
      * @param admin
      */
-    @Update("UPDATE t_admin SET name =#{name},password =#{password} WHERE id =#{id}")
     void updateAdmin(Admin admin);
 }

@@ -36,7 +36,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 		
 		if ( loginAdmin == null ) {
 			String path = session.getServletContext().getContextPath();
-			response.sendRedirect(path + "/admin/login");
+			String context = path + "/admin/login";
+			response.getWriter().write("<script>window.top.location.href=\""+context+"\";</script>");
 			return false;	
 		} else {
 			return true;

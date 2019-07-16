@@ -14,12 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,21 +32,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
+import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Admin;
+import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.pojo.Permission;
 import com.qst.goldenarches.pojo.Role;
+import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.service.AdminService;
 import com.qst.goldenarches.service.PermissionService;
 import com.qst.goldenarches.service.RoleService;
+import com.qst.goldenarches.vo.SignInVo;
 
+import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 
 @ApiIgnore
 @Controller
 @RequestMapping("admin")
 public class AdminController {
-
+	private static Logger logger = LogManager.getLogger(AdminController.class);
     @Autowired
     private AdminService adminService;
 
@@ -52,6 +63,18 @@ public class AdminController {
     private PermissionService permissionService;
 
 
+	@ResponseBody
+    @RequestMapping(value= "/{id}/info",method=RequestMethod.GET,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg getAdminInfo(@PathVariable("id") Integer id){
+		try {
+			Admin admin = adminService.getAdminById(id);
+			return Msg.success().add("data", admin);
+		} catch (Exception e) {
+			logger.error("获取管理信息失败", e);
+			return Msg.fail("获取管理信息失败");
+		}
+    }
     /**
      * 跳转到错误页面(权限不足)
      * @return
@@ -157,14 +180,18 @@ public class AdminController {
              return Msg.fail();
         }
     }
+    
+   
     /**
      * 实现用户修改业务逻辑
      * @param admin
      * @return
      */
     @ResponseBody
-    @RequestMapping("/doEdit")
-    public Msg update(HttpSession session, Admin admin ) {
+    @RequestMapping(value= "update",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg update(@RequestBody Admin admin, HttpSession session) {
         try {
             Admin sessionAdmin =(Admin) session.getAttribute("loginAdmin");
             if(sessionAdmin.getId()==admin.getId()){
@@ -174,8 +201,7 @@ public class AdminController {
             }
             return Msg.fail();
         } catch ( Exception e ) {
-            e.printStackTrace();
-             return Msg.fail();
+            return Msg.fail();
         }
     }
 

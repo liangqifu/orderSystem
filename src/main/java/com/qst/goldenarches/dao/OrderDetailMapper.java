@@ -23,7 +23,7 @@ public interface OrderDetailMapper {
 
 	List<OrderDetail> queryOrderDetail(OrderDetail param);
 	
-	Double getTotalAmount(Map<String, Object> param);
+	Double getTotalAmountByOrderId(Map<String, Object> param);
 
 	int deleteByOrderId(Integer orderId);
 }

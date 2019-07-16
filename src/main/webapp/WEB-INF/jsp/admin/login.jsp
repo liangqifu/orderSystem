@@ -112,7 +112,7 @@
                 success : function(result) {
                 	layer.close(loadingIndex);
                     if ( result.code==100 ) {
-                    	window.location.href = "${APP_PATH}/admin/main";
+                    	window.top.location.href = "${APP_PATH}/admin/main";
                     } else {
                     	layer.msg($.i18n.prop('loginForm-account-or-pwd-Invalid'), {time:2000, icon:5, shift:6}, function(){});
                     }

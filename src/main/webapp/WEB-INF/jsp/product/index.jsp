@@ -4,19 +4,40 @@
 <%@include file="/WEB-INF/jsp/common/htmlBase.jsp"%>
 <script type="text/javascript">
 	var pageNum = 1;
+	var options={};
 	$(function() {
+		$("#queryForm .selectpicker").selectpicker({
+            noneSelectedText : $.i18n.prop('bootstrap-select-noneSelectedText')
+        });
+		
+		$("#resetBtn").click(function(){
+            $("#queryForm")[0].reset();
+            $("#queryForm #keyCid").selectpicker('val', '');
+        });
+		getCategoryList();
 		$("#addProductBtn").click(function() {
-	    	$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/add");
+			 bindPictureFileInput(options);
+        	 $("#productForm").autofill({id:"0",status:'1',state:'0'});
+         	//弹出模态框
+            $("#product_modal").modal({
+                backdrop:"static"
+            }).on('hidden.bs.modal', function() {
+                $("#productForm").data('bootstrapValidator').destroy();
+                $('#productForm').data('bootstrapValidator', null);
+                $('#productForm').clearForm(true);
+                bindProductForm();
+            	bindPictureFileInput(options);
+            });
 		});
 		/**分页查询**/
 		queryListByPage();
-
+		bindProductForm();
 		/**为查询按钮添加点击事件,判断内容是否为空，进行模糊查询**/
 		$("#queryBtn").click(function() {
+			pageNum=1;
 			queryListByPage();
 		});
 		
-
 		/***为总单选按钮添加check 选择则全部选中**/
 		$("#allSelBox").click(function() {
 			var flg = this.checked;
@@ -32,14 +53,62 @@
 			$("#allSelBox").prop("checked", flag);
 		});
 		
+		createTree();
+    	hideMenu();
+    	$("body").bind("mousedown", 
+             function(event){
+                if (!(event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+                    hideMenu();
+                }
+             }
+        ); 
+        $("#productForm #categoryName").bind("click",
+              function(){
+      	          showMenu();
+              }
+        );
 		
+        var language = localStorage.currentLang;
+    	if(!language || language == ''){
+    		language = "zh_CN";
+    	}
+    	options = {
+    			language: language,
+        		dropZoneTitle:$.i18n.prop('fileinput-dropZoneTitle'),
+        		dropZoneClickTitle:$.i18n.prop('fileinput-dropZoneClickTitle'),
+        		uploadUrl: '#',
+        		allowedFileExtensions: ['jpg','jpeg','gif','png'],
+        		showUpload: false,
+        		showRemove: false,
+        		showPreview: true,
+        		showCaption:false,
+        		showBrowse:false,
+        		hideThumbnailContent:false,
+        		dropZoneEnabled: true,
+        		browseOnZoneClick:true,
+        		autoReplace:true,
+        		maxFileSize: 1024,
+        		minFileCount: 1,
+        		maxFileCount: 1,
+        		allowedPreviewTypes: ['image'],
+                fileActionSettings:{
+                	showRemove:true,
+                	showUpload:false,   
+                	showDrag:false,
+                	showZoom:false
+                },
+                msgFilesTooMany: $.i18n.prop('fileinput-msgFilesTooMany'),
+                overwriteInitial:false,
+    	};
+    	 bindPictureFileInput(options);
 		
 	});
 
 	/***分页查询构建表格***/
 	function queryListByPage() {
 		var loadingIndex = null;
-    	var params  = {pageNum:pageNum,name:$("#queryText").val()};
+		var params = $("#queryForm").serializeJSON();
+    	params.pageNum=pageNum;
     	$.ajax({
             type : "POST",
             dataType : 'json',
@@ -56,20 +125,34 @@
                     $("#queryListResult tbody").html(template("tpl-data",$.extend(data, {imgPath:result.extend.imgPath})));
                     $("#queryListResult tbody").on('click','.edit',function(){
                     	var data = JSON.parse($(this).attr('item'));
-                    	$("#printerForm").autofill(data);
-                    	if(data.status == "0"){
-                            $("#statusSwitch").bootstrapSwitch('state',true,false);
-                        }else{
-                            $("#statusSwitch").bootstrapSwitch('state',false,true);
-                        }
+                    	var imgPath = $(this).attr('imgPath');
+                    	
+                    	var previewData = {};
+                    	if(data.pic){
+                    		previewData ={
+                    				initialPreviewFileType: 'image',
+                    	            initialPreviewAsData:true,
+                    	            initialPreview:[
+                    	            	imgPath+data.pic
+                    	            ],
+                    	            initialPreviewConfig:[
+                    	            	{type: "image", caption: data.pic,url:"${APP_PATH}/category/deletePic",key: 1}
+                    	            ]
+                    		}
+                    	}
+                		bindPictureFileInput($.extend(true,{},options,previewData));
+                		data.categoryName = data.category?data.category.name:"";
+                    	$("#productForm").autofill(data);
+                    	
                      	//弹出模态框
-                        $("#printer_modal").modal({
+                        $("#product_modal").modal({
                             backdrop:"static"
                         }).on('hidden.bs.modal', function() {
-                            $("#printerForm").data('bootstrapValidator').destroy();
-                            $('#printerForm').data('bootstrapValidator', null);
-                            $('#printerForm').clearForm(true);
-                            bindPrinterForm();
+                            $("#productForm").data('bootstrapValidator').destroy();
+                            $('#productForm').data('bootstrapValidator', null);
+                            $('#productForm').clearForm(true);                            
+                            bindProductForm();
+                            bindPictureFileInput(options);
                         });;
                     }).on('click','.del',function(){
                     	var params = JSON.parse($(this).attr('item'));
@@ -122,10 +205,6 @@
             }
         })
     }
-	/**跳转到菜品修改页**/
-	function goUpdatePage(id) {
-		$('#mainIframe', parent.document).attr('src',"${APP_PATH}/product/edit?id=" + id)
-	}
 	
 	/***批量删除菜品信息***/
 	function deleteProducts() {
@@ -196,6 +275,181 @@
         });
     	
 	}
+	
+	
+	//显示树
+    function showMenu() {
+         var cityObj = $("#productForm #categoryName");
+         var cityOffset = $("#productForm #categoryName").offset();
+         $("#productForm #menuContent").css({ left: cityOffset.left-273 + "px", top: cityOffset.top + cityObj.outerHeight()-30	 + "px" }).slideDown("fast");
+    }
+           
+     //隐藏树
+    function hideMenu() {
+         $("#productForm  #menuContent").fadeOut("fast");
+    }
+    
+    function createTree() {
+        var zTree; //用于保存创建的树节点
+        var setting = { //设置
+            check: {
+                enable: false,
+                dblClickExpand: false
+            },
+            view: {
+                showLine: true, //显示辅助线
+                dblClickExpand: false,
+            },
+            data:{
+            	simpleData: {
+    				enable: true,
+    				idKey : "id",
+    				pidKey : "pId"
+    			}
+            },
+            callback: {
+            	beforeClick:function (treeId, treeNode){
+            		 var check = (treeNode && !treeNode.isParent);
+            		 if (!check){
+            			 layer.alert($.i18n.prop('layer-please-select-sub'), { 
+         				    icon: 0,
+         				    title:$.i18n.prop('layer-title'),
+         					btn: [$.i18n.prop('layer-ok')],
+         				    closeBtn: 0 
+     				       },function(index){
+     				    	  layer.close(index);
+     				    	  $("#productForm #categoryName").val('');
+                 		      $("#productForm #cid").val('');
+     				       });
+            		 } 
+            		 return check;
+            	},
+                onClick: function(e, treeId, treeNode){
+                	if (treeNode) {
+                		$("#productForm #categoryName").val(treeNode.name);
+                		$("#productForm #cid").val(treeNode.id);
+                		hideMenu();
+                	}
+                    
+                }
+            },
+            async : {
+                enable : true,
+                url : "${APP_PATH}/category/getTreeListAll",
+                autoParam : [ "id" ],
+            }
+        };
+        $.ajax({ //请求数据,创建树
+        	url:"${APP_PATH}/category/getTreeListAll",
+			type:"GET",
+			dataType:"json",
+			cache:false,
+            success: function(data) {
+                zTree = $.fn.zTree.init($("#treeDemo"), setting, data); //创建树
+            },
+            error: function(data) {
+                
+            }
+        });
+    }
+    
+    function bindPictureFileInput(options) {
+    	 $("#pictureDIV").empty();
+    	$('<input id="picture"  name="picture" type="file"  >').appendTo("#pictureDIV");
+    	$("#picture").fileinput(options); 
+    }
+    
+    function bindProductForm (){
+    	$('#productForm').bootstrapValidator({
+        	// 默认的提示消息
+            message: 'This value is not valid',
+            // 表单框里右侧的icon
+            feedbackIcons: {
+              　　　　　　　　valid: 'glyphicon glyphicon-ok',
+              　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+              　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+            	name: {
+                    validators: {
+                        notEmpty: {
+                            message: $.i18n.prop('notEmpty')
+                        }
+                    }
+                },
+                price:{
+                	validators: {
+                        numeric:{
+                        	message: $.i18n.prop('numeric')
+                        },
+                        regexp: {
+                            regexp: /^\d+(\.\d{0,2})?$/,
+                            message: $.i18n.prop('number-greater-than-0')
+                        }
+                    }
+                },
+                categoryName:{
+                	validators: {
+                		notEmpty: {
+                            message: $.i18n.prop('notEmpty')
+                        }
+                    }
+                }
+                
+            }
+        }).on('success.form.bv', function(e) {//点击提交之后
+            // 终止重复提交
+            e.preventDefault();
+            // 得到form表单对象
+            var $form = $(e.target);
+            // 获得bootstrap验证对象
+            var bv = $form.data('bootstrapValidator');
+            var params  = $form.serializeJSON();
+            params.status = $form.find('input:radio[name="status"]:checked').val();
+            $.ajaxFileUpload({
+                url : $form.attr('action'), //用于文件上传的服务器端请求地址
+                fileElementId : 'picture',
+                type : 'POST',
+                data:params,
+                dataType : 'json',
+                success : function(result) {
+                	if ( result.code==100 ) {
+                    	$("#product_modal").modal('hide');
+                        layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
+                        	queryListByPage()
+                        });
+                    } else {
+                        layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
+                        });
+                    }
+                }
+            });
+        });
+    }
+    
+    function getCategoryList() {
+    	var params = {
+    			state:"0",
+    		};
+    	$.ajax({
+            type : "POST",
+            dataType : 'json',
+            url  : "${APP_PATH}/category/queryList",
+            data:JSON.stringify(params),
+            contentType:"application/json",
+            success:function (result) {
+            	 var data = result.extend.data || [];
+           		 var options = [];
+           	     options.push('<option value=""></option>') 
+           		 for(var i=0;i<data.length;i++){
+                    var item = data[i];
+　　　　　　　　　　　　      options.push('<option value="'+item.id+'">'+item.name+'</option>') 
+                 }
+                 $("#queryForm #keyCid").html(options.join(' ')); 
+      		     $("#queryForm #keyCid").selectpicker('refresh');
+            }
+        })
+    }
 </script>
 
 <script type="text/html"  id="tpl-data">
@@ -219,7 +473,7 @@
                   {{/if}} 
                </td>
                 <td>
-                   <button type="button" item='{{obj2Str($value)}}'  class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
+                   <button type="button" imgPath="{{imgPath}}" item='{{obj2Str($value)}}'  class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
                    &nbsp;&nbsp;&nbsp;
                    <button type="button" item='{{obj2Str($value)}}' class="btn btn-danger btn-xs del"><i class=" glyphicon glyphicon-remove"></i></button>
                 </td>
@@ -237,17 +491,40 @@
 				</h3>
 			</div>
 			<div class="panel-body">
-				<form class="form-inline" role="form" style="float: left;">
-					<div class="form-group has-feedback">
-						<div class="input-group">
-							<div class="input-group-addon i18n" data-properties="query-criteria" data-ptype="text"></div>
-							<input id="queryText" class="form-control has-success i18n" data-properties="pleaseEnter" data-ptype="pleaseEnter" type="text" placeholder="">
-						</div>
+				<form id="queryForm" class="form-horizontal" role="form" >
+					<div class="form-group">
+					      <label for="order" class="col-sm-1 control-label i18n" data-properties="product-name" data-ptype="text" ></label> 
+						  <div class="col-sm-2">
+						      <input autocomplete="off" type="text" class="form-control i18n" data-properties="pleaseEnter" data-ptype="placeholder"  name="name"  placeholder="">
+						  </div>
+						  <label for="status" class="col-sm-1 control-label i18n" data-properties="product-status" data-ptype="text" ></label> 
+						  <div class="col-sm-2">
+						      <select  class="form-control" id="status" name="status" >
+						         <option value="" class="i18n" data-properties="bootstrap-select-noneSelectedText" data-ptype="text"></option>
+						         <option value="1" class="i18n" data-properties="product-status-1" data-ptype="text"></option>
+						         <option value="0" class="i18n" data-properties="product-status-0" data-ptype="text"></option>
+						      </select>
+						  </div>
+						  <label for="keyCid" class="col-sm-1 control-label i18n" data-properties="product-category" data-ptype="text" ></label> 
+						  <div class="col-sm-2">
+						      <select data-size="6" id="keyCid" name="keyCid" class="form-control selectpicker"></select>
+						  </div>
 					</div>
-					<button id="queryBtn" type="button" class="btn btn-warning">
-						<i class="glyphicon glyphicon-search i18n" data-properties="btn-search" data-ptype="text"></i> 
-					</button>
+					
+					<div style="float: right; margin-right: 30%">
+					       <button id="queryBtn" type="button" class="btn btn-primary i18n" data-properties="btn-search" data-ptype="text"> 
+					           <i class="glyphicon glyphicon-search"></i>
+					        </button>
+					        <button id="resetBtn" type="button" class="btn btn-default">
+							   <i class="glyphicon glyphicon-refresh i18n" data-properties="btn-reset" data-ptype="text" ></i>
+						    </button>
+					</div>
+					
 				</form>
+	
+				
+				<br>
+				<hr style="clear: both;">
 				<button type="button" class="btn btn-danger"
 					onclick="deleteProducts()" style="float: right; margin-left: 10px;">
 					<i class=" glyphicon glyphicon-remove i18n" data-properties="btn-delete" data-ptype="text" ></i>
@@ -294,5 +571,62 @@
 		</div>
 	</div>
 
+    <div id="product_modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" style="width: 50%;">
+            <form class="modal-content form-horizontal" id="productForm" method="post" action="${APP_PATH}/product/save">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"></h4>
+                </div>
+                <div class="modal-body">
+                        <input type="hidden" name="id" class="form-control" id="id">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-3 control-label i18n" data-properties="product-name" data-ptype="text" ></label>
+                            <div class="col-sm-6">
+                                <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="" name="name" class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="name" placeholder="">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price" class="col-sm-3 control-label i18n" data-properties="product-price" data-ptype="text" ></label>
+                            <div class="col-sm-6">
+                                <input type="text" autocomplete="off"  name="price" class="form-control i18n" data-properties="pleaseEnter" data-ptype="placeholder" id="price" placeholder="">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+							<label for="status" class="col-sm-3 control-label i18n" data-properties="product-status" data-ptype="text" ></label> 
+							<div class="col-sm-6">
+							      <input type="radio" name="status" value="1" class="fl" id="status-1"  ><label for="status-1"  class="fl i18n" data-properties="product-status-1" data-ptype="text"></label>
+								  <input type="radio" name="status" value="0" class="fl ml20" id="status-0" ><label for="status-0" class="fl i18n" data-properties="product-status-0" data-ptype="text"></label>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="cid" class="col-sm-3 control-label i18n" data-properties="category-name" data-ptype="text" ></label> 
+							<div class="col-sm-6">
+							       <input type="hidden" id="cid" name="cid" ></input>
+                                   <input id="categoryName"  readonly="readonly"   name="categoryName" class="form-control i18n" data-properties="layer-please-select-sub" data-ptype="placeholder" type="text" placeholder="请选择分类"  />
+	                         </div>
+				     	</div>
+                        
+                        <div class="form-group">
+							<label for="picture"  class="col-sm-3 control-label i18n" data-properties="upload-pic" data-ptype="text" ></label> 
+							<div class="col-sm-8" id="pictureDIV">
+				                <input id="picture"  name="picture" type="file" >
+				            </div>
+					    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary i18n" data-properties="btn-save" data-ptype="text" ></button>
+                    <button type="button" class="btn btn-default i18n" data-properties="btn-close" data-ptype="text" data-dismiss="modal"></button>
+                </div>
+                <div id="menuContent" class="menuContent" style="displayx: none; position: absolute;z-index: 10000;width: 44%;height: 180px;  overflow-y: auto;background-color: #edf0f3;">
+				      <ul id="treeDemo" class="ztree" style="margin-top: 0; width:100%;">
+				      </ul>
+				</div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

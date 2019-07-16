@@ -35,12 +35,14 @@ public class Product extends BasePo {
      * 商品状态
      */
 	@ApiModelProperty(value="状态 1上架 0下架")
-    private Integer status;
+    private String status;
     /**
      * 商品类型id
      */
 	@ApiModelProperty(value="菜品类型ID")
     private Integer cid;
+	@ApiModelProperty(value="菜品类型ID",hidden=true)
+    private Integer keyCid;
     /**
      * 商品类型id
      */
@@ -86,11 +88,11 @@ public class Product extends BasePo {
         this.inventory = inventory;
     }
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -118,17 +120,13 @@ public class Product extends BasePo {
         this.pic = pic;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", inventory=" + inventory +
-                ", status=" + status +
-                ", cid=" + cid +
-                ", category=" + category +
-                ", pic='" + pic + '\'' +
-                '}';
-    }
+	public Integer getKeyCid() {
+		return keyCid;
+	}
+
+	public void setKeyCid(Integer keyCid) {
+		this.keyCid = keyCid;
+	}
+
+    
 }

@@ -103,7 +103,7 @@ public class AppController {
     public Msg queryProductListByPage(@RequestBody @Validated Product product,HttpServletRequest request){
 		try {
 			PageHelper.startPage(product.getPageNum(),product.getPageSize());
-			product.setStatus(1);
+			product.setStatus("1");
 			List<Product> list = productService.query(product);
 			com.github.pagehelper.PageInfo<Product> pageInfo = new com.github.pagehelper.PageInfo<Product>(list,product.getPageSize());
 			String imgPath = request.getServletContext().getContextPath()+"/img/product/";

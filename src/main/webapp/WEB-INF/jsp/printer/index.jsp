@@ -50,7 +50,7 @@
                                 $('#printerForm').data('bootstrapValidator', null);
                                 $('#printerForm').clearForm(true);
                                 bindPrinterForm();
-                            });;
+                            });
                         }).on('click','.del',function(){
                         	var params = JSON.parse($(this).attr('item'));
                         	delPrinter(params)
