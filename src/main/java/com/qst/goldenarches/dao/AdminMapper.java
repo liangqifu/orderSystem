@@ -6,14 +6,13 @@
  */
 package com.qst.goldenarches.dao;
 
-import com.qst.goldenarches.pojo.Admin;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+
+import com.qst.goldenarches.pojo.Admin;
 
 public interface AdminMapper {
     /**
@@ -24,12 +23,6 @@ public interface AdminMapper {
     @Select("SELECT * FROM t_admin WHERE account=#{account} AND password =#{password}")
     Admin selectAdminByAdmin(Admin admin);
 
-    /***
-     * 根据管理员名模糊查询，所有符合的管理员
-     * @param queryText 管理员名，可以为null
-     * @return
-     */
-    List<Admin> selectAllAdmin(@Param("queryText") String queryText);
 
     /**
      * 根据账号查询admin
@@ -50,7 +43,7 @@ public interface AdminMapper {
      * 根据id 删除
      * @param map
      */
-    void deleteAdmins(Map<String, Object> map);
+    void deleteAdmins(List<Integer> ids);
 
     /**
      * 根据id查询Admin
@@ -85,4 +78,6 @@ public interface AdminMapper {
      * @param admin
      */
     void updateAdmin(Admin admin);
+
+	List<Admin> query(Admin admin);
 }

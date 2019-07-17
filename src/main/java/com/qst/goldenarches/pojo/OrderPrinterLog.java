@@ -59,7 +59,7 @@ public class OrderPrinterLog extends BasePo implements Serializable {
 	@ApiModelProperty(value="打印失败原因",hidden = true)
 	private String msg;
 
-	@ApiModelProperty(value="打印类型：1菜品打印 2酒水打印 3服务打印")
+	@ApiModelProperty(value="打印类型：1菜品打印 2酒水打印 3服务打印 4通知付款打印")
 	private String pinterType;
     private static final long serialVersionUID = 1L;
 

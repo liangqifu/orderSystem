@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,29 +22,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
-import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Admin;
-import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.pojo.Permission;
 import com.qst.goldenarches.pojo.Role;
-import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.service.AdminService;
 import com.qst.goldenarches.service.PermissionService;
 import com.qst.goldenarches.service.RoleService;
-import com.qst.goldenarches.vo.SignInVo;
 
-import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 
 @ApiIgnore
@@ -164,21 +156,21 @@ public class AdminController {
      * @param adminid
      * @return
      */
+    
     @ResponseBody
-    @RequestMapping("/deletes")
-    public Msg deletes( Integer[] adminid ) {
+    @RequestMapping(value = "deleteBatch",method=RequestMethod.POST,
+    	    consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg deleteBatch(@RequestBody List<Integer> ids) {
         try {
-            if (adminid.length>0){
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("adminids", adminid);
-                adminService.removeAdmins(map);
-                return Msg.success();
-            }
-            return  Msg.fail();
-        } catch ( Exception e ) {
-            e.printStackTrace();
-             return Msg.fail();
+        	if(!CollectionUtils.isEmpty(ids)) {
+        		adminService.removeAdmins(ids);
+        	}
+        } catch (Exception e) {
+           logger.error("根据id删除管理员异常", e);
+           return Msg.fail();
         }
+        return Msg.success();
     }
     
    
@@ -271,29 +263,23 @@ public class AdminController {
         return "admin/add";
     }
 
-    /**
-     *
-     * @param pn
-     * @param pagesize
-     * @param queryText
-     * @return
-     */
     @ResponseBody
-    @RequestMapping("/pageQuery")
-    public Msg pageQuery( @RequestParam(value = "pageno",defaultValue = "1") Integer pn,
-                          @RequestParam(value = "pagesize",defaultValue = "10")Integer pagesize , String queryText) {
-        try {
-            PageHelper.startPage(pn,pagesize);
-            List<Admin> admins =adminService.getAllAdmin(queryText);
-
-            com.github.pagehelper.PageInfo<Admin> adminPageInfo =
-                    new com.github.pagehelper.PageInfo<Admin>(admins,5);
-            return Msg.success().add("pageInfo",adminPageInfo);
-        } catch ( Exception e ) {
-            e.printStackTrace();
-             return Msg.fail();
-        }
+    @RequestMapping(value= "/queryListByPage",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryListByPage(@RequestBody Admin admin){
+		try {
+			PageHelper.startPage(admin.getPageNum(),admin.getPageSize());
+			List<Admin> admins = adminService.query(admin);
+	        com.github.pagehelper.PageInfo<Admin> adminPageInfo = new com.github.pagehelper.PageInfo<Admin>(admins,admin.getPageSize());
+			return Msg.success().add("data",adminPageInfo);
+		} catch (Exception e) {
+			logger.error("分页查询列表异常",e);
+			return Msg.fail(e.getMessage());
+		}
     }
+    
+    
     /**
      * 页面跳转
      * 管理员列表主界面

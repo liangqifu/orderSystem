@@ -140,8 +140,8 @@ public class AppController {
 			BeanUtils.copyProperties(updateVo, order);
 			orderService.updateOrderMaster(order);
 		} catch (Exception e) {
-			logger.error("午餐/晚餐确认失败", e);
-			 return Msg.fail("午餐/晚餐确认失败");
+			logger.error("更新订单设置信息失败", e);
+			 return Msg.fail("更新订单设置信息失败");
 		}
         return Msg.success();
     }
@@ -196,6 +196,23 @@ public class AppController {
 		}catch (Exception e) {
 			logger.error("需要服务接口失败", e);
 			return Msg.fail("失败");
+		}
+        return Msg.success();
+    }
+	
+	@ApiOperation(value="通知付款",response=Msg.class,produces="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/notifyPay",method=RequestMethod.POST,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg notifyPay(@RequestParam Integer orderId){
+		try {
+		    orderService.notifyPay(orderId);
+		}catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("通知付款失败", e);
+			return Msg.fail("通知付款失败");
 		}
         return Msg.success();
     }

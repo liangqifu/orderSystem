@@ -19,12 +19,6 @@ public interface AdminService {
      */
     Admin login(Admin admin);
 
-    /**
-     * 获取所有管理员列表
-     * @param queryText
-     * @return
-     */
-    List<Admin> getAllAdmin(String queryText);
 
     /**
      * 检验账号的唯一性
@@ -43,7 +37,7 @@ public interface AdminService {
      * 根据id删除管理员
      * @param map
      */
-    void removeAdmins(Map<String, Object> map);
+    void removeAdmins(List<Integer> ids);
 
     /**
      * 根据id获取
@@ -76,4 +70,6 @@ public interface AdminService {
      * @param admin
      */
     void editAdmin(Admin admin);
+
+	List<Admin> query(Admin admin);
 }

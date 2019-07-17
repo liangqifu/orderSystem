@@ -100,5 +100,7 @@ public interface OrderService {
 
 	void orderSettlement(Integer orderId) throws BusException;
 
-	void delOrder(Map<String, Object> param) throws BusException;;
+	void delOrder(Map<String, Object> param) throws BusException;
+
+	void notifyPay(Integer orderId)throws BusException;
 }

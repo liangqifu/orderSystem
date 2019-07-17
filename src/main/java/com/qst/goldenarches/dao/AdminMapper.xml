@@ -7,9 +7,9 @@
             (#{adminId},#{roleId})
         </foreach>
     </insert>
-    <delete id="deleteAdmins">
+    <delete id="deleteAdmins" parameterType="java.util.List" >
         DELETE FROM t_admin WHERE id IN
-        <foreach collection="adminids" item="adminid" open="(" close=")" separator=",">
+        <foreach collection="list" item="adminid" open="(" close=")" separator=",">
             #{adminid}
         </foreach>
     </delete>
@@ -23,11 +23,11 @@
             #{roleId}
         </foreach>
     </delete>
-    <select id="selectAllAdmin" resultType="admin">
+    <select id="query" resultType="com.qst.goldenarches.pojo.Admin" parameterType="com.qst.goldenarches.pojo.Admin">
         SELECT * FROM t_admin
         <where>
-            <if test="queryText!=null">
-                name LIKE CONCAT('%',#{queryText},'%')
+            <if test="searchKey!=null and searchKey !='' ">
+                name LIKE CONCAT('%',#{searchKey},'%')
             </if>
         </where>
         ORDER BY create_time DESC

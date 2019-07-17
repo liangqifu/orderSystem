@@ -6,7 +6,7 @@
  */
 package com.qst.goldenarches.pojo;
 
-public class Admin {
+public class Admin extends BasePo {
 
     /**
      * 管理员id

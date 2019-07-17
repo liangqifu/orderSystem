@@ -477,4 +477,34 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusException(e);
 		}
 	}
+
+
+	@Override
+	@Transactional(rollbackFor = {BusException.class,Exception.class} )
+	public void notifyPay(Integer orderId) throws BusException {
+		OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+		if(orderMaster == null) {
+			throw new BusException("订单数据不存在");
+		}
+		
+		OrderMaster param = new OrderMaster();
+		param.setOrderId(orderId);
+		param.setStatus("1");
+		orderMasterMapper.updateByPrimaryKeySelective(orderMaster);
+		
+		OrderPrinterLog printerLog = new OrderPrinterLog();
+		printerLog.setOrderId(orderMaster.getOrderId());
+		printerLog.setContent(JSON.toJSONString(orderMaster));
+		printerLog.setPinterType("3");
+		printerLog.setStatus("0");
+		int ret = orderPrinterLogMapper.insert(printerLog);
+		if(ret > 0) {
+			try {
+				EventStorage.getInstance().putEvent(printerLog);
+			} catch (InterruptedException e) {
+				logger.error("notifyPay存放异常",e);
+			}
+		}
+		
+	}
 }

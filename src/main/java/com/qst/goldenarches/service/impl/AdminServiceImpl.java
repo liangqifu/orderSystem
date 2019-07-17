@@ -26,9 +26,6 @@ public class AdminServiceImpl implements AdminService {
         return adminMapper.selectAdminByAdmin(admin);
     }
 
-    public List<Admin> getAllAdmin(String queryText) {
-        return adminMapper.selectAllAdmin(queryText);
-    }
 
     public boolean validateAccountUnique(String account) {
         return adminMapper.selectAdminByAccount(account)==null?true:false;
@@ -38,8 +35,8 @@ public class AdminServiceImpl implements AdminService {
         adminMapper.insertAdmin(admin);
     }
 
-    public void removeAdmins(Map<String, Object> map) {
-        adminMapper.deleteAdmins(map);
+    public void removeAdmins(List<Integer> ids) {
+        adminMapper.deleteAdmins(ids);
     }
 
     public Admin getAdminById(Integer id) {
@@ -60,4 +57,9 @@ public class AdminServiceImpl implements AdminService {
     public void editAdmin(Admin admin) {
         adminMapper.updateAdmin(admin);
     }
+
+	@Override
+	public List<Admin> query(Admin admin) {
+		return adminMapper.query(admin);
+	}
 }
