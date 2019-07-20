@@ -213,7 +213,7 @@ public class AppController {
         return Msg.success();
     }
 	
-	@ApiOperation(value="通知付款",response=Msg.class,produces="application/json;charset=UTF-8")
+	@ApiOperation(value="通知付款",notes="PS:如果后台返回状态码code为102，则表示该订单已通知付款,提示不要重复点击,100=成功，200=失败",response=Msg.class,produces="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/order/notifyPay",method=RequestMethod.POST,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -221,8 +221,8 @@ public class AppController {
 		try {
 		    orderService.notifyPay(orderId);
 		}catch (BusException e) {
-			logger.error(e.getMessage(), e);
-			return Msg.fail(e.getMessage());
+			logger.error(e.getErrorMsg(), e);
+			return Msg.fail(102,e.getErrorMsg());
 		}catch (Exception e) {
 			logger.error("通知付款失败", e);
 			return Msg.fail("通知付款失败");

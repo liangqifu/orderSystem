@@ -394,9 +394,15 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional(rollbackFor = {BusException.class, Exception.class})
 	public void updateOrderMaster(OrderMaster order) throws BusException {
 		if(!StringUtils.isEmpty(order.getTableNum())) {
-			int count = orderMasterMapper.checkTableNum(order.getTableNum());
-			if(count > 0) {
-				throw new  BusException(101, "台号已被占用，请重新输入台号");
+			OrderMaster orderMsater = orderMasterMapper.selectByPrimaryKey(order.getOrderId());
+			if(orderMsater == null) {
+				throw new BusException("订单主表数据不存在");
+			}
+			if(!orderMsater.getTableNum().equals(order.getTableNum())) {
+				int count = orderMasterMapper.checkTableNum(order.getTableNum());
+				if(count > 0) {
+					throw new  BusException(101, "台号已被占用，请重新输入台号");
+				}
 			}
 		}
 		orderMasterMapper.updateByPrimaryKeySelective(order);
@@ -497,7 +503,9 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMaster == null) {
 			throw new BusException("订单数据不存在");
 		}
-		
+		if("1".equals(orderMaster.getStatus())) {
+			throw new BusException(102,"订单已通知付款");
+		}
 		OrderMaster param = new OrderMaster();
 		param.setOrderId(orderId);
 		param.setStatus("1");
