@@ -44,6 +44,12 @@ public class Msg {
         result.setMsg(msg);
         return result;
     }
+    public static Msg fail(Integer code ,String msg){
+        Msg result =new Msg();
+        result.setCode(code);
+        result.setMsg(msg);
+        return result;
+    }
 
     public Msg add(String key,Object value){
         this.extend.put(key,value);

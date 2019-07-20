@@ -25,5 +25,7 @@ public interface OrderMasterMapper {
 
 	String queryMaxOrderNo(@Param("dateStr")String dateStr);
 
+	int checkTableNum(@Param("tableNum") String tableNum);
+
 	
 }

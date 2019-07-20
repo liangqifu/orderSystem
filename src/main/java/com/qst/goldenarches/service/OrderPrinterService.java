@@ -4,6 +4,6 @@ import com.qst.goldenarches.pojo.OrderPrinterLog;
 
 public interface OrderPrinterService {
 
-	void handelOrderPrinter(OrderPrinterLog orderPrinter);
+	void handelOrderPrinter(OrderPrinterLog orderPrinter) throws Exception;
 
 }

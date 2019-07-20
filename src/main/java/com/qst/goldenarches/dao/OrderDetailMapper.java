@@ -26,4 +26,6 @@ public interface OrderDetailMapper {
 	Double getTotalAmountByOrderId(Map<String, Object> param);
 
 	int deleteByOrderId(Integer orderId);
+	
+	List<OrderDetail> queryOrderDetailByGroupCid(List<Integer> detailIds);
 }

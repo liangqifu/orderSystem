@@ -49,7 +49,7 @@ public class OrderMaster extends BasePo implements Serializable {
 	
 
     /**
-     * 台号
+             * 台号
      */
 	@ApiModelProperty(value="台号")
 	@NotEmpty(message="台号不能为空")

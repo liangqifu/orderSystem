@@ -239,4 +239,8 @@
     SELECT SUBSTR(max(s.order_no),9, 4) as maxOrderNo from order_master s where SUBSTR(s.order_no,1, 8)=#{dateStr} 
   </select>
   
+  <select id="checkTableNum" parameterType="java.lang.String" resultType="java.lang.Integer" >
+    SELECT count(1) from order_master s where s.status in('0','1') and s.table_num=#{tableNum,jdbcType=VARCHAR} 
+  </select>
+  
 </mapper>

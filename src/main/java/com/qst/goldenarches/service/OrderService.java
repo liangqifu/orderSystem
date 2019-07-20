@@ -76,7 +76,7 @@ public interface OrderService {
      */
     public int updVIP(Map<String,Integer> map,String phone);
 
-    OrderMaster createOrderMaster(OrderMaster order);
+    OrderMaster createOrderMaster(OrderMaster order) throws BusException;;
 
 	void createOrderDrinks(List<OrderDetail> orderDetails) throws BusException;
 
@@ -88,7 +88,7 @@ public interface OrderService {
 
 	List<OrderDetail> queryOrderDetail(OrderDetail param);
 
-	void updateOrderMaster(OrderMaster order) throws Exception;
+	void updateOrderMaster(OrderMaster order) throws BusException;
 
 	/**
 	 * 更新订单总额
@@ -103,4 +103,6 @@ public interface OrderService {
 	void delOrder(Map<String, Object> param) throws BusException;
 
 	void notifyPay(Integer orderId)throws BusException;
+
+	void orderCancel(Integer orderId)throws BusException;
 }

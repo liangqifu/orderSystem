@@ -75,4 +75,11 @@
               </foreach>
         )
     </select>
+  
+    <select id="queryPrinterByCategoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+       SELECT s.printid,s.category_id FROM product_category s WHERE s.category_id=#{categoryId} GROUP BY s.printid,s.category_id
+    </select>
+    
+    
+    
 </mapper>

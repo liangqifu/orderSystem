@@ -193,7 +193,12 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public OrderMaster createOrderMaster(OrderMaster order) {
+	public OrderMaster createOrderMaster(OrderMaster order) throws BusException{
+		
+		int count = orderMasterMapper.checkTableNum(order.getTableNum());
+		if(count > 0) {
+			throw new  BusException(101, "台号已被占用，请重新输入台号");
+		}
 		order.setOrderNo(this.getOrderNo());
 		Setting setting = settingMapper.getSettingInfo();
 		if(setting != null) {
@@ -386,8 +391,14 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public void updateOrderMaster(OrderMaster order) throws Exception {
+	@Transactional(rollbackFor = {BusException.class, Exception.class})
+	public void updateOrderMaster(OrderMaster order) throws BusException {
+		if(!StringUtils.isEmpty(order.getTableNum())) {
+			int count = orderMasterMapper.checkTableNum(order.getTableNum());
+			if(count > 0) {
+				throw new  BusException(101, "台号已被占用，请重新输入台号");
+			}
+		}
 		orderMasterMapper.updateByPrimaryKeySelective(order);
 		//更新订单总额
 		this.updateTotalAmount(order);
@@ -490,12 +501,12 @@ public class OrderServiceImpl implements OrderService {
 		OrderMaster param = new OrderMaster();
 		param.setOrderId(orderId);
 		param.setStatus("1");
-		orderMasterMapper.updateByPrimaryKeySelective(orderMaster);
+		orderMasterMapper.updateByPrimaryKeySelective(param);
 		
 		OrderPrinterLog printerLog = new OrderPrinterLog();
 		printerLog.setOrderId(orderMaster.getOrderId());
 		printerLog.setContent(JSON.toJSONString(orderMaster));
-		printerLog.setPinterType("3");
+		printerLog.setPinterType("4");
 		printerLog.setStatus("0");
 		int ret = orderPrinterLogMapper.insert(printerLog);
 		if(ret > 0) {
@@ -506,5 +517,18 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 		
+	}
+
+
+	@Override
+	public void orderCancel(Integer orderId) throws BusException {
+		OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+		if(orderMaster == null) {
+			throw new BusException("订单数据不存在");
+		}
+		OrderMaster param = new OrderMaster();
+		param.setOrderId(orderId);
+		param.setStatus("3");
+		orderMasterMapper.updateByPrimaryKeySelective(param);
 	}
 }

@@ -33,9 +33,9 @@ public class OrderPrinterLog extends BasePo implements Serializable {
     private String content;
 
     /**
-     * 0未打印、1已打印
+     * 0未打印、1已打印 2打印失败
      */
-	@ApiModelProperty(value="0未打印、1已打印",hidden = true)
+	@ApiModelProperty(value="0未打印、1已打印，2打印失败",hidden = true)
     private String status;
     /**
             * 创建时间

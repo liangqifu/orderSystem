@@ -44,6 +44,28 @@
     <if test="detailType !=null and detailType !='' ">
        and detail_type = #{detailType}
     </if>
+    <if test="categoryId !=null  ">
+      and category_id = #{categoryId}
+    </if>
+    <if test="detailIds !=null and detailIds.size() > 0">
+      and detail_id IN
+        <foreach collection="detailIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </if>
+    order by create_time DESC
+  </select>
+  
+  <select id="queryOrderDetailByGroupCid" parameterType="java.util.List" resultMap="BaseResultMap">
+    select 
+       <include refid="Base_Column_List" />
+    from order_detail
+    where 
+       detail_id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    GROUP BY category_id
     order by create_time DESC
   </select>
   

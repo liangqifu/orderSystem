@@ -64,25 +64,32 @@ public class AppController {
     @RequestMapping(value= "/signin",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg signin(@RequestBody @Validated SignInVo vo,HttpServletRequest request){
+    public Msg signin(@RequestBody @Validated SignInVo vo){
 		try {
 			Setting setting = settingService.getSettingInfo();
 			if(setting == null) {
 				return Msg.fail("系统未授权App登录");
 			}
-			if(!vo.getPwd().equals(setting.getAppPwd())) {
-				return Msg.fail("登录密码不正确");
+			if("1".equals(vo.getType())) {
+				if(!vo.getPwd().equals(setting.getAppPwd())) {
+					return Msg.fail("登录密码不正确");
+				}
+			} else {
+				if(!vo.getPwd().equals(setting.getCtlAppPwd())) {
+					return Msg.fail("登录密码不正确");
+				}
 			}
 			Area area = new Area();
 			area.setState("0");
-			String imgPath = request.getServletContext().getContextPath()+"/img/category/";
-			return Msg.success().add("setting",setting)
-					.add("areas", areaService.query(area)).add("imgPath", imgPath);
+			return Msg.success().add("setting",setting).add("areas", areaService.query(area));
 		} catch (Exception e) {
 			logger.error("App登录异常",e);
 			return Msg.fail(e.getMessage());
 		}
     }
+	
+	
+	
 	@ApiOperation(value="根据父级分类id获取子分类",response=Setting.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "getCategorysByPid",method=RequestMethod.GET,
@@ -114,7 +121,7 @@ public class AppController {
 		}
     }
 	
-	@ApiOperation(value="午餐/晚餐确认,",response=OrderMaster.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ApiOperation(value="午餐/晚餐确认,",notes="PS:如果后台返回状态码code为101，则表示台号已被占用,100=成功，200=失败",response=OrderMaster.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/order/confirm",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -122,14 +129,17 @@ public class AppController {
     public Msg createOrderMaster(@RequestBody @Validated OrderMaster order){
 		try {
 			order = orderService.createOrderMaster(order);
+		} catch (BusException e) {
+			logger.error(e.getErrorMsg(), e);
+			return Msg.fail(e.getErrorCode(),e.getErrorMsg());
 		} catch (Exception e) {
 			logger.error("午餐/晚餐确认失败", e);
-			 return Msg.fail("午餐/晚餐确认失败");
+			return Msg.fail("午餐/晚餐确认失败");
 		}
         return Msg.success().add("data",order);
     }
 	
-	@ApiOperation(value="更新订单设置信息",response=Msg.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
+	@ApiOperation(value="更新订单设置信息",notes="PS:如果后台返回状态码code为101，则表示台号已被占用,100=成功，200=失败",response=Msg.class,produces="application/json;charset=UTF-8",consumes="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/order/update",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -139,6 +149,9 @@ public class AppController {
 			OrderMaster order= new OrderMaster(); 
 			BeanUtils.copyProperties(updateVo, order);
 			orderService.updateOrderMaster(order);
+		} catch (BusException e) {
+			logger.error(e.getErrorMsg(), e);
+			return Msg.fail(e.getErrorCode(),e.getErrorMsg());
 		} catch (Exception e) {
 			logger.error("更新订单设置信息失败", e);
 			 return Msg.fail("更新订单设置信息失败");
@@ -292,8 +305,25 @@ public class AppController {
 			logger.error(e.getMessage(), e);
 			return Msg.fail(e.getMessage());
 		} catch (Exception e) {
-			logger.error("获取餐区信息失败", e);
-			return Msg.fail("获取餐区信息失败");
+			logger.error("控制面板--订单确认结账失败", e);
+			return Msg.fail("控制面板--订单确认结账失败");
+		}
+    }
+	
+	@ApiOperation(value="控制面板--订单取消",response=Msg.class,produces="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/ctl/order/cancel",method=RequestMethod.POST,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg orderCancel(@RequestParam Integer orderId){
+		try {
+			orderService.orderCancel(orderId);
+			return Msg.success();
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		} catch (Exception e) {
+			logger.error("控制面板--订单确认取消失败", e);
+			return Msg.fail("控制面板--订单确认取消失败");
 		}
     }
 	
