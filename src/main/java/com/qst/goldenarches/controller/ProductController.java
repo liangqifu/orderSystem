@@ -79,6 +79,19 @@ public class ProductController {
     @RequestMapping(value= "save",method=RequestMethod.POST,
     produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Msg save(Product product,HttpServletRequest request){
+    	Product productDB = null;
+    	if(product.getId()>0) {
+    		productDB = productService.getProductById(product.getId());
+    		if(!productDB.getNo().equals(product.getNo())) {
+    			if(productService.checkNo(product)) {
+    				return Msg.fail(103,"菜品编号重复，请重新输入");
+    			}
+    		}
+    	}else {
+    		if(productService.checkNo(product)) {
+				return Msg.fail(103,"菜品编号重复，请重新输入");
+			}
+    	}
     	 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
          MultipartFile mFile = multipartRequest.getFile("picture");
          if (!StringUtils.isEmpty(mFile.getOriginalFilename())){
@@ -88,9 +101,9 @@ public class ProductController {
              }
          }
     	 try {
-			if(product.getId()>0) {
+			if(productDB !=null ) {
 				if(!StringUtils.isEmpty(product.getPic())) {
-					Product productDB = productService.getProductById(product.getId());
+					productDB = productService.getProductById(product.getId());
 					if(!StringUtils.isEmpty(productDB.getPic())) {
 						ImageUtil.dropPic(request,"product",productDB.getPic());
 					}

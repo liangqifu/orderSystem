@@ -4,6 +4,7 @@
     <resultMap id="baseProductMap" type="com.qst.goldenarches.pojo.Product">
         <id property="id" column="product_id"/>
         <result property="name" column="product_name"/>
+        <result property="no" column="product_no"/>
         <result property="price" column="product_price"/>
         <result property="inventory" column="product_inventory"/>
         <result property="status" column="product_status"/>
@@ -13,6 +14,7 @@
     <resultMap id="productMapWithType" type="com.qst.goldenarches.pojo.Product" >
         <id property="id" column="product_id"/>
         <result property="name" column="product_name"/>
+        <result property="no" column="product_no"/>
         <result property="price" column="product_price"/>
         <result property="inventory" column="product_inventory"/>
         <result property="status" column="product_status"/>
@@ -24,19 +26,22 @@
         </association>
     </resultMap>
     <sql id="Base_Column_List">
-        product_id,product_name,product_price,product_inventory,product_status,product_pic,category_id
+        product_id,product_name,product_no,product_price,product_inventory,product_status,product_pic,category_id
     </sql>
     <sql id="WithType_Column_List">
-        p.product_id,p.product_name,p.product_price,p.product_inventory,p.product_status,p.product_pic,ca.category_id,ca.category_name
+        p.product_id,p.product_name,p.product_no,p.product_price,p.product_inventory,p.product_status,p.product_pic,ca.category_id,ca.category_name
     </sql>
     <insert id="insertProduct">
-        INSERT INTO product_info(product_name,product_price,product_inventory,product_status,product_pic,category_id,create_time,update_time)
-        VALUES(#{name},#{price},#{inventory},#{status},#{pic},#{cid},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+        INSERT INTO product_info(product_name,product_no,product_price,product_inventory,product_status,product_pic,category_id,create_time,update_time)
+        VALUES(#{name},#{no},#{price},#{inventory},#{status},#{pic},#{cid},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
     </insert>
     <update id="updateBySelective" parameterType="com.qst.goldenarches.pojo.Product">
         UPDATE product_info SET 
         <if test="name !=null and name !='' ">
            product_name=#{name},
+        </if>
+        <if test="no !=null and no !='' ">
+           product_no=#{no},
         </if>
         <if test="price !=null ">
            product_price=#{price},
@@ -125,7 +130,13 @@
                and p.category_id = #{cid}
              </if>
         
-        ORDER BY p.product_id DESC
+        ORDER BY p.category_id ASC,char(p.product_no) ASC
     </select>
+    <select id="checkNo" resultType="java.lang.Integer" parameterType="com.qst.goldenarches.pojo.Product" >
+        SELECT count(1)
+        FROM product_info p
+        where p.state='0' and p.product_no=#{no} and p.category_id = #{cid}
+    </select>
+    
     
 </mapper>

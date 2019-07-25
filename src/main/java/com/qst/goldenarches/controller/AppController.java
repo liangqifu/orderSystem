@@ -97,6 +97,7 @@ public class AppController {
     public Msg queryListByPage(@RequestParam Integer parentId,HttpServletRequest request){
 		Category param = new Category();
 		param.setParentId(parentId);
+		param.setState("0");
         List<Category> categories = categoryService.query(param);
         String imgPath = request.getServletContext().getContextPath()+"/img/category/";
         return Msg.success().add("data",categories).add("imgPath", imgPath);

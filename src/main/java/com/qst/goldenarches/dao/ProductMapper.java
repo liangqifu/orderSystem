@@ -46,4 +46,6 @@ public interface ProductMapper {
 
 	List<Product> query(Product product);
 
+	int checkNo(Product product);
+
 }

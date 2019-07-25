@@ -370,6 +370,13 @@
               　　　　　　　　validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
+            	no: {
+                    validators: {
+                        notEmpty: {
+                            message: $.i18n.prop('notEmpty')
+                        }
+                    }
+                },
             	name: {
                     validators: {
                         notEmpty: {
@@ -418,7 +425,11 @@
                         layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                         	queryListByPage()
                         });
-                    } else {
+                    }if ( result.code==103 ) {
+                    	layer.msg($.i18n.prop('product-no-repeat'), {time:1500, icon:6}, function(){
+                           
+                    	});
+                    }else {
                         layer.msg($.i18n.prop('save-fail'), {time:2000, icon:5, shift:6}, function(){
                         });
                     }
@@ -463,7 +474,8 @@
                    <td><img src="{{imgPath}}{{$value.pic}}" class="img-rounded" style="width:80px;height:45px"/></td>
                 {{else}} 
                   <td><img src="/img/upload.png" class="img-rounded" style="width:80px;height:45px"/></td>
-                {{/if}}                
+                {{/if}}  
+                <td>{{$value.no}}</td>              
                 <td>{{$value.name}}</td>
                 <td style="text-align: right;">{{$value.price}}</td>
                 <td style="text-align: center;">{{convertProductStatus($value.status)}}</td>
@@ -542,7 +554,8 @@
 							        <th style="width: 4%;text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
 									<th style="width:3% ;text-align: center;" ><input type="checkbox" id="allSelBox"></th>
 									<th style="width:10% ;text-align: center;" class="i18n" data-properties="product-pic" data-ptype="text"></th>
-									<th style="width:30% ;text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
+									<th style="width:8% ;text-align: center;" class="i18n" data-properties="product-no" data-ptype="text"></th>
+									<th style="width:22% ;text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
 									<th style="width:6% ;text-align: center;" class="i18n" data-properties="product-price" data-ptype="text"></th>
 									<th style="width:5% ;text-align: center;" class="i18n" data-properties="product-status" data-ptype="text"></th>
 									<th style="width:10% ;text-align: center;" class="i18n" data-properties="product-category" data-ptype="text"></th>
@@ -580,6 +593,12 @@
                 </div>
                 <div class="modal-body">
                         <input type="hidden" name="id" class="form-control" id="id">
+                        <div class="form-group">
+                            <label for="no" class="col-sm-3 control-label i18n" data-properties="product-no" data-ptype="text" ></label>
+                            <div class="col-sm-6">
+                                <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="" name="no" class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="no" placeholder="">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-3 control-label i18n" data-properties="product-name" data-ptype="text" ></label>
                             <div class="col-sm-6">

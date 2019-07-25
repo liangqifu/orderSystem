@@ -21,6 +21,8 @@ public class Product extends BasePo {
      */
 	@ApiModelProperty(value="菜品名称")
     private String name;
+	@ApiModelProperty(value="菜品编号")
+    private String no;
     /**
      * 商品单价
      */
@@ -127,6 +129,16 @@ public class Product extends BasePo {
 	public void setKeyCid(Integer keyCid) {
 		this.keyCid = keyCid;
 	}
+
+	public String getNo() {
+		return no;
+	}
+
+	public void setNo(String no) {
+		this.no = no;
+	}
+	
+	
 
     
 }

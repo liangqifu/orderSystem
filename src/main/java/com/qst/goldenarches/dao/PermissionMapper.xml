@@ -11,5 +11,6 @@
 		      WHERE admin_id =#{id}
 	        )
         )
+        order by ord asc
     </select>
 </mapper>

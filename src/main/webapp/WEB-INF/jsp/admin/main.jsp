@@ -31,6 +31,7 @@
     <script type="text/javascript" src="${APP_PATH}/bootstrap/js/fileinput.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/jquery/jquery.i18n.properties.js"></script>
     <script type="text/javascript" src="${APP_PATH}/script/language.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/layer/layer.js"></script>
     
   </head>
 

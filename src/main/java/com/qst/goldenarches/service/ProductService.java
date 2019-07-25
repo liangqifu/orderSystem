@@ -42,5 +42,6 @@ public interface ProductService {
     List<Category> getCategory();
     
     int update(Product product);
+	boolean checkNo(Product product);
 
 }

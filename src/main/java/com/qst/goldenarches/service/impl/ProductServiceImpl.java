@@ -101,4 +101,10 @@ public class ProductServiceImpl implements ProductService {
 		return productMapper.updateBySelective(product);
 	}
 
+	@Override
+	public boolean checkNo(Product product) {
+		int count = productMapper.checkNo(product);
+		return count>0;
+	}
+
 }

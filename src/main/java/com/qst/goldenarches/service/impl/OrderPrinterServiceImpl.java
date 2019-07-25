@@ -1,9 +1,12 @@
 package com.qst.goldenarches.service.impl;
 
+import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.print.PrintService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +38,11 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 	public void handelOrderPrinter(OrderPrinterLog orderPrinter) throws Exception{
 		try {
 			logger.info(JSON.toJSONString(orderPrinter));
+			/*PrinterJob job  = PrinterJob.getPrinterJob();
+			PrintService[] s = job.lookupPrintServices();
+			for (int i = 0; i < s.length; i++) {
+				s[i].
+			}*/
 			//1菜品打印 2酒水打印 3服务打印 4通知付款打印
 			if("1".equals(orderPrinter.getPinterType())) {//
 				OrderRound orderRound =JSON.parseObject(orderPrinter.getContent(), OrderRound.class);

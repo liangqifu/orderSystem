@@ -358,6 +358,24 @@ public class AdminController {
             return Msg.fail();
         }
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/checkPwd",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg doLogin(@RequestBody Map<String, String> params, HttpSession session){
+    	String pwd = params.get("pwd");
+        Admin loginAdmin = (Admin)session.getAttribute("loginAdmin");
+        if (loginAdmin !=null){
+        	Admin adminDb =  adminService.getAdminById(loginAdmin.getId());
+        	if(!adminDb.getPassword().equals(pwd)) {
+        		return Msg.fail(104,"密码错误");
+        	}
+            return Msg.success();
+        }else {
+            return Msg.fail(105,"请重新登录");
+        }
+    }
     /**
      * 跳转到登陆页面
      * @return
