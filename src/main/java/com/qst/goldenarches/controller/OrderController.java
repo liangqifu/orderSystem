@@ -6,38 +6,32 @@
  */
 package com.qst.goldenarches.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Area;
-import com.qst.goldenarches.pojo.Detail;
 import com.qst.goldenarches.pojo.Msg;
-import com.qst.goldenarches.pojo.Order;
 import com.qst.goldenarches.pojo.OrderMaster;
 import com.qst.goldenarches.service.AreaService;
 import com.qst.goldenarches.service.OrderService;
-import com.qst.goldenarches.utils.OrderByEnumUtil;
 
-import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @Controller
@@ -108,9 +102,12 @@ public class OrderController {
      * 跳转到订单详情主页
      * @return
      */
-    @RequestMapping("index")
-    public String index(){
-        return "order/index";
+    @SuppressWarnings("unchecked")
+	@RequestMapping("index")
+    public String index(HttpServletRequest request,Model model){
+    	 Set<String> authUriSet = (Set<String>)request.getSession().getAttribute("authUriSet");
+    	 model.addAttribute("orderDel", authUriSet.contains("orderDel"));
+    	 return "order/index";
     }
 
 }

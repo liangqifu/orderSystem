@@ -17,7 +17,7 @@
 		getCategoryList();
 		$("#addProductBtn").click(function() {
 			 bindPictureFileInput(options);
-        	 $("#productForm").autofill({id:"0",status:'1',state:'0'});
+        	 $("#productForm").autofill({id:"0",status:'1',type:'2',state:'0'});
          	//弹出模态框
             $("#product_modal").modal({
                 backdrop:"static"
@@ -479,6 +479,7 @@
                 <td>{{$value.name}}</td>
                 <td style="text-align: right;">{{$value.price}}</td>
                 <td style="text-align: center;">{{convertProductStatus($value.status)}}</td>
+                <td style="text-align: center;">{{convertProductType($value.type)}}</td>
                 <td>
                   {{if $value.category }}
                       {{$value.category.name }}
@@ -558,6 +559,7 @@
 									<th style="width:22% ;text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
 									<th style="width:6% ;text-align: center;" class="i18n" data-properties="product-price" data-ptype="text"></th>
 									<th style="width:5% ;text-align: center;" class="i18n" data-properties="product-status" data-ptype="text"></th>
+									<th style="width:5% ;text-align: center;" class="i18n" data-properties="product-type" data-ptype="text"></th>
 									<th style="width:10% ;text-align: center;" class="i18n" data-properties="product-category" data-ptype="text"></th>
 									<th style="width:10%" class="i18n" data-properties="thead-opt" data-ptype="text"></th>
 								
@@ -618,6 +620,13 @@
 							<div class="col-sm-6">
 							      <input type="radio" name="status" value="1" class="fl" id="status-1"  ><label for="status-1"  class="fl i18n" data-properties="product-status-1" data-ptype="text"></label>
 								  <input type="radio" name="status" value="0" class="fl ml20" id="status-0" ><label for="status-0" class="fl i18n" data-properties="product-status-0" data-ptype="text"></label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="type" class="col-sm-3 control-label i18n" data-properties="product-type" data-ptype="text" ></label> 
+							<div class="col-sm-6">
+							      <input type="radio" name="type" value="2" class="fl" id="type-2"  ><label for="type-2"  class="fl i18n" data-properties="product-type-2" data-ptype="text"></label>
+								  <input type="radio" name="type" value="1" class="fl ml20" id="type-1" ><label for="type-1" class="fl i18n" data-properties="product-type-1" data-ptype="text"></label>
 							</div>
 						</div>
 						

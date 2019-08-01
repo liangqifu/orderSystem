@@ -5,6 +5,8 @@
     <id column="Setting_id" jdbcType="INTEGER" property="id" />
     <result column="Setting_app_pwd" jdbcType="VARCHAR" property="appPwd" />
     <result column="Setting_ctl_app_pwd" jdbcType="VARCHAR" property="ctlAppPwd" />
+    <result column="Setting_cancel_pwd" jdbcType="VARCHAR" property="cancelPwd" />
+    <result column="Setting_logo" jdbcType="VARCHAR" property="logo" />
     <result column="Setting_lunch_num" jdbcType="INTEGER" property="lunchNum" />
     <result column="Setting_dinner_num" jdbcType="INTEGER" property="dinnerNum" />
     <result column="Setting_wait_time" jdbcType="INTEGER" property="waitTime" />
@@ -19,6 +21,8 @@
     Setting.id as Setting_id, 
     Setting.app_pwd as Setting_app_pwd, 
     Setting.ctl_app_pwd as Setting_ctl_app_pwd, 
+    Setting.cancel_pwd as Setting_cancel_pwd, 
+    Setting.logo as Setting_logo, 
     Setting.lunch_num as Setting_lunch_num, 
     Setting.dinner_num as Setting_dinner_num, Setting.wait_time as Setting_wait_time,
     Setting.adult_lunch_price as Setting_adult_lunch_price,
@@ -51,10 +55,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into t_setting (app_pwd,ctl_app_pwd, lunch_num, dinner_num, 
+    insert into t_setting (app_pwd,ctl_app_pwd,cancel_pwd,logo, lunch_num, dinner_num, 
       wait_time,adult_lunch_price,adult_dinner_price,child_lunch_price,child_dinner_price)
     values (#{appPwd,jdbcType=VARCHAR},
       #{ctlAppPwd,jdbcType=VARCHAR},
+      #{cancelPwd,jdbcType=VARCHAR},
+      #{logo,jdbcType=VARCHAR},
       #{lunchNum,jdbcType=INTEGER}, 
       #{dinnerNum,jdbcType=INTEGER}, 
       #{waitTime,jdbcType=INTEGER},
@@ -75,6 +81,12 @@
       </if>
       <if test="ctlAppPwd != null">
         ctl_app_pwd,
+      </if>
+      <if test="cancelPwd != null">
+        cancel_pwd,
+      </if>
+      <if test="logo != null">
+        logo,
       </if>
       <if test="lunchNum != null">
         lunch_num,
@@ -107,6 +119,12 @@
       </if>
       <if test="ctlAppPwd != null">
         #{ctlAppPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelPwd != null">
+        #{cancelPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        #{logo,jdbcType=VARCHAR},
       </if>
       <if test="lunchNum != null">
         #{lunchNum,jdbcType=INTEGER},
@@ -143,6 +161,12 @@
       <if test="ctlAppPwd != null">
         ctl_app_pwd = #{ctlAppPwd,jdbcType=VARCHAR},
       </if>
+      <if test="cancelPwd != null">
+        cancel_pwd = #{cancelPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        logo = #{logo,jdbcType=VARCHAR},
+      </if>
       <if test="lunchNum != null">
         lunch_num = #{lunchNum,jdbcType=INTEGER},
       </if>
@@ -174,6 +198,8 @@
     update t_setting
     set app_pwd = #{appPwd,jdbcType=VARCHAR},
       ctl_app_pwd = #{ctlAppPwd,jdbcType=VARCHAR},
+      cancel_pwd = #{cancelPwd,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
       lunch_num = #{lunchNum,jdbcType=INTEGER},
       dinner_num = #{dinnerNum,jdbcType=INTEGER},
       wait_time = #{waitTime,jdbcType=INTEGER},

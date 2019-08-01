@@ -22,7 +22,7 @@ public class OrderDetailVo extends BasePo implements Serializable {
 	private static final long serialVersionUID = 397961460721652115L;
 
 	@ApiModelProperty(value="明细类型 1 酒水类明细 2菜品类明细 3服务类明细")
-	@NotNull(message="明细类型 1 酒水类明细 2菜品类明细 3服务类明细 不能为空")
+	@NotNull(message="明细类型 1 酒水类明细 2菜品类明细 3服务类明细不能为空")
 	private String detailType;
 
     /**

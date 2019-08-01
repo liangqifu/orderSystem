@@ -8,27 +8,42 @@
     <result column="category_name" jdbcType="VARCHAR" property="name" />
     <result column="printid" jdbcType="INTEGER" property="printid" />
     <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="print_type" jdbcType="VARCHAR" property="printType" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <association property="printer" column="printid" select="com.qst.goldenarches.dao.PrinterMapper.getById"/>
   </resultMap>
   
   <sql id="Base_Column_List">
-    category_id, parent_id, category_name,printid, state, pic
+    category_id, parent_id, category_name,printid, state, pic,print_type
   </sql>
    <sql id="baseCategoryList">
        category_id id,parent_id parentId,category_name name,printid,state, pic
    </sql>
     <insert id="insertCategory">
-        INSERT INTO product_category(parent_id,category_name,printid,pic,create_time,update_time)
-         VALUES (#{parentId},#{name},#{printid},#{pic},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+        INSERT INTO product_category(parent_id,category_name,printid,pic,print_type,create_time,update_time)
+         VALUES (#{parentId},#{name},#{printid},#{pic},#{printType},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
     </insert>
     <update id="updateCategory">
         UPDATE product_category SET 
-        category_name=#{name},
-        parent_id=#{parentId},
-        printid=#{printid},
-        state=#{state},
-        pic=#{pic},
+        <if test="name !=null and name !='' ">
+          category_name=#{name}, 
+        </if>
+        <if test="parentId != null ">
+          parent_id=#{parentId},
+        </if>
+        <if test="printid != null ">
+          printid=#{printid},
+        </if>
+        <if test="printType !=null and printType !='' ">
+          print_type=#{printType},
+        </if>
+        <if test="state !=null and state !='' ">
+           state=#{state},
+        </if>
+        <if test="pic !=null and pic !='' ">
+            pic=#{pic},
+        </if>
+        
         update_time=CURRENT_TIMESTAMP
         WHERE category_id=#{id}
     </update>

@@ -162,6 +162,13 @@
                     		bindPictureFileInput($.extend(true,{},options,previewData));
                         	$("#category_modal").autofill(data);
                       		$("#category_modal #printid").selectpicker('val', data.printid);
+                      		$("#category_modal #printType").selectpicker('val', data.printType);
+                      		if(data.parentId > 0){
+                      			$("#category_modal #printTypeDiv").show()
+                      		}else{
+                      			$("#category_modal #printTypeDiv").hide()
+                      		}
+                      		
                          	//弹出模态框
                             $("#category_modal").modal({
                                 backdrop:"static"
@@ -333,6 +340,7 @@
                          }
                          $("#category_modal #printid").html(options.join(' ')); 
                 		 $("#category_modal #printid").selectpicker('refresh');
+                		 
                      } else {
                          layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
                          });
@@ -408,6 +416,12 @@
                 {{/if}}
                 <td>{{$value.name}}</td>
                 <td>
+                 {{if $value.parentId > 0 }}
+                       {{convertCategoryPrintType($value.printType)}}
+                 {{/if}}
+
+                </td>
+                <td>
                   {{if $value.printer }}
                       {{$value.printer.name}}
                   {{/if}}
@@ -469,6 +483,7 @@
 										<th style="width: 5%;"><input type="checkbox" id="allSelBox"></th>
 										<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-pic" data-ptype="text" ></th>
 										<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-name" data-ptype="text" ></th>
+										<th style="width: 10%; text-align: center;" class="i18n" data-properties="category-printType" data-ptype="text" ></th>
 										<th style="width: 14%; text-align: center;" class="i18n" data-properties="category-printer" data-ptype="text" ></th>
 										<th style="width: 14%; text-align: center;" class="i18n" data-properties="thead-category-printer-ip" data-ptype="text" ></th>
 										<th style="width: 18%" class="i18n" data-properties="thead-opt" data-ptype="text" >操作</th>
@@ -518,6 +533,15 @@
                             <label for="printid" class="col-sm-3 control-label i18n" data-properties="category-printer" data-ptype="text" ></label>
                             <div class="col-sm-6">
                                 <select data-size="6" id="printid" name="printid" class="form-control selectpicker"></select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="printTypeDiv" >
+                            <label for="printType" class="col-sm-3 control-label i18n" data-properties="category-printType" data-ptype="text" ></label>
+                            <div class="col-sm-6">
+                                <select data-size="6" id="printType" name="printType" class="form-control selectpicker">
+                                   <option value="0" class="i18n" data-properties="category-printType-0" data-ptype="text" ></option>
+                                   <option value="1" class="i18n" data-properties="category-printType-1" data-ptype="text" ></option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">

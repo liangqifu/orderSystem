@@ -75,6 +75,11 @@
                         	var params = JSON.parse($(this).attr('item'));
                         	delOrder(params);
                         }); 
+                        if($("#orderDel").val() == 'true'){
+                        	$("#queryOrderListResult tbody").find('.del').show(); 
+                        }else{
+                        	$("#queryOrderListResult tbody").find('.del').hide();
+                        }
                         setPage(data.pageNum, data.total, data.pageSize,queryOrderListByPage)
                     } else {
                         layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
@@ -308,7 +313,7 @@
    </script>
    
   <body>
-
+        <input type="hidden" id="orderDel" value="${orderDel}" />
 	<div>
 		<div class="panel panel-default">
 			<div class="panel-heading">

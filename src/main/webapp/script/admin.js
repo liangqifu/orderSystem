@@ -46,6 +46,15 @@ $(function () {
     	}
     });
     
+    template.helper('convertProductType', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('product-type-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    
     template.helper('convertPrinterStatus', function (val) {
     	if(val && val !=''){
     		return $.i18n.prop('printerForm-status-'+val);
@@ -53,6 +62,16 @@ $(function () {
     		return '';
     	}
     });
+    
+    template.helper('convertCategoryPrintType', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('category-printType-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    
     
     
 });

@@ -55,6 +55,8 @@ public class Product extends BasePo {
      */
 	@ApiModelProperty(value="菜品图片")
     private String pic;
+	@ApiModelProperty(value="菜品类型 2全天菜 1午餐菜")
+	private String type;
     /**
      * 商品图片
      */
@@ -136,6 +138,14 @@ public class Product extends BasePo {
 
 	public void setNo(String no) {
 		this.no = no;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

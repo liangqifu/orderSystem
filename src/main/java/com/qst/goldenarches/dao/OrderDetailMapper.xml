@@ -32,17 +32,20 @@
     <include refid="Base_Column_List" />
     from order_detail
     where 1=1
-    <if test="orderId !=null and roundId ==null ">
-       and order_id = #{orderId} and round_id is null
+    <if test="orderId !=null">
+       and order_id = #{orderId}
     </if>
-    <if test="orderId !=null and roundId !=null ">
-       and order_id = #{orderId} and round_id=#{roundId}
+    <if test="orderId !=null ">
+       and order_id = #{orderId}
+    </if>
+    <if test="roundId !=null ">
+       and round_id=#{roundId}
     </if>
     <if test="state !=null and state !='' ">
        and state = #{state}
     </if>
     <if test="detailType !=null and detailType !='' ">
-       and detail_type = #{detailType}
+       and detail_type in (${detailType})
     </if>
     <if test="categoryId !=null  ">
       and category_id = #{categoryId}

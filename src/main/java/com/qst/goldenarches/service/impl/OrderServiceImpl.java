@@ -376,6 +376,35 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMaster == null) {
 			throw new BusException("订单数据不存在");
 		}
+		Double totalAmount = orderMaster.getTotalAmount();
+		Setting setting = settingMapper.getSettingInfo();
+		if(setting != null) {
+			double adultTotalAmount = 0l;
+			double childTotalAmount = 0l;
+			Integer adult = orderMaster.getAdult();
+			Integer child = orderMaster.getChild();
+			String orderType = orderMaster.getOrderType();
+			if("1".equals(orderType)) {//午餐
+				if(adult != null) {
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
+				}
+				if(child != null) {
+					childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
+				}
+			}else {//晚餐
+				if(adult != null) {
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
+				}
+				if(child != null) {
+					childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
+				}
+			}
+			double totalAmountSum = DigitalUtil.add(adultTotalAmount, childTotalAmount);
+			Double drinksTotalAmount=DigitalUtil.sub(totalAmount, totalAmountSum);
+			BigDecimal b = new BigDecimal(drinksTotalAmount);
+			drinksTotalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			orderMaster.setDrinksTotalAmount(drinksTotalAmount);
+		}
 		OrderRound param = new OrderRound();
 		param.setState("0");
 		param.setOrderId(orderId);

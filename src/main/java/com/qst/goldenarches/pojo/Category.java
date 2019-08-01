@@ -27,6 +27,9 @@ public class Category extends BasePo {
     private String name;
 	@ApiModelProperty(value="图片")
     private String pic;
+	@ApiModelProperty(value="打印类型 0批量 1单个")
+    private String printType;
+	
 
     public int getId() {
         return id;
@@ -86,5 +89,15 @@ public class Category extends BasePo {
 	public void setPic(String pic) {
 		this.pic = pic;
 	}
+
+	public String getPrintType() {
+		return printType;
+	}
+
+	public void setPrintType(String printType) {
+		this.printType = printType;
+	}
+	
+	
 	
 }

@@ -26,6 +26,18 @@
         <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
         <property name="user" value="${jdbc.user}"/>
         <property name="password" value="${jdbc.password}"/>
+        <!--定义所有连接测试都执行的测试语句。在使用连接测试的情况下这个显著提高测试速度。默认null-->
+        <property name="preferredTestQuery" value="select 1" />
+       <!--每6个小时检查所有连接池中的空闲连接，这个值一定要小于MySQL的wait_timeout时间，默认为8小时。默认0 -->
+        <property name="idleConnectionTestPeriod" value="120"/>
+        <!--初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。 Default: 3 -->
+        <property name="initialPoolSize" value="5"/>
+        <!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="60"/>
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="15" />
+        <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
+        <property name="testConnectionOnCheckin" value="true" />
     </bean>
 
     <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean" >

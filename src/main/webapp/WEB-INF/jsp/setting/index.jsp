@@ -57,6 +57,9 @@ function getSettingInfo(){
                 	}
                 	$("#id").val(settingInfo.id);
                 	$("#appPwd").val(settingInfo.appPwd);
+                	if(settingInfo.logo){
+                		$("#Img").attr('src','${APP_PATH}/img/logo/'+settingInfo.logo);
+                	}
                 	$("#lunchNum").slider({
                 		tooltip: 'always',
                 		value:settingInfo.lunchNum
@@ -360,15 +363,15 @@ function bindSettingForm(){
         var $form = $(e.target);
         // 获得bootstrap验证对象
         var bv = $form.data('bootstrapValidator');
-        var params  = JSON.stringify($form.serializeJSON());
-        $.ajax({
-            type : "POST",
+        var params  = $form.serializeJSON();
+        $.ajaxFileUpload({
+            url : $form.attr('action'), //用于文件上传的服务器端请求地址
+            fileElementId : 'logoPic',
+            type : 'POST',
+            data:params,
             dataType : 'json',
-            url  : $form.attr('action'),
-            data : params,
-            contentType:"application/json",
             success : function(result) {
-                if ( result.code==100 ) {
+            	if ( result.code==100 ) {
                     layer.msg($.i18n.prop('save-success'), {time:1500, icon:6}, function(){
                     	$("#settingForm").data('bootstrapValidator').destroy();
                         $('#settingForm').data('bootstrapValidator', null);
@@ -380,8 +383,37 @@ function bindSettingForm(){
                 }
             }
         });
+        
     });
 	
+}
+
+
+/**选择图片，马上预览**/
+function onupload(file) {
+    if(!file.files || !file.files[0]){
+        return;
+    }
+    //判断文件格式
+    var picInfo = $("#logoPic").val();
+    if(picInfo.length>0 && picInfo != '') {
+        var lodt = picInfo.lastIndexOf(".");
+        var ext = picInfo.substring(lodt + 1).toUpperCase();
+        if (ext != "PNG" && ext != "GIF"&&  ext != "JPG" && ext != "JPEG"){
+            layer.msg($.i18n.prop('picture-format-Invalid'), {time:2000, icon:5, shift:6}, function(){
+            });
+            var filePic =$("#logoPic");
+            filePic.after(filePic.clone().val(""));
+            filePic.remove();
+            return ;
+		}
+    }
+    //读取文件过程方法
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        document.getElementById('Img').src = e.target.result;
+    };
+    reader.readAsDataURL(file.files[0]);
 }
 
 </script>
@@ -413,7 +445,7 @@ function bindSettingForm(){
 		        <form id="settingForm" class="form-horizontal" method="post" action="${APP_PATH}/setting/save" >
 		            <input type="hidden" id="id" name="id" />
 					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label i18n" data-properties="settingForm-appPwd" data-ptype="text" ></label> 
+						<label for="appPwd" class="col-sm-2 control-label i18n" data-properties="settingForm-appPwd" data-ptype="text" ></label> 
 						<div class="col-sm-4">
 					     	<input type="text"
 							data-bv-notempty="true" data-bv-notempty-message=""
@@ -421,11 +453,18 @@ function bindSettingForm(){
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label i18n" data-properties="settingForm-ctlAppPwd" data-ptype="text"></label> 
+						<label for="ctlAppPwd" class="col-sm-2 control-label i18n" data-properties="settingForm-ctlAppPwd" data-ptype="text"></label> 
 						<div class="col-sm-4">
 					     	<input type="text"
 							data-bv-notempty="true" data-bv-notempty-message=""
 							class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty"  id="ctlAppPwd" style="width: 100%;" name="ctlAppPwd" placeholder="" autocomplete="off">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="cancelPwd" class="col-sm-2 control-label i18n" data-properties="settingForm-cancelPwd" data-ptype="text"></label> 
+						<div class="col-sm-4">
+					     	<input type="text" data-bv-notempty="true" data-bv-notempty-message=""
+							class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty"  id="cancelPwd" style="width: 100%;" name="cancelPwd" placeholder="" autocomplete="off" />
 						</div>
 					</div>
 					<div class="form-group">
@@ -490,12 +529,13 @@ function bindSettingForm(){
 						</div>
 					</div>
 					
-					<!-- <div class="form-group">
-                            <label for="servicePrinterId" class="col-sm-2 control-label">服务台打印机:</label>
+					<div class="form-group">
+                            <label for="logoPic" class="col-sm-2 control-label i18n" data-properties="settingForm-logo" data-ptype="text"></label>
                             <div class="col-sm-4">
-                                <select data-size="6" id="servicePrinterId" name="servicePrinterId" class="form-control selectpicker"></select>
-                            </div>
-                     </div> -->
+						        <input id="logoPic" name="logoPic" onchange="onupload(this)" type="file" accept="image/png, image/jpeg, image/gif, image/jpg" class="btn-info" /> 
+							    <img style="padding-top: 2px;" id="Img" width="376" height="213" src="${APP_PATH}/img/upload.png">
+						    </div>
+                     </div>
 					
 					<div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">

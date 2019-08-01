@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,11 +65,17 @@ public class AppController {
     @RequestMapping(value= "/signin",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg signin(@RequestBody @Validated SignInVo vo){
+    public Msg signin(@RequestBody @Validated SignInVo vo,HttpServletRequest request){
 		try {
 			Setting setting = settingService.getSettingInfo();
 			if(setting == null) {
 				return Msg.fail("系统未授权App登录");
+			}
+			String imgPath = request.getServletContext().getContextPath()+"/img/";
+			if(!StringUtils.isEmpty(setting.getLogo())) {
+				setting.setLogo(imgPath+"logo/"+setting.getLogo());
+			}else{
+				setting.setLogo(imgPath+"upload.png");
 			}
 			if("1".equals(vo.getType())) {
 				if(!vo.getPwd().equals(setting.getAppPwd())) {
@@ -311,12 +318,16 @@ public class AppController {
 		}
     }
 	
-	@ApiOperation(value="控制面板--订单取消",response=Msg.class,produces="application/json;charset=UTF-8")
+	@ApiOperation(value="控制面板--订单取消",notes="PS:如果返回状态码106 表示取消订单密码不正确",response=Msg.class,produces="application/json;charset=UTF-8")
 	@ResponseBody
     @RequestMapping(value= "/ctl/order/cancel",method=RequestMethod.POST,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg orderCancel(@RequestParam Integer orderId){
+    public Msg orderCancel(@RequestParam(required=true) Integer orderId,@RequestParam(required=true) String pwd){
 		try {
+			Setting setting = settingService.getSettingInfo();
+			if(StringUtils.isEmpty(pwd) || !pwd.equals(setting.getCancelPwd())) {
+				return Msg.fail(106,"密码不正确");
+			}
 			orderService.orderCancel(orderId);
 			return Msg.success();
 		} catch (BusException e) {

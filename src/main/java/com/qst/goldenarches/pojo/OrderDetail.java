@@ -202,5 +202,4 @@ public class OrderDetail extends BasePo implements Serializable {
 	}
 
     
-    
 }

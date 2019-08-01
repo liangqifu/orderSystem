@@ -127,7 +127,9 @@
                 $.ajax({
                     type : "POST",
                     url  : "${APP_PATH}/printer/update",
+                    datatype : 'json',
                     data : JSON.stringify(params),
+                    contentType:"application/json",
                     success : function(result) {
                         if ( result.code==100 ) {
                             layer.msg($.i18n.prop('delete-success'), {time:1000, icon:6}, function(){

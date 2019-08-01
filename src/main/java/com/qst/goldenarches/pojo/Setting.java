@@ -23,7 +23,11 @@ public class Setting implements Serializable {
     private String appPwd;
 	@ApiModelProperty(value="控制面板App登录密码")
     private String ctlAppPwd;
-
+	@ApiModelProperty(value="取消订单密码")
+    private String cancelPwd;
+	
+	@ApiModelProperty(value="app端logo图片")
+    private String logo;
     /**
      * 每轮午餐能点的数量
      */
@@ -165,6 +169,22 @@ public class Setting implements Serializable {
 
 	public void setServicePrinter(Printer servicePrinter) {
 		this.servicePrinter = servicePrinter;
+	}
+
+	public String getCancelPwd() {
+		return cancelPwd;
+	}
+
+	public void setCancelPwd(String cancelPwd) {
+		this.cancelPwd = cancelPwd;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 	
