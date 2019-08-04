@@ -22,8 +22,8 @@
            <li style="margin-left:10px;padding-top:8px;margin-right: 25px">
                 <select id="language_setting">
 				    <option value="zh_CN">Chinese</option>
-				    <option value="de_DE">German</option>
-				    <option value="en_US">English</option>
+				    <option value="de_DE">Deutsch</option>
+				    <!-- <option value="en_US">English</option> -->
 				</select>
             </li> 
         </ul>
