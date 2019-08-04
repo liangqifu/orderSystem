@@ -27,7 +27,7 @@ public interface CategoryMapper {
 
     List<Category> selectHaveProductCategories(Map<String, Object> map);
 
-	Category getById(Integer id);
+	Category getById(@Param("id")Integer id);
 	
 	Category queryPrinterByCategoryId(@Param("categoryId")Integer categoryId);
 }

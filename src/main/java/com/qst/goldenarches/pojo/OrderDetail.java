@@ -46,6 +46,8 @@ public class OrderDetail extends BasePo implements Serializable {
 	@ApiModelProperty(value="菜品ID")
 	@NotNull(message="菜品ID不能为空")
     private Integer productId;
+	@ApiModelProperty(value="菜品",hidden = true)
+	private Product product;
 
     /**
      * 商品�?
@@ -199,6 +201,14 @@ public class OrderDetail extends BasePo implements Serializable {
 
 	public void setDetailIds(List<Integer> detailIds) {
 		this.detailIds = detailIds;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
     

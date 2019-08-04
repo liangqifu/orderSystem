@@ -340,25 +340,23 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional(rollbackFor = {BusException.class,Exception.class})
 	public void needService(OrderNeedServiceVo needServiceVo) throws BusException {
 		
-		if(CollectionUtils.isEmpty(needServiceVo.getNeedServiceDetails())) {
-			throw new BusException("needServiceDetails 参数为空");
-		}
-		
-		for (OrderDetail orderDetail : needServiceVo.getNeedServiceDetails()) {
-			orderDetail.setDetailType("3");
-			orderDetail.setOrderId(needServiceVo.getOrderId());
-		}
-		
-		int ret = orderDetailMapper.insertBatch(needServiceVo.getNeedServiceDetails());
-		if(ret == 0) {
-			throw new BusException("保存数据失败");
+		if(!CollectionUtils.isEmpty(needServiceVo.getNeedServiceDetails())) {
+			for (OrderDetail orderDetail : needServiceVo.getNeedServiceDetails()) {
+				orderDetail.setDetailType("3");
+				orderDetail.setOrderId(needServiceVo.getOrderId());
+			}
+			
+			int ret = orderDetailMapper.insertBatch(needServiceVo.getNeedServiceDetails());
+			if(ret == 0) {
+				throw new BusException("保存数据失败");
+			}
 		}
 		OrderPrinterLog printerLog = new OrderPrinterLog();
 		printerLog.setOrderId(needServiceVo.getOrderId());
 		printerLog.setContent(JSON.toJSONString(needServiceVo));
 		printerLog.setPinterType("3");
 		printerLog.setStatus("0");
-		ret = orderPrinterLogMapper.insert(printerLog);
+		int ret = orderPrinterLogMapper.insert(printerLog);
 		if(ret > 0) {
 			try {
 				EventStorage.getInstance().putEvent(printerLog);

@@ -20,7 +20,7 @@ import com.qst.goldenarches.dao.OrderMapper;
 import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.service.ChartService;
 import com.qst.goldenarches.utils.DigitalUtil;
-import com.qst.goldenarches.utils.TimeUtil;
+import com.qst.goldenarches.utils.DateUtils;
 
 @Service
 public class ChartServiceImpl implements ChartService {
@@ -62,8 +62,8 @@ public class ChartServiceImpl implements ChartService {
             //用于保存该类别下的每个月份的销售情况
             List<Integer> dataList =new ArrayList<Integer>();
             for(int i=1;i<=month;i++){
-                String firstTime = TimeUtil.getFirstTimeOfMonth(year,i);
-                String lastTime =TimeUtil.getLastTimeOfMonth(year,i);
+                String firstTime = DateUtils.getFirstTimeOfMonth(year,i);
+                String lastTime =DateUtils.getLastTimeOfMonth(year,i);
                 Map<String,Object> queryCriteria = new HashMap<String, Object>();
                 queryCriteria.put("cid",c.getId());
                 queryCriteria.put("fTime",firstTime);
@@ -93,8 +93,8 @@ public class ChartServiceImpl implements ChartService {
         List<Double> dataList =new ArrayList<Double>();
         //查询每个月的销销售金额
         for(int i=1;i<=month;i++){
-            String firstTime = TimeUtil.getFirstTimeOfMonth(year,i);
-            String lastTime =TimeUtil.getLastTimeOfMonth(year,i);
+            String firstTime = DateUtils.getFirstTimeOfMonth(year,i);
+            String lastTime =DateUtils.getLastTimeOfMonth(year,i);
             Map<String,Object> queryCriteria = new HashMap<String, Object>();
             queryCriteria.put("fTime",firstTime);
             queryCriteria.put("lTime",lastTime);

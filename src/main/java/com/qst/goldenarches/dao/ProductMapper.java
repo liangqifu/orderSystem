@@ -22,7 +22,7 @@ public interface ProductMapper {
 
     int insertProduct(Product product);
 
-    Product selectProductById(Integer id);
+    Product selectProductById(@Param("id")Integer id);
 
     int updateBySelective(Product product);
 

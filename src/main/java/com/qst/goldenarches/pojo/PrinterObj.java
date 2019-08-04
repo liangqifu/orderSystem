@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class PrinterObj {
 	private boolean flag = true;
-	private List<Map<String, Object>> printerList;
+	private Map<String, List<OrderDetail>>  printerMap;
 
 	public boolean isFlag() {
 		return flag;
@@ -15,12 +15,14 @@ public class PrinterObj {
 		this.flag = flag;
 	}
 
-	public List<Map<String, Object>> getPrinterList() {
-		return printerList;
+	public Map<String, List<OrderDetail>> getPrinterMap() {
+		return printerMap;
 	}
 
-	public void setPrinterList(List<Map<String, Object>> printerList) {
-		this.printerList = printerList;
+	public void setPrinterMap(Map<String, List<OrderDetail>> printerMap) {
+		this.printerMap = printerMap;
 	}
+
+	
 
 }

@@ -17,7 +17,7 @@
     category_id, parent_id, category_name,printid, state, pic,print_type
   </sql>
    <sql id="baseCategoryList">
-       category_id id,parent_id parentId,category_name name,printid,state, pic
+       category_id id,parent_id parentId,category_name name,printid,state, pic,print_type
    </sql>
     <insert id="insertCategory">
         INSERT INTO product_category(parent_id,category_name,printid,pic,print_type,create_time,update_time)
@@ -51,8 +51,8 @@
         DELETE FROM product_category
         WHERE category_id=#{id}
     </delete>
-    <select id="getById" resultType="com.qst.goldenarches.pojo.Category" parameterType="java.lang.Integer">
-         SELECT <include refid="baseCategoryList"/>
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+         SELECT <include refid="Base_Column_List"/>
         FROM product_category
         WHERE category_id=#{id}
     </select>

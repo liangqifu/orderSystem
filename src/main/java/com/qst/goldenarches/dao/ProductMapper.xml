@@ -87,10 +87,10 @@
         </where>
         ORDER BY p.product_id DESC
     </select>
-    <select id="selectProductById" resultMap="baseProductMap">
+    <select id="selectProductById" resultMap="baseProductMap" parameterType="java.lang.Integer">
         SELECT <include refid="Base_Column_List"/>
         FROM product_info
-        WHERE product_id=#{0}
+        WHERE product_id=#{id}
     </select>
     <select id="selByPage" resultMap="productMapWithType">
         select <include refid="Base_Column_List"/>

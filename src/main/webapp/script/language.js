@@ -63,51 +63,28 @@ var i18nLanguage = "zh_CN";
 /*
 设置一下网站支持的语言种类
  */
-var webLanguage = ['zh_CN', 'en_US'];
+var webLanguage = ['zh_CN', 'en_US','de_DE'];
 
 /**
  * 执行页面i18n方法
  * @return
  */ 
-var execI18n = function(){
+var execI18n = function(appPath){
     /*
           获取一下资源文件名
      */
     var optionEle = $("#i18n_pagename");
-    var appPath = $("#appPath").attr('content');
     if (optionEle.length < 1) {
         console.log("未找到页面名称元素，请在页面写入\n <meta id=\"i18n_pagename\" content=\"页面名(对应语言包的语言文件名)\">");
         return false;
     };
-    /*
-    if (getCookie("userLanguage")) {
-        i18nLanguage = getCookie("userLanguage");
-    } else {
-        // 获取浏览器语言
-        var navLanguage = getNavLanguage();
-        if (navLanguage) {
-            // 判断是否在网站支持语言数组里
-            var charSize = $.inArray(navLanguage, webLanguage);
-            if (charSize > -1) {
-                i18nLanguage = navLanguage;
-                // 存到缓存中
-                getCookie("userLanguage",navLanguage);
-            };
-        } else{
-            console.log("not navigator");
-            return false;
-        }
-    }*/
+   
     /* 需要引入 i18n 文件*/
     i18nLanguage = localStorage.currentLang
     if ($.i18n == undefined) {
         console.log("请引入i18n js 文件")
         return false;
     };
-    if(!appPath){
-    	appPath='';
-    } 
-    
     var script = $('<script><\/script>');
     script.attr('src', appPath+'/bootstrap/language/'+i18nLanguage+'.js');
     $('head').append(script);
@@ -130,7 +107,6 @@ var execI18n = function(){
     if(appPath){
     	i18nPath=appPath+i18nPath;
     }
-    
     jQuery.i18n.properties({
         name : 'message', //资源文件名称
         path : i18nPath, //资源文件路径
@@ -190,8 +166,10 @@ var execI18n = function(){
 
 /*页面执行加载执行*/
 $(function(){
-	
-	
+	   var appPath = $("#appPath").attr('content');
+	   if(!appPath){
+	    	appPath='';
+	    } 
 	   if(!localStorage.currentLang) {
 		   //本地存储当前选中语言
 		   localStorage.currentLang = $('#language_setting option:selected').val();
@@ -202,14 +180,29 @@ $(function(){
 		    $("#language_setting").on('change', function() {
 		       //存储当前选中的语言
 	        	localStorage.currentLang = $(this).children('option:selected').val();
-		        //单页面可以注释
-		        //刷新
-		        location.reload();
+	        	$.ajax({
+	                type : "POST",
+	                dataType : 'json',
+	                url  : appPath+"/setting/updateLanguage?language="+localStorage.currentLang,
+	                contentType:"application/json",
+	                beforeSend : function(){
+	                    loadingIndex = layer.msg($.i18n.prop('layer-loading-msg'), {icon: 16});
+	                },
+	                success : function(result) {
+	                    layer.close(loadingIndex);
+	                    if ( result.code == 100 ) {
+	        		        //刷新
+	        		        location.reload();
+	                    } else {
+	                        layer.msg($.i18n.prop('layer-load-data-fail'), {time:2000, icon:5, shift:6}, function(){
+	                        });
+	                    }
+	                }
+	            });
+		        
 		    });
 	   }
-
-	  /*执行I18n翻译*/
-	   execI18n()
-
+	   /*执行I18n翻译*/
+	   execI18n(appPath)
 
 });

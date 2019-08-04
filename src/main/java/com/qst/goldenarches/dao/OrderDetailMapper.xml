@@ -15,6 +15,7 @@
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="product" column="product_id" select="com.qst.goldenarches.dao.ProductMapper.selectProductById"/>
   </resultMap>
   <sql id="Base_Column_List">
     detail_id, detail_type,order_id, round_id, product_id, product_name, product_price, product_number, 
@@ -94,10 +95,10 @@
   </insert>
   
   <!-- 批量插入 -->
-   <insert id ="insertBatch" parameterType="java.util.List" >
-        <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
+   <insert id ="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="detailId" >
+        <!-- <selectKey keyProperty="detailId" order="AFTER" resultType="java.lang.Integer">
 		      SELECT LAST_INSERT_ID()
-		 </selectKey>
+		 </selectKey> -->
          insert into order_detail (detail_type, order_id,round_id, product_id, 
 	      product_name, product_price, product_number, 
 	      category_id, category_name, state, 

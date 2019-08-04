@@ -169,7 +169,7 @@
                                 message:$.i18n.prop('enter-ip')
                             }
                         }
-                    },
+                    }/* ,
                     port: {
                         message: $.i18n.prop('port-Invalid'),
                         validators: {
@@ -181,7 +181,7 @@
                                 message: $.i18n.prop('enter-port')
                             }
                         }
-                    }
+                    } */
                 }
             }).on('success.form.bv', function(e) {//点击提交之后
                 // 终止重复提交
@@ -243,7 +243,7 @@
                 <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
                 <td>{{$value.name}}</td>
                 <td>{{$value.ip}}</td>
-                <td>{{$value.port}}</td>
+                
                 {{if $value.status == '0'}}
                   <td style="color: green">{{convertPrinterStatus($value.status)}}</td>
                 {{else}} 
@@ -296,7 +296,7 @@
 										<th style="width: 5%;text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
 										<th style="width:20% ;text-align: center;" class="i18n" data-properties="printerForm-name" data-ptype="text"></th>
 										<th style="width:20% ;text-align: center;" class="i18n" data-properties="printerForm-ip" data-ptype="text"></th>
-										<th style="width:8% ;text-align: center;" class="i18n" data-properties="printerForm-port" data-ptype="text"></th>
+										<!-- <th style="width:8% ;text-align: center;" class="i18n" data-properties="printerForm-port" data-ptype="text"></th> -->
 										<th style="width:10% ;text-align: center;" class="i18n" data-properties="printerForm-status" data-ptype="text"></th>
 										<th style="width:10% ;text-align: center;" class="i18n" data-properties="printerForm-onLine" data-ptype="text"></th>
 										<th style="width:15%" class="i18n" data-properties="thead-opt" data-ptype="text"></th>
@@ -346,12 +346,12 @@
 							  <input autocomplete="off" type="text" class="form-control i18n"  data-properties="pleaseEnter" data-ptype="placeholder" id="ip" name="ip"  placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label class="col-sm-3 control-label i18n" data-properties="printerForm-port" data-ptype="text" for="port"></label> 
 							<div class="col-sm-6">
 							  <input autocomplete="off" type="text" class="form-control i18n"  data-properties="pleaseEnter" data-ptype="placeholder" id="port" name="port"  placeholder="">
 							</div>
-						</div>
+						</div> -->
 						<div class="form-group">
 							<label class="col-sm-3 control-label i18n" data-properties="printerForm-status" data-ptype="text" ></label> 
 							<div class="col-sm-6">

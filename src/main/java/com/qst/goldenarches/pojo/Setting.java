@@ -73,6 +73,12 @@ public class Setting implements Serializable {
     private Integer servicePrinterId;
 	@ApiModelProperty(value="服务台打印机",hidden =true)
 	private Printer servicePrinter;
+	
+	@ApiModelProperty(value="语言",hidden =true)
+	/**
+	 * 语言
+	 */
+	private String language;
     
 
     public Integer getId() {
@@ -185,6 +191,14 @@ public class Setting implements Serializable {
 
 	public void setLogo(String logo) {
 		this.logo = logo;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	
