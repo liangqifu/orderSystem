@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Printer;
 import com.qst.goldenarches.service.PrinterService;
+import com.qst.goldenarches.utils.DigitalUtil;
 
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
@@ -36,6 +38,15 @@ public class PrinterController {
     public Msg queryListByPage(@RequestBody Printer printer ){
     	PageHelper.startPage(printer.getPageNum(),printer.getPageSize());
         List<Printer> list = printerService.query(printer);
+        for (Printer p : list) {
+			if(!StringUtils.isEmpty(p.getIp())) {
+				if(DigitalUtil.isHostReachable(p.getIp(), 1000)) {
+					p.setOnLine("1");
+				}else {
+					p.setOnLine("0");
+				}
+			}
+		}
         com.github.pagehelper.PageInfo<Printer> printerPageInfo = new com.github.pagehelper.PageInfo<Printer>(list,printer.getPageSize());
         return Msg.success().add("data",printerPageInfo);
     }

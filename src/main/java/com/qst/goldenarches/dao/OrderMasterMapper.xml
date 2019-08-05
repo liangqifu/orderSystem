@@ -7,6 +7,8 @@
     <result column="order_type" jdbcType="VARCHAR" property="orderType" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
     <result column="total_amount" jdbcType="DOUBLE" property="totalAmount" />
+    <result column="adult_amount" jdbcType="DOUBLE" property="adultAmount" />
+    <result column="child_amount" jdbcType="DOUBLE" property="childAmount" />
     <result column="drinks_total_amount" jdbcType="DOUBLE" property="drinksTotalAmount" />
     <result column="table_num" jdbcType="VARCHAR" property="tableNum" />
     <result column="adult" jdbcType="INTEGER" property="adult" />
@@ -22,7 +24,7 @@
     <association property="area" column="buyer_id" select="com.qst.goldenarches.dao.AreaMapper.selectByPrimaryKey"/>
   </resultMap>
   <sql id="Base_Column_List">
-    order_id, buyer_id, order_type,order_no, total_amount,drinks_total_amount, table_num, adult, child, lunch_num, 
+    order_id, buyer_id, order_type,order_no, total_amount,adult_amount,child_amount,drinks_total_amount, table_num, adult, child, lunch_num, 
     dinner_num, wait_time, status,state, open_time, create_time,update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -75,12 +77,15 @@
     <selectKey keyProperty="orderId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into order_master (buyer_id, order_type,order_no, total_amount, drinks_total_amount,
+    insert into order_master (buyer_id, order_type,order_no, total_amount, adult_amount,child_amount,drinks_total_amount,
       table_num, adult, child, 
       lunch_num, dinner_num, wait_time, 
       status, open_time, create_time,update_time
       )
-    values (#{buyerId,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DOUBLE}, 
+    values (#{buyerId,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR},
+     #{totalAmount,jdbcType=DOUBLE}, 
+      #{adultAmount,jdbcType=DOUBLE}, 
+       #{childAmount,jdbcType=DOUBLE}, 
      #{drinksTotalAmount,jdbcType=DOUBLE}, 
       #{tableNum,jdbcType=VARCHAR}, #{adult,jdbcType=INTEGER}, #{child,jdbcType=INTEGER}, 
       #{lunchNum,jdbcType=INTEGER}, #{dinnerNum,jdbcType=INTEGER}, #{waitTime,jdbcType=INTEGER}, 
@@ -104,6 +109,12 @@
       </if>
       <if test="totalAmount != null">
         total_amount,
+      </if>
+      <if test="adultAmount != null">
+        adult_amount,
+      </if>
+      <if test="childAmount != null">
+        child_amount,
       </if>
       <if test="drinksTotalAmount != null">
         drinks_total_amount,
@@ -143,6 +154,12 @@
       </if>
       <if test="totalAmount != null">
         #{totalAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="adultAmount != null">
+        #{adultAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="childAmount != null">
+        #{childAmount,jdbcType=DOUBLE},
       </if>
       <if test="drinksTotalAmount != null">
         #{drinksTotalAmount,jdbcType=DOUBLE},
@@ -186,6 +203,12 @@
       <if test="totalAmount != null">
         total_amount = #{totalAmount,jdbcType=DOUBLE},
       </if>
+      <if test="adultAmount != null">
+        adult_amount = #{adultAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="childAmount != null">
+        child_amount = #{childAmount,jdbcType=DOUBLE},
+      </if>
       <if test="drinksTotalAmount != null">
         drinks_total_amount = #{drinksTotalAmount,jdbcType=DOUBLE},
       </if>
@@ -223,6 +246,8 @@
       order_type = #{orderType,jdbcType=VARCHAR},
       order_no = #{orderNo,jdbcType=VARCHAR},
       total_amount = #{totalAmount,jdbcType=DOUBLE},
+      adult_amount = #{adultAmount,jdbcType=DOUBLE},
+      child_amount = #{childAmount,jdbcType=DOUBLE},
       drinks_total_amount = #{drinksTotalAmount,jdbcType=DOUBLE},
       table_num = #{tableNum,jdbcType=VARCHAR},
       adult = #{adult,jdbcType=INTEGER},

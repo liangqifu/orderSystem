@@ -6,9 +6,22 @@
  */
 package com.qst.goldenarches.utils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class DigitalUtil {
+	
+	public static boolean isHostReachable(String host, Integer timeOut) {
+        try {
+            return InetAddress.getByName(host).isReachable(timeOut);
+        } catch (UnknownHostException e) {
+        	return false;
+        } catch (IOException e) {
+        	return false;
+        }
+    }
 
     /**
      * 将数字向上转换成

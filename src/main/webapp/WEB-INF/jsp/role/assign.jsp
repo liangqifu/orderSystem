@@ -8,7 +8,8 @@
 
 		var setting = {
 			check : {
-				enable : true
+				enable : true,
+				chkboxType :{ "Y" : "s", "N" : "s" }
 			},
 			async : {
 				enable : true,

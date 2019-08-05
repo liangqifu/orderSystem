@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -201,8 +202,11 @@ public class CategoryController {
      * 跳转至商品类别主页
      * @return
      */
-    @RequestMapping("index")
-    public String toIndex(){
+    @SuppressWarnings("unchecked")
+	@RequestMapping("index")
+    public String toIndex(HttpServletRequest request,Model model){
+    	Set<String> authUriSet = (Set<String>)request.getSession().getAttribute("authUriSet");
+   	    model.addAttribute("edit_pic", authUriSet.contains("edit_pic"));
         return "category/index";
     }
    

@@ -28,8 +28,20 @@ public class Admin extends BasePo {
      * 管理员创建时间
      */
     private String createTime;
+    
+    private String rolesName;
+    
+    
 
-    public int getId() {
+    public String getRolesName() {
+		return rolesName;
+	}
+
+	public void setRolesName(String rolesName) {
+		this.rolesName = rolesName;
+	}
+
+	public int getId() {
         return id;
     }
 

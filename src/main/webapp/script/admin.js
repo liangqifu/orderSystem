@@ -63,6 +63,15 @@ $(function () {
     	}
     });
     
+    template.helper('convertPrinterOnLine', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('printerForm-onLine-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    
     template.helper('convertCategoryPrintType', function (val) {
     	if(val && val !=''){
     		return $.i18n.prop('category-printType-'+val);

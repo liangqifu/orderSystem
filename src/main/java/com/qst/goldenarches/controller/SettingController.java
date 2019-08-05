@@ -1,6 +1,7 @@
 package com.qst.goldenarches.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,9 +98,12 @@ public class SettingController {
          }
          return Msg.success();
     }
+	@SuppressWarnings("unchecked")
 	@ApiIgnore
 	@RequestMapping("index")
-    public String toIndex(){
+    public String toIndex(HttpServletRequest request,Model model){
+		Set<String> authUriSet = (Set<String>)request.getSession().getAttribute("authUriSet");
+   	    model.addAttribute("logoSet", authUriSet.contains("logoSet"));
         return "setting/index";
     }
 	@ApiIgnore

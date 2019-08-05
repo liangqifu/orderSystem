@@ -271,6 +271,21 @@ public class AdminController {
 		try {
 			PageHelper.startPage(admin.getPageNum(),admin.getPageSize());
 			List<Admin> admins = adminService.query(admin);
+			List<Role> roles = roleService.getAllRoles(null);
+			for (Admin ad : admins) {
+				// 获取关系表的数据
+		        List<Integer> roleids = adminService.getRoleIdsByAdminId(ad.getId());
+		        StringBuffer sb =  new StringBuffer();
+		        for ( Role role : roles ) {
+		            if (roleids.contains(role.getId()) ) {
+		            	sb.append(role.getName()).append(",");
+		            } 
+		        }
+		        if(sb.length()>0) {
+		        	sb.deleteCharAt(sb.lastIndexOf(","));
+		        	ad.setRolesName(sb.toString());
+		        }
+			}
 	        com.github.pagehelper.PageInfo<Admin> adminPageInfo = new com.github.pagehelper.PageInfo<Admin>(admins,admin.getPageSize());
 			return Msg.success().add("data",adminPageInfo);
 		} catch (Exception e) {

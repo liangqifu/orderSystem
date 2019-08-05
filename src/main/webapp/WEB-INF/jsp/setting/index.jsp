@@ -529,7 +529,7 @@ function onupload(file) {
 						</div>
 					</div>
 					
-					<div class="form-group">
+					<div class="form-group" <c:choose><c:when test="${logoSet == 'true' }">style="display: block;"</c:when> <c:otherwise>style="display: none;"</c:otherwise> </c:choose>  >
                             <label for="logoPic" class="col-sm-2 control-label i18n" data-properties="settingForm-logo" data-ptype="text"></label>
                             <div class="col-sm-4">
 						        <input id="logoPic" name="logoPic" onchange="onupload(this)" type="file" accept="image/png, image/jpeg, image/gif, image/jpg" class="btn-info" /> 

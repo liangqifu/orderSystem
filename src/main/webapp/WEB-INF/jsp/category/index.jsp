@@ -168,7 +168,15 @@
                       		}else{
                       			$("#category_modal #printTypeDiv").hide()
                       		}
-                      		
+                      		if($("#edit_pic").val()=='true'){
+                      			$("#picture-form-group").show()
+                      		}else{
+                      			if(data.id==1 || data.id==2 || data.id==3 || data.id==41){
+                      				$("#picture-form-group").hide()
+                      			}else{
+                      				$("#picture-form-group").show()
+                      			}
+                      		}
                          	//弹出模态框
                             $("#category_modal").modal({
                                 backdrop:"static"
@@ -232,8 +240,14 @@
         
        
         function goAddPage() {
-    		bindPictureFileInput(options);
         	var parentId = $("#queryBtn").attr("parentId");
+        	if(parentId == 0 ){
+        		if($("#edit_pic").val()!='true'){
+        			return ;
+        		}
+        	}
+    		bindPictureFileInput(options);
+        	
         	 $("#category_modal").autofill({id:"0",parentId:parentId,name:"",printid:"",state:'0'});
         	 $("#category_modal #printid").selectpicker('val', "");
          	//弹出模态框
@@ -441,7 +455,7 @@
 
    </script>
 <body>
-
+     <input type="hidden" id="edit_pic" value="${edit_pic}" />
 	<div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -496,7 +510,7 @@
 
 								<tfoot>
 									<tr>
-										<td colspan="7" align="center">
+										<td colspan="8" align="center">
 											<ul class="pagination"></ul>
 											<span class="total"></span>
 										</td>
@@ -544,7 +558,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="picture-form-group">
 							<label for="picture"  class="col-sm-3 control-label i18n" data-properties="upload-pic" data-ptype="text" >上传图片:</label> 
 							<div class="col-sm-8" id="pictureDIV">
 				                <input id="picture"  name="picture" type="file"  >

@@ -249,7 +249,7 @@
                 {{else}} 
                   <td style="color: red" >{{convertPrinterStatus($value.status)}}</td>
                 {{/if}}
-                <td>{{$value.onLine}}</td>
+                <td>{{convertPrinterOnLine($value.onLine)}}</td>
                 <td>
                    <button type="button" item='{{obj2Str($value)}}'  class="btn btn-primary btn-xs edit"><i class=" glyphicon glyphicon-pencil"></i></button>
                    &nbsp;&nbsp;&nbsp;

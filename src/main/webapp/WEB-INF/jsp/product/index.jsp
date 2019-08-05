@@ -572,7 +572,7 @@
 
 							<tfoot>
 								<tr>
-									<td colspan="8" align="center">
+									<td colspan="10" align="center">
 										<ul class="pagination"></ul>
 										<span class="total"></span>
 									</td>

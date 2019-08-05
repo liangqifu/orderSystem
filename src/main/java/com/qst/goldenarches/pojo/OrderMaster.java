@@ -44,6 +44,11 @@ public class OrderMaster extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="订单总金额")
     private Double totalAmount;
+	
+	@ApiModelProperty(value="成人总价")
+    private Double adultAmount;
+    @ApiModelProperty(value="小孩总价")
+    private Double childAmount;
 	@ApiModelProperty(value="酒水总金额")
     private Double drinksTotalAmount;
 	
@@ -270,6 +275,22 @@ public class OrderMaster extends BasePo implements Serializable {
 
 	public void setDrinksTotalAmount(Double drinksTotalAmount) {
 		this.drinksTotalAmount = drinksTotalAmount;
+	}
+
+	public Double getAdultAmount() {
+		return adultAmount;
+	}
+
+	public void setAdultAmount(Double adultAmount) {
+		this.adultAmount = adultAmount;
+	}
+
+	public Double getChildAmount() {
+		return childAmount;
+	}
+
+	public void setChildAmount(Double childAmount) {
+		this.childAmount = childAmount;
 	}
 
     

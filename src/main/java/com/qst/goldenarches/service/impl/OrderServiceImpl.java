@@ -43,7 +43,6 @@ import com.qst.goldenarches.pojo.VIP;
 import com.qst.goldenarches.service.OrderService;
 import com.qst.goldenarches.thread.EventStorage;
 import com.qst.goldenarches.utils.DigitalUtil;
-import com.qst.goldenarches.utils.OrderNoUtil;
 import com.qst.goldenarches.vo.OrderNeedServiceVo;
 
 @Service
@@ -374,7 +373,7 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMaster == null) {
 			throw new BusException("订单数据不存在");
 		}
-		Double totalAmount = orderMaster.getTotalAmount();
+		/*Double totalAmount = orderMaster.getTotalAmount();
 		Setting setting = settingMapper.getSettingInfo();
 		if(setting != null) {
 			double adultTotalAmount = 0l;
@@ -402,7 +401,7 @@ public class OrderServiceImpl implements OrderService {
 			BigDecimal b = new BigDecimal(drinksTotalAmount);
 			drinksTotalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 			orderMaster.setDrinksTotalAmount(drinksTotalAmount);
-		}
+		}*/
 		OrderRound param = new OrderRound();
 		param.setState("0");
 		param.setOrderId(orderId);
@@ -444,6 +443,7 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMaster != null) {
 			Setting setting = settingMapper.getSettingInfo();
 			if(setting != null) {
+				OrderMaster record = new OrderMaster();
 				double adultTotalAmount = 0l;
 				double childTotalAmount = 0l;
 				Integer adult = orderMaster.getAdult();
@@ -464,6 +464,8 @@ public class OrderServiceImpl implements OrderService {
 						childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
 					}
 				}
+				record.setAdultAmount(adultTotalAmount);
+				record.setChildAmount(childTotalAmount);
 				double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
 				if(totalAmount == 0) {
 					totalAmount = orderMaster.getTotalAmount()==null?0l:orderMaster.getTotalAmount();
@@ -471,7 +473,7 @@ public class OrderServiceImpl implements OrderService {
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("orderId", order.getOrderId());
 				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmountByOrderId(param);
-				OrderMaster record = new OrderMaster();
+				
 				if(orderDetailTotalAmount != null) {
 					record.setDrinksTotalAmount(orderDetailTotalAmount);
 					totalAmount = DigitalUtil.add(totalAmount, orderDetailTotalAmount);
