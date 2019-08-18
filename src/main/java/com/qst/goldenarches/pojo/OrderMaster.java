@@ -120,8 +120,18 @@ public class OrderMaster extends BasePo implements Serializable {
 	
 	@ApiModelProperty(value="每轮点餐列表")
 	private List<OrderRound> orderRounds;
-	
-	
+	@ApiModelProperty(hidden=true)
+	private List<OrderDetail> orderDetails;
+	@ApiModelProperty(hidden=true)
+	private String startTime;
+	@ApiModelProperty(hidden=true)
+	private String endTime;
+	@ApiModelProperty(hidden=true)
+	private Integer orderDrinksCount;
+	@ApiModelProperty(hidden=true)
+	private Integer orderServiceCount;
+	@ApiModelProperty(hidden=true)
+	private List<OrderPrinterLog> printLogs;
 
     private static final long serialVersionUID = 1L;
 
@@ -293,5 +303,54 @@ public class OrderMaster extends BasePo implements Serializable {
 		this.childAmount = childAmount;
 	}
 
+	public List<OrderDetail> getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(List<OrderDetail> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Integer getOrderDrinksCount() {
+		return orderDrinksCount;
+	}
+
+	public void setOrderDrinksCount(Integer orderDrinksCount) {
+		this.orderDrinksCount = orderDrinksCount;
+	}
+
+	public Integer getOrderServiceCount() {
+		return orderServiceCount;
+	}
+
+	public void setOrderServiceCount(Integer orderServiceCount) {
+		this.orderServiceCount = orderServiceCount;
+	}
+
+	public List<OrderPrinterLog> getPrintLogs() {
+		return printLogs;
+	}
+
+	public void setPrintLogs(List<OrderPrinterLog> printLogs) {
+		this.printLogs = printLogs;
+	}
+
+	
     
 }

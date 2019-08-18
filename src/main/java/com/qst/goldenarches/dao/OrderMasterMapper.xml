@@ -43,13 +43,13 @@
         and buyer_id =  #{buyerId,jdbcType=INTEGER}
     </if>
     <if test="orderNo !=null and orderNo !='' ">
-        and order_no =  #{orderNo,jdbcType=VARCHAR}
+        and order_no  like concat('%',#{orderNo,jdbcType=VARCHAR},'%')
     </if>
      <if test="orderType !=null and orderType !='' ">
         and order_type =  #{orderType,jdbcType=VARCHAR}
     </if>
      <if test="tableNum !=null and tableNum !='' ">
-        and table_num =  #{orderType,jdbcType=VARCHAR}
+        and table_num like concat('%',#{tableNum,jdbcType=VARCHAR},'%')
     </if>
     <if test="status !=null and status !='' ">
         and status =  #{status,jdbcType=VARCHAR}
@@ -60,6 +60,14 @@
     <if test="state !=null and state !='' ">
         and state =  #{state,jdbcType=VARCHAR}
     </if>
+    <if test="startTime !=null and startTime !='' ">
+        and date_format(open_time,'%Y-%m-%d') <![CDATA[  >=  ]]>  #{startTime,jdbcType=VARCHAR}
+    </if>
+    <if test="endTime !=null and endTime !='' ">
+        and date_format(open_time,'%Y-%m-%d') <![CDATA[ <= ]]>  #{endTime,jdbcType=VARCHAR}
+    </if>
+    
+    
     order by create_time DESC
   </select>
   

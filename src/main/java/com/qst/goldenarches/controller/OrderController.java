@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,9 +28,15 @@ import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.exception.BusException;
 import com.qst.goldenarches.pojo.Area;
 import com.qst.goldenarches.pojo.Msg;
+import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMaster;
+import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.service.AreaService;
 import com.qst.goldenarches.service.OrderService;
+import com.qst.goldenarches.service.SettingService;
+import com.qst.goldenarches.utils.ExcelUtil;
+import com.qst.goldenarches.utils.ResourceUtils;
+import com.qst.goldenarches.utils.ExcelUtil.ExportOrderInfo;
 
 import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
@@ -42,6 +48,9 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
 	private AreaService areaService;
+    @Autowired
+	private SettingService settingService;
+    
 
     
 	@ResponseBody
@@ -60,6 +69,40 @@ public class OrderController {
 			return Msg.fail(e.getMessage());
 		}
     }
+	
+	@RequestMapping(value= "/exportExcel",method=RequestMethod.POST)
+	public void exportExcel(OrderMaster queryParam, HttpServletResponse response){
+		 try {
+			queryParam.setState("0");
+			List<OrderMaster> list = orderService.queryOrderList(queryParam);
+			OrderDetail param = new OrderDetail();
+			for (OrderMaster orderMaster : list) {
+				param.setOrderId(orderMaster.getOrderId());
+				param.setState("0");
+				param.setDetailType("1,2");
+				orderMaster.setOrderDetails(orderService.queryOrderDetail(param));
+			}
+			response.reset(); //清除buffer缓存
+			Setting setting  = settingService.getSettingInfo();
+			 // 指定下载的文件名
+			String filename = ResourceUtils.getValueByLanguage("excel-title", setting.getLanguage());
+			filename = new String(filename.getBytes(), "ISO-8859-1");
+            response.setHeader("Content-Disposition", "attachment;filename="+filename+".xls");
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+	
+			 ExportOrderInfo setInfo =  new ExportOrderInfo();
+			 setInfo.setOrderList(list);
+			 setInfo.setSetting(setting);
+			 setInfo.setOut(response.getOutputStream());
+			 ExcelUtil.exportExcel(setInfo);
+		} catch (Exception e) {
+			logger.error("查询订单列表异常",e);
+		}
+   }
+	
 	
 	@ResponseBody
     @RequestMapping(value= "/queryAreaList",method=RequestMethod.POST,

@@ -36,9 +36,6 @@
     <if test="orderId !=null">
        and order_id = #{orderId}
     </if>
-    <if test="orderId !=null ">
-       and order_id = #{orderId}
-    </if>
     <if test="roundId !=null ">
        and round_id=#{roundId}
     </if>
@@ -245,6 +242,13 @@
   
   <select id="getTotalAmountByOrderId" parameterType="java.util.HashMap" resultType="java.lang.Double">
     SELECT SUM(t1.product_price*t1.product_number) as total FROM order_detail t1 WHERE (t1.state='0' or t1.state is NULL) and t1.detail_type='1' and t1.order_id=#{orderId} GROUP BY t1.order_id
+  </select>
+  
+  <select id="queryDrinksAndServiceCount" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+	  SELECT 
+	  sum(CASE WHEN s.detail_type='1' then 1 else 0 END ) as D_COUNT,
+	  sum(CASE WHEN s.detail_type='3' then 1 else 0 END ) as S_COUNT
+	 from order_detail s where  s.state='0' and s.order_id=#{orderId} GROUP BY s.order_id
   </select>
   
 </mapper>

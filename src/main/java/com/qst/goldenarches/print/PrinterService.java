@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.qst.goldenarches.utils.DigitalUtil;
+
 @Service
 public class PrinterService {
 	private static Logger logger = LogManager.getLogger(PrinterService.class);
@@ -40,17 +42,22 @@ public class PrinterService {
 					logger.warn("没有配置打印机");
 					return ;
 				}
-				PrintService printService=null;
 				for (int i = 0; i < printServices.length; i++) {
-					printService = printServices[i];
+					PrintService printService = printServices[i];
 					String name = printService.getName();
 					if(ticket.getPrinterIp().equals(name)) {
+						boolean flag = DigitalUtil.isHostReachable(name, 100);
+						if(flag) {
+							logger.info("打印机名称：{}",name);
+							job.setPrintService(printService);
+							job.print(); //开始打印 
+						}else {
+							logger.info("打印机名称：{},不在线",name);
+						}
 						break;
 					}
-					logger.info("打印机名称：{}",name);
 				}
-				job.setPrintService(printService);
-				job.print(); //开始打印 
+				
 			} catch (Exception e) {
 				logger.error("打印异常，参数={"+ticket+"}",e);
 			}

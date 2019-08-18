@@ -95,6 +95,8 @@ public class OrderDetail extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="修改时间")
     private Date updateTime;
+	@ApiModelProperty(value="订单信息",hidden =true)
+	private OrderMaster orderMaster;
 
     private static final long serialVersionUID = 1L;
 
@@ -209,6 +211,14 @@ public class OrderDetail extends BasePo implements Serializable {
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public OrderMaster getOrderMaster() {
+		return orderMaster;
+	}
+
+	public void setOrderMaster(OrderMaster orderMaster) {
+		this.orderMaster = orderMaster;
 	}
 
     

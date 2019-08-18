@@ -40,6 +40,7 @@ import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Setting;
 import com.qst.goldenarches.pojo.VIP;
+import com.qst.goldenarches.service.OrderPrinterService;
 import com.qst.goldenarches.service.OrderService;
 import com.qst.goldenarches.thread.EventStorage;
 import com.qst.goldenarches.utils.DigitalUtil;
@@ -62,6 +63,8 @@ public class OrderServiceImpl implements OrderService {
     
     @Autowired
 	private SettingMapper settingMapper;
+    @Autowired
+    private OrderPrinterService orderPrinterService;
     
     
 
@@ -278,6 +281,9 @@ public class OrderServiceImpl implements OrderService {
 		
 		this.updateTotalAmount(orderMsater);
 		OrderPrinterLog printerLog = new OrderPrinterLog();
+		Date dateTime = new Date();
+		printerLog.setCreateTime(dateTime);
+		printerLog.setUpdateTime(dateTime);
 		printerLog.setOrderId(orderMsater.getOrderId());
 		printerLog.setContent(JSON.toJSONString(orderDetails));
 		printerLog.setPinterType("2");
@@ -320,6 +326,9 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusException("保存数据失败");
 		}
 		OrderPrinterLog printerLog = new OrderPrinterLog();
+		Date dateTime = new Date();
+		printerLog.setCreateTime(dateTime);
+		printerLog.setUpdateTime(dateTime);
 		printerLog.setOrderId(orderMsater.getOrderId());
 		printerLog.setContent(JSON.toJSONString(orderRound));
 		printerLog.setPinterType("1");
@@ -351,6 +360,9 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 		OrderPrinterLog printerLog = new OrderPrinterLog();
+		Date dateTime = new Date();
+		printerLog.setCreateTime(dateTime);
+		printerLog.setUpdateTime(dateTime);
 		printerLog.setOrderId(needServiceVo.getOrderId());
 		printerLog.setContent(JSON.toJSONString(needServiceVo));
 		printerLog.setPinterType("3");
@@ -373,40 +385,28 @@ public class OrderServiceImpl implements OrderService {
 		if(orderMaster == null) {
 			throw new BusException("订单数据不存在");
 		}
-		/*Double totalAmount = orderMaster.getTotalAmount();
-		Setting setting = settingMapper.getSettingInfo();
-		if(setting != null) {
-			double adultTotalAmount = 0l;
-			double childTotalAmount = 0l;
-			Integer adult = orderMaster.getAdult();
-			Integer child = orderMaster.getChild();
-			String orderType = orderMaster.getOrderType();
-			if("1".equals(orderType)) {//午餐
-				if(adult != null) {
-					adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
-				}
-				if(child != null) {
-					childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
-				}
-			}else {//晚餐
-				if(adult != null) {
-					adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
-				}
-				if(child != null) {
-					childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
-				}
-			}
-			double totalAmountSum = DigitalUtil.add(adultTotalAmount, childTotalAmount);
-			Double drinksTotalAmount=DigitalUtil.sub(totalAmount, totalAmountSum);
-			BigDecimal b = new BigDecimal(drinksTotalAmount);
-			drinksTotalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-			orderMaster.setDrinksTotalAmount(drinksTotalAmount);
-		}*/
 		OrderRound param = new OrderRound();
 		param.setState("0");
 		param.setOrderId(orderId);
 		List<OrderRound> orderRounds = orderRoundMapper.query(param);
 		orderMaster.setOrderRounds(orderRounds);
+		Map<String, Object> retListMap = orderDetailMapper.queryDrinksAndServiceCount(orderId);
+		if(!CollectionUtils.isEmpty(retListMap)) {
+			orderMaster.setOrderDrinksCount(retListMap.get("D_COUNT") != null?Integer.valueOf(retListMap.get("D_COUNT").toString()):0);
+			orderMaster.setOrderServiceCount(retListMap.get("S_COUNT") != null?Integer.valueOf(retListMap.get("S_COUNT").toString()):0);
+		}
+		
+		return orderMaster;
+	}
+	
+	@Override
+	public OrderMaster getPrintInfoByOrderId(Integer orderId) throws BusException {
+		OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+		if(orderMaster == null) {
+			throw new BusException("订单数据不存在");
+		}
+		List<OrderPrinterLog> list = orderPrinterLogMapper.queryPrintInfo(orderId);
+		orderMaster.setPrintLogs(list);
 		return orderMaster;
 	}
 
@@ -541,6 +541,9 @@ public class OrderServiceImpl implements OrderService {
 		orderMasterMapper.updateByPrimaryKeySelective(param);
 		
 		OrderPrinterLog printerLog = new OrderPrinterLog();
+		Date dateTime = new Date();
+		printerLog.setCreateTime(dateTime);
+		printerLog.setUpdateTime(dateTime);
 		printerLog.setOrderId(orderMaster.getOrderId());
 		printerLog.setContent(JSON.toJSONString(orderMaster));
 		printerLog.setPinterType("4");
@@ -567,5 +570,28 @@ public class OrderServiceImpl implements OrderService {
 		param.setOrderId(orderId);
 		param.setStatus("3");
 		orderMasterMapper.updateByPrimaryKeySelective(param);
+	}
+
+
+	@Override
+	public void doPrint(OrderPrinterLog printerLog) throws BusException {
+		if(printerLog == null || printerLog.getId() == null) {
+			return ;
+		}
+		OrderPrinterLog logDb = orderPrinterLogMapper.selectByPrimaryKey(printerLog.getId());
+		if(logDb != null) {
+			try {
+				orderPrinterService.handelOrderPrinter(logDb);
+			} catch (Exception e) {
+				throw new BusException(e);
+			}
+		}
+	}
+
+
+	@Override
+	public List<OrderPrinterLog> queryOrderPrintInfoDetail(OrderPrinterLog printerLog) {
+		printerLog.setState("0");
+		return orderPrinterLogMapper.query(printerLog);
 	}
 }

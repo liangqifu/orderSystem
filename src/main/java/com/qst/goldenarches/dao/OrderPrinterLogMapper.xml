@@ -22,6 +22,23 @@
     from order_printer_log
     where id = #{id,jdbcType=INTEGER}
   </select>
+  
+  <select id="query" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_printer_log
+    where  1=1
+       <if test="orderId != null ">
+        and  order_id=#{orderId}
+      </if>
+      <if test="pinterType != null and pinterType !='' ">
+        and  pinter_type=#{pinterType}
+      </if>
+      <if test="state != null and state !='' ">
+        and  state=#{state}
+      </if>
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from order_printer_log
     where id = #{id,jdbcType=INTEGER}
@@ -34,7 +51,7 @@
       state, create_time, update_time,printer_id,msg,pinter_type
       )
     values (#{orderId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, '0', 
-      '0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,#{printerId,jdbcType=INTEGER},
+      '0', #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{printerId,jdbcType=INTEGER},
       #{msg,jdbcType=VARCHAR},#{pinterType,jdbcType=VARCHAR}
       )
   </insert>
@@ -134,4 +151,11 @@
       update_time = CURRENT_TIMESTAMP
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="queryPrintInfo" parameterType="java.lang.Integer" resultType="com.qst.goldenarches.pojo.OrderPrinterLog">
+	  SELECT s.order_id as orderId,s.pinter_type as pinterType FROM order_printer_log s where s.state='0' 
+	  and s.order_id=#{orderId} GROUP BY s.order_id,s.pinter_type
+  </select>
+  
+  
 </mapper>

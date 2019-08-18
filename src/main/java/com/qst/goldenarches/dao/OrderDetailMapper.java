@@ -3,6 +3,8 @@ package com.qst.goldenarches.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.qst.goldenarches.pojo.OrderDetail;
 
 public interface OrderDetailMapper {
@@ -28,4 +30,6 @@ public interface OrderDetailMapper {
 	int deleteByOrderId(Integer orderId);
 	
 	List<OrderDetail> queryOrderDetailByGroupCid(List<Integer> detailIds);
+
+	Map<String, Object> queryDrinksAndServiceCount(@Param("orderId")Integer orderId);
 }

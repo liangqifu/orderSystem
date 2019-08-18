@@ -55,8 +55,12 @@ public class Product extends BasePo {
      */
 	@ApiModelProperty(value="菜品图片")
     private String pic;
-	@ApiModelProperty(value="菜品类型 2全天菜 1午餐菜")
+	@ApiModelProperty(value="1午餐,2晚餐")
 	private String type;
+	@ApiModelProperty(value="是否午餐菜 0 否 1 是")
+	private String type1;
+	@ApiModelProperty(value="是否晚餐菜 0 否 1 是")
+	private String type2;
     /**
      * 商品图片
      */
@@ -140,6 +144,22 @@ public class Product extends BasePo {
 		this.no = no;
 	}
 
+	public String getType1() {
+		return type1;
+	}
+
+	public void setType1(String type1) {
+		this.type1 = type1;
+	}
+
+	public String getType2() {
+		return type2;
+	}
+
+	public void setType2(String type2) {
+		this.type2 = type2;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -147,6 +167,8 @@ public class Product extends BasePo {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	
 	
 	
 

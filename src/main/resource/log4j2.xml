@@ -6,7 +6,7 @@
 
 <!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
 
-<configuration status="DEBUG" monitorInterval="6000">
+<configuration status="INFO" monitorInterval="6000">
 	<Properties>
 		<!-- 配置日志文件输出目录 -->
 	 	<Property name="LOG_HOME" value="log/log_${main:0}" />
@@ -23,7 +23,7 @@
         <RollingFile name="RollingFileInfo" fileName="logs/info.log"
                      filePattern="logs/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
             <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -50,7 +50,7 @@
         <logger name="org.hibernate.validator" level="INFO"/>
         <logger name="springfox.documentation" level="INFO"/>
         <!--对应的mybatis查询日志-->
-        <logger name="com.qst.goldenarches.dao" level="DEBUG" additivity="false">
+        <logger name="com.qst.goldenarches.dao" level="debug" additivity="false">
              <appender-ref ref="Console"/>
              <appender-ref ref="RollingFileInfo"/>
         </logger>

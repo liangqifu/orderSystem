@@ -142,8 +142,23 @@
                     	}
                 		bindPictureFileInput($.extend(true,{},options,previewData));
                 		data.categoryName = data.category?data.category.name:"";
+                		
+                		
+                		
                     	$("#productForm").autofill(data);
                     	
+                		if(data.type1 == '1'){
+                			$("#productForm #type1").prop("checked",true);
+                		}else{
+                			$("#productForm #type1").prop("checked",false);
+                		}
+                		
+                		if(data.type2 == '1'){
+                			$("#productForm #type2").prop("checked",true);
+                		}else{
+                			$("#productForm #type2").prop("checked",false);
+                		}
+                		
                      	//弹出模态框
                         $("#product_modal").modal({
                             backdrop:"static"
@@ -357,7 +372,11 @@
     	 $("#pictureDIV").empty();
     	$('<input id="picture"  name="picture" type="file"  >').appendTo("#pictureDIV");
     	$("#picture").fileinput(options); 
+    	$('#picture').on('filedeleted', function(event, key, jqXHR, data) {
+    		$("#productForm #pic").val("")
+        });
     }
+    
     
     function bindProductForm (){
     	$('#productForm').bootstrapValidator({
@@ -386,6 +405,9 @@
                 },
                 price:{
                 	validators: {
+                		notEmpty: {
+                            message: $.i18n.prop('notEmpty')
+                        },
                         numeric:{
                         	message: $.i18n.prop('numeric')
                         },
@@ -413,6 +435,18 @@
             var bv = $form.data('bootstrapValidator');
             var params  = $form.serializeJSON();
             params.status = $form.find('input:radio[name="status"]:checked').val();
+            
+            if($('#productForm #type1').is(':checked')){
+            	params.type1='1';
+            }else{
+            	params.type1='0';
+            }
+            if($('#productForm #type2').is(':checked')){
+            	params.type2='1';
+            }else{
+            	params.type2='0';
+            }
+            
             $.ajaxFileUpload({
                 url : $form.attr('action'), //用于文件上传的服务器端请求地址
                 fileElementId : 'picture',
@@ -479,7 +513,7 @@
                 <td>{{$value.name}}</td>
                 <td style="text-align: right;">{{$value.price}}</td>
                 <td style="text-align: center;">{{convertProductStatus($value.status)}}</td>
-                <td style="text-align: center;">{{convertProductType($value.type)}}</td>
+                <td style="text-align: center;white-space: nowrap;">{{convertProductType($value.type1,$value.type2)}}</td>
                 <td>
                   {{if $value.category }}
                       {{$value.category.name }}
@@ -595,6 +629,7 @@
                 </div>
                 <div class="modal-body">
                         <input type="hidden" name="id" class="form-control" id="id">
+                        <input type="hidden" name="pic" class="form-control" id="pic">
                         <div class="form-group">
                             <label for="no" class="col-sm-3 control-label i18n" data-properties="product-no" data-ptype="text" ></label>
                             <div class="col-sm-6">
@@ -625,8 +660,16 @@
 						<div class="form-group">
 							<label for="type" class="col-sm-3 control-label i18n" data-properties="product-type" data-ptype="text" ></label> 
 							<div class="col-sm-6">
-							      <input type="radio" name="type" value="2" class="fl" id="type-2"  ><label for="type-2"  class="fl i18n" data-properties="product-type-2" data-ptype="text"></label>
-								  <input type="radio" name="type" value="1" class="fl ml20" id="type-1" ><label for="type-1" class="fl i18n" data-properties="product-type-1" data-ptype="text"></label>
+							      <div class="checkbox checkbox-primary fl">
+								      <input id="type1" name="type1" class="styled" type="checkbox" checked>
+										<label for="type1" class="i18n" data-properties="product-type-1" data-ptype="text" ></label>
+								  </div>
+								  <div class="checkbox checkbox-primary fl" style="margin-left: 10%">
+								      <input id="type2" name="type2" class="styled" type="checkbox" checked>
+										<label for="type2" class="i18n" data-properties="product-type-2" data-ptype="text" ></label>
+								  </div>
+							     <!--  <input type="radio" name="type" value="2" class="fl" id="type-2"  ><label for="type-2"  class="fl i18n" data-properties="product-type-2" data-ptype="text"></label>
+								  <input type="radio" name="type" value="1" class="fl ml20" id="type-1" ><label for="type-1" class="fl i18n" data-properties="product-type-1" data-ptype="text"></label> -->
 							</div>
 						</div>
 						

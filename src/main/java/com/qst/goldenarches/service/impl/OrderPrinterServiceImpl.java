@@ -1,12 +1,11 @@
 package com.qst.goldenarches.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +64,10 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 			}else if("2".equals(orderPrinter.getPinterType())) {//2酒水打印
 				orderDetails =JSON.parseArray(orderPrinter.getContent(), OrderDetail.class);
 			}else if("3".equals(orderPrinter.getPinterType())) {//3服务打印 
-				OrderNeedServiceVo needServiceVo =JSON.parseObject(orderPrinter.getContent(), OrderNeedServiceVo.class);
+				OrderNeedServiceVo needServiceVo = JSON.parseObject(orderPrinter.getContent(), OrderNeedServiceVo.class);
 				orderDetails = needServiceVo.getNeedServiceDetails();
 			}else if("4".equals(orderPrinter.getPinterType())) {//4通知付款打印
-				List<Ticket> tickets = getPrintTickets(orderMaster, null, setting, orderPrinter.getPinterType());
+				List<Ticket> tickets = getPrintTickets(orderMaster, null, setting, orderPrinter);
 				//调打印机开始打印
 				printerService.printer(tickets);
 				//更新打印日志信息
@@ -82,7 +81,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 				if(printerObj.isFlag()) {
 					Map<String, List<OrderDetail>> printerMap = printerObj.getPrinterMap();
 					if(!CollectionUtils.isEmpty(printerMap)) {
-						List<Ticket> tickets = getPrintTickets(orderMaster, printerMap,setting,orderPrinter.getPinterType());
+						List<Ticket> tickets = getPrintTickets(orderMaster, printerMap,setting,orderPrinter);
 						//调打印机开始打印
 						printerService.printer(tickets);
 						//更新打印日志信息
@@ -96,7 +95,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 				}
 			}else {
 				if("3".equals(orderPrinter.getPinterType())) {//3服务打印 
-					List<Ticket> tickets = getPrintTickets(orderMaster, null, setting, orderPrinter.getPinterType());
+					List<Ticket> tickets = getPrintTickets(orderMaster, null, setting, orderPrinter);
 					//调打印机开始打印
 					printerService.printer(tickets);
 					//更新打印日志信息
@@ -109,11 +108,9 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 			logger.error("handelOrderPrinter error",e);
 		}
 		
-		
-		
 	}
 	
-	private List<Ticket> getPrintTickets(OrderMaster orderMaster,Map<String, List<OrderDetail>> printerMap,Setting setting,String pinterType){
+	private List<Ticket> getPrintTickets(OrderMaster orderMaster,Map<String, List<OrderDetail>> printerMap,Setting setting,OrderPrinterLog orderPrinter){
 		List<Ticket> tickets = new ArrayList<Ticket>();
 		Ticket ticket = null;
 		OrderInfo orderInfo = null;
@@ -127,7 +124,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 					Category category = categoryMapper.getById(detail.getCategoryId());
 					//打印类型 0批量 1单个
 					if("1".equals(category.getPrintType()) ) {//1单个打印
-						orderInfo = this.getPrintOrderInfo(orderMaster, setting, pinterType);
+						orderInfo = this.getPrintOrderInfo(orderMaster, setting, orderPrinter);
 						List<OrderDetailInfo> detailInfos =  new ArrayList<OrderDetailInfo>();
 						detailInfo =  new OrderDetailInfo();
 						detailInfo.setNumber(detail.getProductNumber());
@@ -149,7 +146,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 				}
 				
 				if(!CollectionUtils.isEmpty(batchDetailInfos)) {
-					orderInfo = this.getPrintOrderInfo(orderMaster, setting, pinterType);
+					orderInfo = this.getPrintOrderInfo(orderMaster, setting, orderPrinter);
 					orderInfo.setDetailInfos(batchDetailInfos);
 					ticket = new Ticket(orderInfo,printerIp,setting);
 					tickets.add(ticket);
@@ -157,11 +154,11 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 			}
 			
 		}else {
-			orderInfo = this.getPrintOrderInfo(orderMaster, setting, pinterType);
+			orderInfo = this.getPrintOrderInfo(orderMaster, setting, orderPrinter);
 			Category category = null;
-			if("3".equals(pinterType)) { //服务打印
+			if("3".equals(orderPrinter.getPinterType())) { //服务打印
 				category = categoryMapper.getById(3);
-			} else if("4".equals(pinterType)) {//结账打印
+			} else if("4".equals(orderPrinter.getPinterType())) {//结账打印
 				category = categoryMapper.getById(41);
 			}
 			if(category != null) {
@@ -179,14 +176,16 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 		return tickets;
 	}
 	
-	private OrderInfo getPrintOrderInfo(OrderMaster orderMaster,Setting setting,String pinterType) {
+	private OrderInfo getPrintOrderInfo(OrderMaster orderMaster,Setting setting,OrderPrinterLog orderPrinter) {
 		OrderInfo orderInfo = new OrderInfo();
 		orderInfo.setArea(orderMaster.getArea().getName());
-		String date = DateUtils.formatDate(orderMaster.getOpenTime(), "dd.MM.yyyy");
-		String time = DateUtils.formatDate(orderMaster.getOpenTime(), "HH:mm");
+		Date createTime = orderPrinter.getCreateTime();
+		String date = createTime !=null? DateUtils.formatDate(createTime, "dd.MM.yyyy") : DateUtils.formatDate(orderMaster.getOpenTime(), "dd.MM.yyyy");
+		String time = createTime !=null? DateUtils.formatDate(createTime, "HH:mm"): DateUtils.formatDate(orderMaster.getOpenTime(), "HH:mm");
 		orderInfo.setDate(date);
 		orderInfo.setTime(time);
 		orderInfo.setTableNum(orderMaster.getTableNum());
+		String pinterType = orderPrinter.getPinterType();
 		orderInfo.setPrintType(pinterType);
 		if("3".equals(pinterType)) { //服务打印
 			orderInfo.setRemark(ResourceUtils.getValueByLanguage("need-service", setting.getLanguage()));

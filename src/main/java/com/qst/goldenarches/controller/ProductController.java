@@ -98,12 +98,13 @@ public class ProductController {
              String img = ImageUtil.upload(request,"product",mFile);
              if (!StringUtils.isEmpty(img)) {
             	 product.setPic(img);
+             }else {
+            	 product.setPic("");
              }
          }
     	 try {
 			if(productDB !=null ) {
 				if(!StringUtils.isEmpty(product.getPic())) {
-					productDB = productService.getProductById(product.getId());
 					if(!StringUtils.isEmpty(productDB.getPic())) {
 						ImageUtil.dropPic(request,"product",productDB.getPic());
 					}

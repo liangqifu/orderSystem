@@ -105,4 +105,10 @@ public interface OrderService {
 	void notifyPay(Integer orderId)throws BusException;
 
 	void orderCancel(Integer orderId)throws BusException;
+
+	OrderMaster getPrintInfoByOrderId(Integer orderId) throws BusException;
+
+	void doPrint(OrderPrinterLog printerLog) throws BusException;
+
+	List<OrderPrinterLog> queryOrderPrintInfoDetail(OrderPrinterLog printerLog) throws Exception;
 }

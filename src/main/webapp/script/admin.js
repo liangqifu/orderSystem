@@ -30,9 +30,15 @@ $(function () {
     	return $.i18n.prop('order-drinks-detail');
     });
     
+    template.helper('convertOrderService', function () {
+    	return $.i18n.prop('order-service-detail');
+    });
+    
+    
+    
     template.helper('formatDateTime', function (val) {
     	if(val && val !=''){
-    		return jQuery.formatDateTime('yy-mm-dd hh:ii', new Date(val))
+    		return jQuery.formatDateTime('dd.mm.yy hh:ii', new Date(val))
     	}else{
     		return '';
     	}
@@ -46,9 +52,13 @@ $(function () {
     	}
     });
     
-    template.helper('convertProductType', function (val) {
-    	if(val && val !=''){
-    		return $.i18n.prop('product-type-'+val);
+    template.helper('convertProductType', function (val1,val2) {
+    	if(val1 =='1' && val2 == '1'){
+    		return $.i18n.prop('product-type-1')+','+$.i18n.prop('product-type-2');
+    	} else if(val1 =='1' && (val2 == '0' || val2 == '')){
+    		return $.i18n.prop('product-type-1');
+    	} else if(val2 =='1' && (val1 == '0' || val1 == '')){
+    		return $.i18n.prop('product-type-2');
     	}else{
     		return '';
     	}
@@ -75,6 +85,22 @@ $(function () {
     template.helper('convertCategoryPrintType', function (val) {
     	if(val && val !=''){
     		return $.i18n.prop('category-printType-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    template.helper('convertOrderPinterType', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('order-printType-'+val);
+    	}else{
+    		return '';
+    	}
+    });
+    
+    template.helper('convertOrderPinterStatus', function (val) {
+    	if(val && val !=''){
+    		return $.i18n.prop('order-print-status-'+val);
     	}else{
     		return '';
     	}

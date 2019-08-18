@@ -26,6 +26,7 @@ import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.OrderDetail;
 import com.qst.goldenarches.pojo.OrderMaster;
+import com.qst.goldenarches.pojo.OrderPrinterLog;
 import com.qst.goldenarches.pojo.OrderRound;
 import com.qst.goldenarches.pojo.Product;
 import com.qst.goldenarches.pojo.Setting;
@@ -119,6 +120,13 @@ public class AppController {
 		try {
 			PageHelper.startPage(product.getPageNum(),product.getPageSize());
 			product.setStatus("1");
+			if("2".equals(product.getType())) {//晚餐
+				product.setType2("1");
+				product.setType1("");
+			}else {//午餐
+				product.setType1("1");
+				product.setType2("");
+			}
 			List<Product> list = productService.query(product);
 			com.github.pagehelper.PageInfo<Product> pageInfo = new com.github.pagehelper.PageInfo<Product>(list,product.getPageSize());
 			String imgPath = request.getServletContext().getContextPath()+"/img/product/";
@@ -243,7 +251,7 @@ public class AppController {
     @RequestMapping(value= "/order/queryOrderDetail",method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
     	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Msg queryOrderDetail(@RequestBody @Validated OrderDetailVo param){
+    public Msg queryOrderDetail(@RequestBody @Validated OrderDetailVo param,HttpServletRequest request){
 		try {
 			PageHelper.startPage(param.getPageNum(),param.getPageSize());
 			param.setState("0");
@@ -251,7 +259,8 @@ public class AppController {
 			BeanUtils.copyProperties(param, orderDetail);
 			List<OrderDetail> list = orderService.queryOrderDetail(orderDetail);
 	        com.github.pagehelper.PageInfo<OrderDetail> pageInfo = new com.github.pagehelper.PageInfo<OrderDetail>(list,param.getPageSize());
-			return Msg.success().add("data", pageInfo);
+	        String imgPath = request.getServletContext().getContextPath()+"/img/product/";
+	        return Msg.success().add("data", pageInfo).add("imgPath", imgPath);
 		} catch (Exception e) {
 			logger.error("获取订单详情失败", e);
 			return Msg.fail("获取订单详情失败");
@@ -274,6 +283,59 @@ public class AppController {
 			return Msg.fail("获取订单详情失败");
 		}
     }
+	
+	@ApiOperation(value="根据orderId获取订单打印详情",response=OrderMaster.class,produces="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/{orderId}/print/info",method=RequestMethod.GET,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg getPrintInfoByOrderId(@PathVariable("orderId") Integer orderId){
+		try {
+			OrderMaster order = orderService.getPrintInfoByOrderId(orderId);
+			return Msg.success().add("data", order);
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("获取订单详情失败", e);
+			return Msg.fail("获取订单详情失败");
+		}
+    }
+	
+	@ApiOperation(value="查询订单历史打印信息",response=OrderMaster.class,produces="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/queryOrderPrintInfoDetail",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg queryOrderPrintInfoDetail(@RequestBody OrderPrinterLog printerLog){
+		try {
+			List<OrderPrinterLog> list = orderService.queryOrderPrintInfoDetail(printerLog);
+			return Msg.success().add("data", list);
+		} catch (Exception e) {
+			logger.error("查询订单历史打印信息失败", e);
+			return Msg.fail("查询订单历史打印信息失败");
+		}
+    }
+	
+	
+	@ApiOperation(value="订单重新打印",response=OrderMaster.class,produces="application/json;charset=UTF-8")
+	@ResponseBody
+    @RequestMapping(value= "/order/doPrint",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+    	    produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg doPrint(@RequestBody OrderPrinterLog printerLog){
+		try {
+			orderService.doPrint(printerLog);
+			return Msg.success();
+		} catch (BusException e) {
+			logger.error(e.getMessage(), e);
+			return Msg.fail(e.getMessage());
+		}catch (Exception e) {
+			logger.error("订单重新打印失败", e);
+			return Msg.fail("订单重新打印失败");
+		}
+    }
+	
+	
 	
 	
 	@ApiOperation(value="控制面板--获取餐区信息，每个餐区包含多个订单",response=Area.class,produces="application/json;charset=UTF-8")
