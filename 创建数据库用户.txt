@@ -1,0 +1,2 @@
+create user ordersystem; 
+grant all privileges on ordersystem.* to 'ordersystem'@'%' identified by 'ordersystem@123';
