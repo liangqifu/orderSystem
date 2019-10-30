@@ -483,6 +483,7 @@
            	<tr>
                 <td>{{((pageNum-1)*pageSize)+($index+1)}}</td>
                 <td>{{$value.productName}}</td>
+                <td>{{$value.product.no}}</td>
                 <td style="text-align: right;">{{$value.productPrice}}</td>
                 <td style="text-align: right;">{{$value.productNumber}}</td>
                 <td style='white-space: nowrap;'>{{$value.categoryName}}</td>
@@ -680,7 +681,8 @@
 												<thead>
 													<tr>
 														<th style="width: 5%; text-align: center;" class="i18n" data-properties="thead-serial-number" data-ptype="text"></th>
-														<th style="width: 20%; text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
+														<th style="width: 19%; text-align: center;" class="i18n" data-properties="product-name" data-ptype="text"></th>
+														<th style="width: 5%; text-align: center;" class="i18n" data-properties="product-no" data-ptype="text"></th>
 														<th style="width: 8%; text-align: center;" class="i18n" data-properties="product-price" data-ptype="text"></th>
 														<th style="width: 5%; text-align: center;" class="i18n" data-properties="product-number" data-ptype="text"></th>
 														<th style="width: 6%; text-align: center;" class="i18n" data-properties="category-name" data-ptype="text"></th>

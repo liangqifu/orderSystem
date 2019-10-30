@@ -14,6 +14,11 @@ public class OrderDetailInfo {
      * 菜品名称
      */
     private String productName;
+    
+    /**
+     * 单价
+     */
+    private Double price;
 	public Integer getNumber() {
 		return number;
 	}
@@ -31,6 +36,12 @@ public class OrderDetailInfo {
 	}
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
 	}
     
     

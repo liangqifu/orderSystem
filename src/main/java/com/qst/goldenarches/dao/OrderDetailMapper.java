@@ -32,4 +32,10 @@ public interface OrderDetailMapper {
 	List<OrderDetail> queryOrderDetailByGroupCid(List<Integer> detailIds);
 
 	Map<String, Object> queryDrinksAndServiceCount(@Param("orderId")Integer orderId);
+
+	List<Map<String, Object>> queryEveryProTypeSaleNum(Map<String, Object> params);
+
+	List<Map<String, Object>> queryAmountMoneyOfType(Map<String, Object> params);
+	List<Map<String, Object>> queryEveryMonthSaleNum(Map<String, Object> params);
+	Map<String, Object> queryEveryMonthMoney(Map<String, Object> params);
 }

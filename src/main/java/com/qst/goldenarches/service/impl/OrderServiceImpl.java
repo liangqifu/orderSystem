@@ -581,7 +581,12 @@ public class OrderServiceImpl implements OrderService {
 		OrderPrinterLog logDb = orderPrinterLogMapper.selectByPrimaryKey(printerLog.getId());
 		if(logDb != null) {
 			try {
-				orderPrinterService.handelOrderPrinter(logDb);
+				if("4".equals(logDb.getPinterType())) {
+					orderPrinterService.handelPCPayPrinter(printerLog);
+				}else {
+					orderPrinterService.handelOrderPrinter(logDb);
+				}
+				
 			} catch (Exception e) {
 				throw new BusException(e);
 			}

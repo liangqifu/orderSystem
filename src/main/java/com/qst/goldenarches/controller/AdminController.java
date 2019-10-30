@@ -31,10 +31,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.qst.goldenarches.pojo.Admin;
+import com.qst.goldenarches.pojo.Category;
 import com.qst.goldenarches.pojo.Msg;
 import com.qst.goldenarches.pojo.Permission;
 import com.qst.goldenarches.pojo.Role;
 import com.qst.goldenarches.service.AdminService;
+import com.qst.goldenarches.service.CategoryService;
 import com.qst.goldenarches.service.PermissionService;
 import com.qst.goldenarches.service.RoleService;
 
@@ -53,6 +55,8 @@ public class AdminController {
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private CategoryService categoryService;
 
 
 	@ResponseBody
@@ -114,7 +118,6 @@ public class AdminController {
             adminService.addAdminRoles(map);
             return Msg.success();
         } catch ( Exception e ) {
-            e.printStackTrace();
             return Msg.fail();
         }
     }
@@ -227,7 +230,6 @@ public class AdminController {
             }
             return Msg.fail();
         } catch ( Exception e ) {
-            e.printStackTrace();
              return Msg.fail();
         }
 
@@ -250,7 +252,6 @@ public class AdminController {
             }
             return Msg.fail().add("va_msg","账户已存在");
         }catch (Exception e){
-            e.printStackTrace();
             return Msg.fail().add("va_mag","服务异常,稍后重试");
         }
     }
@@ -325,7 +326,12 @@ public class AdminController {
         return "admin/main";
     }
     @RequestMapping("dataAnalysis")
-    public String toDataAnalysis(){
+    public String toDataAnalysis(Model model ){
+    	List<Category> categoryList = new ArrayList<Category>();
+    	categoryList.add(categoryService.getById(1));
+    	categoryList.add(categoryService.getById(2));
+    	categoryList.add(categoryService.getById(3));
+    	model.addAttribute("categoryList", categoryList);
         return "admin/dataAnalysis";
     }
     

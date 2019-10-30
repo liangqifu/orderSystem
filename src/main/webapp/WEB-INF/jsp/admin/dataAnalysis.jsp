@@ -7,27 +7,26 @@
 <script type="text/javascript">
         var date="";
         $(function () {
-
+        	initDaterangepicker();
             showPie();
-            showBarChart();
-            showHorizontalBar(date);
-            //日期选择
-            lay('#version').html('-v'+ laydate.v);
-            //执行一个laydate实例
-            laydate.render({
-                elem: '#currentDate' //指定元素
+            showHorizontalBar();
+            $("#pieChartForm").find("select[name='categoryId']").on('change',function(){
+            	showPie()
             });
-            $("#updateHorBar").click(function () {
-                date =$("#currentDate").val();
-                showHorizontalBar(date);
-                return false;
-            });
+            $("#barChartForm").find("select[name='categoryId']").on('change',function(){
+            	showBarChart()
+            }); 
+            
         });
 
-        function showPie(url) {
+        function showPie() {
+        	var params = $("#pieChartForm").serializeJSON();
             $.ajax({
                 type : "POST",
+                dataType : 'json',
                 url  : "${APP_PATH}/chart/proTypePie",
+                data:JSON.stringify(params),
+                contentType:"application/json",
                 success : function(result) {
                     if ( result.code==100 ) {
                         var datas =result.extend.chartDatas;
@@ -38,9 +37,11 @@
         }
         function buidPieChart(datas) {
             // 初始化echarts实例
+            var arrayName = new Array();
             var arrayData = new Array();
             $.each( datas, function( index, data ){
-                arrayData.push(data.name);
+            	arrayName.push(data.name);
+            	arrayData.push({value:data.value,name:data.name});
             });
             var dom = document.getElementById("pieChart");
             var myChart = echarts.init(dom);
@@ -48,8 +49,8 @@
             option = null;
             option = {
                 title : {
-                    text: '各类商品销售情况',
-                    subtext: '总销售数量',
+                    text: $.i18n.prop('salesOfVariousCommodities'),
+                    subtext: $.i18n.prop('totalSalesVolume'),
                     x:'center'
                 },
                 tooltip : {
@@ -59,15 +60,15 @@
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: arrayData
+                    data: arrayName
                 },
                 series : [
                     {
-                        name: '销售数量',
+                        name: $.i18n.prop('salesVolume'),
                         type: 'pie',
                         radius : '55%',
                         center: ['50%', '60%'],
-                        data:datas,
+                        data:arrayData,
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
@@ -78,15 +79,22 @@
                     }
                 ]
             };
-            ;
             if (option && typeof option === "object") {
                 myChart.setOption(option, true);
             }
         }
-        function showBarChart(url) {
+        function showBarChart() {
+        	var params={
+        			categoryId: $("#barChartForm").find("select[name='categoryId']").val(),
+        			year:moment($('#barChartFormDatepicker').datepicker('getDate')).format('YYYY')
+        	}
+        	
             $.ajax({
                 type : "POST",
+                dataType : 'json',
                 url  : "${APP_PATH}/chart/barData",
+                data:JSON.stringify(params),
+                contentType:"application/json",
                 success : function(result) {
                     if ( result.code==100 ) {
                         buildBarChart(result.extend.barData);
@@ -99,7 +107,20 @@
             var myChart = echarts.init(dom);
             var app = {};
             var option = null;
-            app.title = '折柱混合';
+            app.title = $.i18n.prop('app-title-bar-line');
+            var xAxisData = [];
+            xAxisData.push($.i18n.prop('monthNames-1'));
+            xAxisData.push($.i18n.prop('monthNames-2'));
+            xAxisData.push($.i18n.prop('monthNames-3'));
+            xAxisData.push($.i18n.prop('monthNames-4'));
+            xAxisData.push($.i18n.prop('monthNames-5'));
+            xAxisData.push($.i18n.prop('monthNames-6'));
+            xAxisData.push($.i18n.prop('monthNames-7'));
+            xAxisData.push($.i18n.prop('monthNames-8'));
+            xAxisData.push($.i18n.prop('monthNames-9'));
+            xAxisData.push($.i18n.prop('monthNames-10'));
+            xAxisData.push($.i18n.prop('monthNames-11'));
+            xAxisData.push($.i18n.prop('monthNames-12'));
             option = {
                 tooltip: {
                     trigger: 'axis',
@@ -124,7 +145,7 @@
                 xAxis: [
                     {
                         type: 'category',
-                        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+                        data: xAxisData,
                         axisPointer: {
                             type: 'shadow'
                         }
@@ -133,7 +154,7 @@
                 yAxis: [
                     {
                         type: 'value',
-                        name: '数量',
+                        name: $.i18n.prop('quantity'),
                         min: 0,
                         max: datas.YAxis.maxCount,
                         interval: 50,
@@ -143,10 +164,10 @@
                     },
                     {
                         type: 'value',
-                        name: '销售金额',
+                        name: $.i18n.prop('sales-amount'),
                         min: 0,
                         max: datas.YAxis.saleMax,
-                        interval: 500,
+                        interval: 1000,
                         axisLabel: {
                             formatter: '{value} '
                         }
@@ -160,11 +181,15 @@
             }
         }
 
-        function showHorizontalBar(date) {
+        function showHorizontalBar() {
+        	var params = $("#horBarForm").serializeJSON();
+        	params.categoryId = 1;
             $.ajax({
                 type : "POST",
+                dataType : 'json',
                 url  : "${APP_PATH}/chart/horBarData",
-                data :{"date":date},
+                data:JSON.stringify(params),
+                contentType:"application/json",
                 success : function(result) {
                     if ( result.code==100 ) {
                         buildHorizontalBar(result.extend.datas);
@@ -174,20 +199,15 @@
         }
         function buildHorizontalBar(datas) {
             var dom = document.getElementById("horizontalBar");
-            var cDate =$("#currentDate").val();
-            if(""==cDate){
-                cDate ="今日数据"
-            }else {
-                cDate =cDate+"数据";
-            }
+            var cDate =$("#horBarForm").find("input[name='startDate']").val() + "~" + $("#horBarForm").find("input[name='endDate']").val()+$.i18n.prop('datas');
             var myChart = echarts.init(dom);
             var app = {};
             option = null;
-            app.title = '当日销售金额 - 条形图';
+            app.title = $.i18n.prop('app-title');
 
             option = {
                 title: {
-                    text: '当日销售金额￥'+datas.sum,
+                    text: $.i18n.prop('app-title-1')+datas.total,
                     subtext: cDate
                 },
                 tooltip: {
@@ -222,37 +242,202 @@
                 myChart.setOption(option, true);
             }
         }
+        function initDaterangepicker(){
+        	 var daysOfWeek = [];
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-1'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-2'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-3'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-4'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-5'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-6'))
+             daysOfWeek.push($.i18n.prop('daterangepicker-daysOfWeek-7'))
+             
+             var monthNames = [];
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-1'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-2'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-3'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-4'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-5'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-6'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-7'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-8'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-9'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-10'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-11'))
+             monthNames.push($.i18n.prop('daterangepicker-monthNames-12'))
+             var locale = {
+                     "format": $.i18n.prop('daterangepicker-format'),
+                     "separator": " - ",
+                     "applyLabel": $.i18n.prop('daterangepicker-applyLabel'),
+                     "cancelLabel": $.i18n.prop('daterangepicker-cancelLabel'),
+                     "fromLabel": $.i18n.prop('daterangepicker-fromLabel'),
+                     "toLabel": $.i18n.prop('daterangepicker-toLabel'),
+                     "customRangeLabel": $.i18n.prop('daterangepicker-customRangeLabel'),
+                     "daysOfWeek": daysOfWeek,
+                     "monthNames": monthNames
+                 };
+             var ranges = {};
+             ranges[$.i18n.prop('daterangepicker-ranges-today')]=[moment(),moment()];
+             ranges[$.i18n.prop('daterangepicker-ranges-week')]=[moment().startOf('week'), moment().endOf('week')];
+             ranges[$.i18n.prop('daterangepicker-ranges-last-week')]=[moment().week(moment().week() -1).startOf('week'), moment().week(moment().week()-1).endOf('week')],
+             ranges[$.i18n.prop('daterangepicker-ranges-this-month')]=[moment().startOf('month'), moment().endOf('month')];
+             ranges[$.i18n.prop('daterangepicker-ranges-last-month')]=[moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+             ranges[$.i18n.prop('daterangepicker-ranges-this-year')]=[moment().startOf('year'), moment().endOf('year')];
+             ranges[$.i18n.prop('daterangepicker-ranges-last-year')]=[moment().year(moment().year() -1).startOf('year'), moment().year(moment().year() -1).endOf('year')];
+             $("#pieChartFormDaterangepicker").daterangepicker(
+    	    		 {
+    	    			timePicker24Hour:true,
+    	    	        autoUpdateInput: false,
+    	    	        startDate: moment().startOf('year').format('YYYY-MM-DD'),
+    	    	        endDate:moment().endOf('year').format('YYYY-MM-DD'),
+    	    	        drops:'down',
+    	    	        opens: 'right', //日期选择框的弹出位置
+    	    	        buttonClasses: ['btn btn-default'],
+    	    	        applyClass: 'btn-small btn-primary blue',
+    	    	        cancelClass: 'btn-small',
+    	    	        ranges: ranges,
+    	    	        locale: locale
+    	    	     }
+ 		   	     ).on('cancel.daterangepicker', function(ev, picker) {
+ 		   	     }).on('apply.daterangepicker', function(ev, picker) {
+	                $("#pieChartForm").find("input[name='startDate']").val(picker.startDate.format('YYYY-MM-DD'));
+	                $("#pieChartForm").find("input[name='endDate']").val(picker.endDate.format('YYYY-MM-DD'));
+	                $("#pieChartForm #pieChartFormDaterangepicker").val(picker.startDate.format($.i18n.prop('daterangepicker-format'))+" - "+picker.endDate.format($.i18n.prop('daterangepicker-format')));
+	                showPie()
+ 		   	 });
+             
+             $("#pieChartForm").find("input[name='startDate']").val(moment().startOf('year').format('YYYY-MM-DD'));
+             $("#pieChartForm").find("input[name='endDate']").val(moment().endOf('year').format('YYYY-MM-DD'));
+             $("#pieChartForm #pieChartFormDaterangepicker").val(moment().startOf('year').format('YYYY-MM-DD')+" - "+moment().endOf('year').format('YYYY-MM-DD'));
+             
+             
+             
+             $("#horBarFormDaterangepicker").daterangepicker(
+    	    		 {
+    	    			timePicker24Hour:true,
+    	    	        autoUpdateInput: false,
+    	    	        startDate: moment().startOf('year').format('YYYY-MM-DD'),
+    	    	        endDate:moment().endOf('year').format('YYYY-MM-DD'),
+    	    	        drops:'down',
+    	    	        opens: 'right', //日期选择框的弹出位置
+    	    	        buttonClasses: ['btn btn-default'],
+    	    	        applyClass: 'btn-small btn-primary blue',
+    	    	        cancelClass: 'btn-small',
+    	    	        ranges: ranges,
+    	    	        locale: locale
+    	    	     }
+ 		   	     ).on('cancel.daterangepicker', function(ev, picker) {
+ 		   	     }).on('apply.daterangepicker', function(ev, picker) {
+	                $("#horBarForm").find("input[name='startDate']").val(picker.startDate.format('YYYY-MM-DD'));
+	                $("#horBarForm").find("input[name='endDate']").val(picker.endDate.format('YYYY-MM-DD'));
+	                $("#horBarForm #horBarFormDaterangepicker").val(picker.startDate.format($.i18n.prop('daterangepicker-format'))+" - "+picker.endDate.format($.i18n.prop('daterangepicker-format')));
+	                showHorizontalBar()
+ 		   	 });
+             
+             $("#horBarForm").find("input[name='startDate']").val(moment().startOf('year').format('YYYY-MM-DD'));
+             $("#horBarForm").find("input[name='endDate']").val(moment().endOf('year').format('YYYY-MM-DD'));
+             $("#horBarForm #horBarFormDaterangepicker").val(moment().startOf('year').format('YYYY-MM-DD')+" - "+moment().endOf('year').format('YYYY-MM-DD'));
+             
+            $('#barChartFormDatepicker').datepicker({
+           	   format: 'yyyy',
+           	   autoclose:true,
+           	   startView: 2,
+           	   minViewMode: 2,
+           	   maxViewMode: 2
+           	}).on('changeDate',function(){
+           		showBarChart();
+           	});;
+            $('#barChartFormDatepicker').datepicker('setDate', new Date());
+        }
+        
     </script>
 
 <body>
         <div>
           
-          <h1 class="page-header">数据分析</h1>
+          <h1 class="page-header i18n"  data-properties="mean_102" data-ptype="text" ></h1>
           <div class="row placeholders">
-            <div class="col-xs-6 col-sm-3 placeholder" style="width:1100px;height:350px;margin-bottom: 50px">
-              <div id="pieChart" class="col-xs-6 col-sm-3 placeholder" style="width: 49%;height:350px;"></div>
-              <div>
-                <form class="form-inline">
-                  <div class="form-group">
-                    <div class="input-group">
-                      <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-                      </div>
-                      <input type="text" class="form-control" id="currentDate" placeholder="请选择日期">
-                    </div>
-                  </div>
-                  <button id="updateHorBar" class="btn btn-primary">搜索</button>
-                </form>
-
-                <div id="horizontalBar" class="col-xs-6 col-sm-3 placeholder" style="width: 51%;height:350px;"></div>
+            <div class="col-xs-6 col-sm-3 placeholder" style="width:100%;height:100%">
+              
+              <div style="float: left;width: 50%">
+                <form id="pieChartForm" class="form-inline">
+	                 <div class="form-group" style="width: 100%">
+						<div class="col-sm-4">
+						   <select class="form-control" name="categoryId" style="width: 100%;">
+						      <c:forEach items="${categoryList}" var="item">
+							      <c:if test="${item.id !=3 }">
+							           <option value="${item.id}">${item.name}</option>
+							      </c:if>
+						      </c:forEach>
+						   </select>
+						</div>
+						<div class="col-sm-4">
+						    <input type="text" id="pieChartFormDaterangepicker" readonly="readonly" class="form-control i18n" data-properties="pleaseSelectDate" data-ptype="placeholder" >
+				            <input type="hidden"  name="startDate" class="form-control" />
+				            <input type="hidden"  name="endDate" class="form-control" /> 
+						</div>
+					  </div>
+					  
+                 </form>
+                 <h1></h1>
+                 <div id="pieChart" class="col-xs-6 col-sm-3 placeholder" style="width: 100%;height:350px;"></div>
+              </div>
+              
+             
+              <div style="float: left;width: 50%" >
+                 <form id="horBarForm" class="form-inline">
+	                 <div class="form-group" style="width: 100%">
+						<%-- <div class="col-sm-4">
+						   <select class="form-control" name="categoryId" style="width: 100%;">
+						      <option></option>
+						      <c:forEach items="${categoryList}" var="item">
+						           
+						           <option value="${item.id}">${item.name}</option>
+						      </c:forEach>
+						   </select>
+						</div> --%>
+						<div class="col-sm-4">
+						    <input type="text" id="horBarFormDaterangepicker" readonly="readonly" class="form-control i18n" data-properties="pleaseSelectDate" data-ptype="placeholder" >
+				            <input type="hidden"  name="startDate" class="form-control" />
+				            <input type="hidden"  name="endDate" class="form-control" /> 
+						</div>
+					  </div>
+                 </form>
+                 <h1></h1>
+                <div id="horizontalBar" class="col-xs-6 col-sm-3 placeholder" style="width: 100%;height:350px;"></div>
               </div>
             </div>
-            <div class="col-xs-6 col-sm-3 placeholder" style="width: 95%;">
-              <h3>全年销售趋势 <small>数量和金额</small></h3>
+            <div class="col-xs-6 col-sm-3 placeholder" style="width: 100%;">
+              <h3 >
+                <span class="i18n" data-properties="sales-trend" data-ptype="text"></span>
+                <small class="i18n" data-properties="quantity-and-amount" data-ptype="text" ></small>
+              </h3>
+              
             </div>
-            <div id="barChart" class="col-xs-6 col-sm-3 placeholder" style="width: 95%;height:500px;"></div>
-            <div class="col-xs-6 col-sm-3 placeholder">
+            
+            <div>
+                <form id="barChartForm" class="form-inline">
+	                 <div class="form-group" style="width: 100%">
+		                 <div class="col-sm-2">
+							   <select class="form-control" name="categoryId" style="width: 100%;">
+							      <c:forEach items="${categoryList}" var="item">
+							           <c:if test="${item.id !=3 }">
+							                <option value="${item.id}">${item.name}</option>
+							           </c:if>
+							      </c:forEach>
+							   </select>
+						 </div>
+						<div class="col-sm-1">
+						    <input style="width: 100%" type="text" name="year" id="barChartFormDatepicker" readonly="readonly" class="form-control i18n" data-properties="pleaseSelectYear" data-ptype="placeholder" >
+						</div>
+					  </div>
+                 </form>
+                 <h1></h1>
+            
+	            <div id="barChart" class="col-xs-6 col-sm-3 placeholder" style="width: 100%;height:500px;">
+	            </div>
             </div>
+            
           </div>
         </div>
 </body>

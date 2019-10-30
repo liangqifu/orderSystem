@@ -1,6 +1,7 @@
 package com.qst.goldenarches.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -26,6 +27,8 @@ public interface OrderMasterMapper {
 	String queryMaxOrderNo(@Param("dateStr")String dateStr);
 
 	int checkTableNum(@Param("tableNum") String tableNum);
+
+	Map<String, Object> staTotalAmount(Map<String, Object> params);
 
 	
 }

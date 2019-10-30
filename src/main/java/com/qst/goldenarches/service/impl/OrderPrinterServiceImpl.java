@@ -30,6 +30,7 @@ import com.qst.goldenarches.print.OrderDetailInfo;
 import com.qst.goldenarches.print.OrderInfo;
 import com.qst.goldenarches.print.PrinterService;
 import com.qst.goldenarches.print.Ticket;
+import com.qst.goldenarches.print.TicketPC;
 import com.qst.goldenarches.service.OrderPrinterService;
 import com.qst.goldenarches.service.SettingService;
 import com.qst.goldenarches.utils.DateUtils;
@@ -109,7 +110,66 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 		}
 		
 	}
+	@Override
+	public void handelPCPayPrinter(OrderPrinterLog orderPrinter) throws Exception{
+		OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderPrinter.getOrderId());
+		Setting setting =settingService.getSettingInfo();
+		List<TicketPC> tickets = getPrintTicketsPC(orderMaster,setting, orderPrinter);
+		//调打印机开始打印
+		printerService.printerPC(tickets);
+	}
 	
+	private List<TicketPC> getPrintTicketsPC(OrderMaster orderMaster,Setting setting,OrderPrinterLog orderPrinter){
+		List<TicketPC> tickets = new ArrayList<TicketPC>();
+		OrderInfo orderInfo = this.getPrintOrderInfo(orderMaster, setting, orderPrinter);
+		orderInfo.setDetailInfos(this.getPrintOrderDetailInfo(orderMaster, setting));
+		Category category = categoryMapper.getById(41);
+		if(category != null) {
+			if(category.getPrinter() != null && !org.springframework.util.StringUtils.isEmpty(category.getPrinter().getIp())) {
+				TicketPC ticket = new TicketPC(orderInfo,category.getPrinter().getIp(),setting);
+				tickets.add(ticket);
+			}else {
+				logger.error("服务或支付分类未关联打印机");
+			}
+		}else {
+			logger.error("服务或支付分类不存在");
+		}
+		return tickets;
+	}
+	
+	private List<OrderDetailInfo> getPrintOrderDetailInfo(OrderMaster orderMaster, Setting setting){
+		List<OrderDetailInfo> list = new ArrayList<OrderDetailInfo>();
+		OrderDetailInfo detailInfo = null;
+		if(orderMaster.getAdult()!=null && orderMaster.getAdult().intValue() > 0) {
+			detailInfo = new OrderDetailInfo();
+			detailInfo.setNumber(orderMaster.getAdult());
+			detailInfo.setProductName(ResourceUtils.getValueByLanguage("adult", setting.getLanguage()));
+			detailInfo.setPrice(orderMaster.getAdultAmount());
+			list.add(detailInfo);
+		}
+		if(orderMaster.getChild() != null && orderMaster.getChild().intValue() > 0) {
+			detailInfo = new OrderDetailInfo();
+			detailInfo.setNumber(orderMaster.getChild());
+			detailInfo.setProductName(ResourceUtils.getValueByLanguage("child", setting.getLanguage()));
+			detailInfo.setPrice(orderMaster.getChildAmount());
+			list.add(detailInfo);
+		}
+		OrderDetail param = new OrderDetail();
+		param.setOrderId(orderMaster.getOrderId());
+		param.setDetailType("1");
+		param.setState("0");
+		List<OrderDetail> details = orderDetailMapper.queryOrderDetail(param);
+		if(!CollectionUtils.isEmpty(details)) {
+			for (OrderDetail orderDetail : details) {
+				detailInfo = new OrderDetailInfo();
+				detailInfo.setNumber(orderDetail.getProductNumber());
+				detailInfo.setProductName(orderDetail.getProductName());
+				detailInfo.setPrice(orderDetail.getProductNumber()*orderDetail.getProductPrice());
+				list.add(detailInfo);
+			}
+		}
+		return list;
+	}
 	private List<Ticket> getPrintTickets(OrderMaster orderMaster,Map<String, List<OrderDetail>> printerMap,Setting setting,OrderPrinterLog orderPrinter){
 		List<Ticket> tickets = new ArrayList<Ticket>();
 		Ticket ticket = null;
@@ -178,6 +238,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 	
 	private OrderInfo getPrintOrderInfo(OrderMaster orderMaster,Setting setting,OrderPrinterLog orderPrinter) {
 		OrderInfo orderInfo = new OrderInfo();
+		orderInfo.setTotalAmount(orderMaster.getTotalAmount());
 		orderInfo.setArea(orderMaster.getArea().getName());
 		Date createTime = orderPrinter.getCreateTime();
 		String date = createTime !=null? DateUtils.formatDate(createTime, "dd.MM.yyyy") : DateUtils.formatDate(orderMaster.getOpenTime(), "dd.MM.yyyy");

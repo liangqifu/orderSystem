@@ -14,7 +14,7 @@ public interface ChartService {
      * 获得每个商品类别的的销售总数
      * @return
      */
-    List<Map> getEveryProTypeSaleNum();
+    List<Map<String,Object>> getEveryProTypeSaleNum(Map<String, Object> params);
 
     /***
      * 获取某年只某月为止的每月的
@@ -24,7 +24,7 @@ public interface ChartService {
      * @param month 截止月份
      * @return
      */
-    Map<String, Object> getEveryMonthBarData(int year, int month);
+    Map<String, Object> getEveryMonthBarData(Map<String, Object> params);
 
-    Map<String, Object> getSalesAmountOfDay(String date);
+    Map<String, Object> getSalesAmountOfDay(Map<String, Object> params);
 }

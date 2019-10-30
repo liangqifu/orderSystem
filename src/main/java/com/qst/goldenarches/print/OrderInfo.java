@@ -29,6 +29,8 @@ public class OrderInfo {
 	 */
 	private List<OrderDetailInfo> detailInfos;
 	
+	 private Double totalAmount;
+	
 	private String printType;
 	
 	
@@ -73,6 +75,12 @@ public class OrderInfo {
 	}
 	public void setPrintType(String printType) {
 		this.printType = printType;
+	}
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 	
 	

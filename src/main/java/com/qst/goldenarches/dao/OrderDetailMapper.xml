@@ -251,4 +251,95 @@
 	 from order_detail s where  s.state='0' and s.order_id=#{orderId} GROUP BY s.order_id
   </select>
   
+  
+    <select id="queryEveryProTypeSaleNum" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  SELECT t2.category_id,
+		(SELECT t1.category_name from product_category t1 where t1.category_id=t2.category_id) as name,
+		t2.value
+		 FROM (
+		SELECT s.category_id,
+		sum(s.product_number) as value
+		from order_detail s,order_master s1 where s1.order_id=s.order_id and s1.state='0' and s1.status='2' and s.state='0' 
+		 <if test="categoryId != null">
+		   and  FIND_IN_SET(s.category_id, queryCategoryChildren(#{categoryId}))
+		 </if>
+		 <if test="startDate != null and startDate !='' ">
+		   AND  date_format( s1.open_time, '%Y-%m-%d' ) <![CDATA[ >=  ]]> #{startDate} 
+		 </if>
+		 <if test="endDate != null and endDate !='' ">
+		   and  date_format( s1.open_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> #{endDate}
+		 </if>
+		GROUP BY s.category_id
+		)t2 ORDER BY t2.value DESC
+  </select>
+  
+  <select id="queryAmountMoneyOfType" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  SELECT t2.category_id,
+		(SELECT t1.category_name from product_category t1 where t1.category_id=t2.category_id) as name,
+		t2.value
+		 FROM (
+		SELECT s.category_id,
+		sum(s.product_number*s.product_price) as value
+		from order_detail s,order_master s1 where s1.order_id=s.order_id and s1.state='0' and s1.status='2' and s.state='0'  AND s.product_price IS not NULL and s.product_price <![CDATA[ >  ]]> 0
+		and s.product_number is not NULL AND s.product_number <![CDATA[ >  ]]> 0
+		 <if test="categoryId != null and categoryId !='' ">
+		   and  FIND_IN_SET(s.category_id, queryCategoryChildren(#{categoryId}))
+		 </if>
+		 <if test="startDate != null and startDate !='' ">
+		   AND  date_format( s1.open_time, '%Y-%m-%d' ) <![CDATA[ >=  ]]> #{startDate} 
+		 </if>
+		 <if test="endDate != null and endDate !='' ">
+		   and  date_format( s1.open_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> #{endDate}
+		 </if>
+		GROUP BY s.category_id
+		)t2 ORDER BY t2.value DESC
+  </select>
+  
+  
+  <select id="queryEveryMonthSaleNum" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   SELECT 
+		s.category_id,
+		(SELECT t1.category_name from product_category t1 where t1.category_id=s.category_id) as name,
+		sum(CASE when date_format( s1.open_time, '%m' )='01' then s.product_number ELSE 0 END) as m1,
+		sum(CASE when date_format( s1.open_time, '%m' )='02' then s.product_number ELSE 0 END) as m2,
+		sum(CASE when date_format( s1.open_time, '%m' )='03' then s.product_number ELSE 0 END) as m3,
+		sum(CASE when date_format( s1.open_time, '%m' )='04' then s.product_number ELSE 0 END) as m4,
+		sum(CASE when date_format( s1.open_time, '%m' )='05' then s.product_number ELSE 0 END) as m5,
+		sum(CASE when date_format( s1.open_time, '%m' )='06' then s.product_number ELSE 0 END) as m6,
+		sum(CASE when date_format( s1.open_time, '%m' )='07' then s.product_number ELSE 0 END) as m7,
+		sum(CASE when date_format( s1.open_time, '%m' )='08' then s.product_number ELSE 0 END) as m8,
+		sum(CASE when date_format( s1.open_time, '%m' )='09' then s.product_number ELSE 0 END) as m9,
+		sum(CASE when date_format( s1.open_time, '%m' )='10' then s.product_number ELSE 0 END) as m10,
+		sum(CASE when date_format( s1.open_time, '%m' )='11' then s.product_number ELSE 0 END) as m11,
+		sum(CASE when date_format( s1.open_time, '%m' )='12' then s.product_number ELSE 0 END) as m12
+		
+		from order_detail s,order_master s1 where s1.order_id=s.order_id and s1.state='0' and s1.status='2' and s.state='0' 
+		 and date_format( s1.open_time, '%Y' )=#{year}
+		<if test="categoryId != null and categoryId !='' ">
+		   and  FIND_IN_SET(s.category_id, queryCategoryChildren(#{categoryId}))
+		 </if>
+		GROUP BY s.category_id
+  </select>
+  
+  <select id="queryEveryMonthMoney" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  SELECT 
+	 sum(CASE when date_format( s1.open_time, '%m' )='01' then s1.total_amount ELSE 0 END) as m1,
+	 sum(CASE when date_format( s1.open_time, '%m' )='02' then s1.total_amount ELSE 0 END) as m2,
+	 sum(CASE when date_format( s1.open_time, '%m' )='03' then s1.total_amount ELSE 0 END) as m3,
+	 sum(CASE when date_format( s1.open_time, '%m' )='04' then s1.total_amount ELSE 0 END) as m4,
+	 sum(CASE when date_format( s1.open_time, '%m' )='05' then s1.total_amount ELSE 0 END) as m5,
+	 sum(CASE when date_format( s1.open_time, '%m' )='06' then s1.total_amount ELSE 0 END) as m6,
+	 sum(CASE when date_format( s1.open_time, '%m' )='07' then s1.total_amount ELSE 0 END) as m7,
+	 sum(CASE when date_format( s1.open_time, '%m' )='08' then s1.total_amount ELSE 0 END) as m8,
+	 sum(CASE when date_format( s1.open_time, '%m' )='09' then s1.total_amount ELSE 0 END) as m9,
+	 sum(CASE when date_format( s1.open_time, '%m' )='10' then s1.total_amount ELSE 0 END) as m10,
+	 sum(CASE when date_format( s1.open_time, '%m' )='11' then s1.total_amount ELSE 0 END) as m11,
+	 sum(CASE when date_format( s1.open_time, '%m' )='12' then s1.total_amount ELSE 0 END) as m12
+	FROM order_master s1 where s1.state='0' AND s1.status='2' AND s1.total_amount is not NULL 
+	 AND s1.total_amount <![CDATA[ >  ]]> 0 
+	 and date_format(s1.open_time, '%Y' )=#{year}
+  </select>
+  
+  
+  
 </mapper>
