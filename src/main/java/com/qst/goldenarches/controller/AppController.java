@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -257,7 +258,16 @@ public class AppController {
 			param.setState("0");
 			OrderDetail orderDetail= new OrderDetail(); 
 			BeanUtils.copyProperties(param, orderDetail);
+			String detailType = param.getDetailType();
 			List<OrderDetail> list = orderService.queryOrderDetail(orderDetail);
+			if("1,2".equals(detailType) && !CollectionUtils.isEmpty(list)){
+				for (int i = list.size() -1; i >= 0 ; i--) {
+					OrderDetail detail = list.get(i);
+					if("2".equals(detail.getDetailType()) && (detail.getProductPrice() == null || detail.getProductPrice().intValue() ==0)){
+						list.remove(i);
+					}
+				}
+			}
 	        com.github.pagehelper.PageInfo<OrderDetail> pageInfo = new com.github.pagehelper.PageInfo<OrderDetail>(list,param.getPageSize());
 	        String imgPath = request.getServletContext().getContextPath()+"/img/product/";
 	        return Msg.success().add("data", pageInfo).add("imgPath", imgPath);

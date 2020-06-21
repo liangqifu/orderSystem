@@ -48,13 +48,21 @@
 			});
 		} else {
 			var d = "roleId=${param.id}";
+			var permissionIds = [];
 			$.each(nodes, function(i, node) {
-				d += "&permissionIds=" + node.id
+				permissionIds.push( node.id);
 			});
 			$.ajax({
-				type : "POST",
 				url : "${APP_PATH}/role/doAssign",
 				data : d,
+				type : 'POST',
+				async : false,
+				datatype : 'json',
+				data : JSON.stringify({
+					"roleId" : ${param.id},
+					"permissionIds":permissionIds
+				}),
+				contentType:"application/json",
 				success : function(result) {
 					if (result) {
 						layer.msg("分配许可信息成功", {

@@ -2,6 +2,7 @@ package com.qst.goldenarches.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -120,7 +121,8 @@ public class ExcelUtil {
 					headCell.setCellValue(ResourceUtils.getValueByLanguage("excel-order-type-"+order.getOrderType(), setting.getLanguage()));
 					headCell = bobayRow.createCell(6);
 					headCell.setCellStyle(contentStyle);
-					headCell.setCellValue(order.getTotalAmount());
+					
+					headCell.setCellValue(DigitalUtil.scale2(order.getTotalAmount()).doubleValue());
 					headCell = bobayRow.createCell(7);
 					headCell.setCellStyle(contentStyle);
 					headCell.setCellValue(detail.getProductName());
@@ -132,7 +134,7 @@ public class ExcelUtil {
 					headCell.setCellValue(detail.getProductNumber());
 					headCell = bobayRow.createCell(10);
 					headCell.setCellStyle(contentStyle);
-					headCell.setCellValue(detail.getProductPrice());
+					headCell.setCellValue(DigitalUtil.scale2(detail.getProductPrice()).doubleValue());
 					rowIndex ++;
 				}
 				index ++;

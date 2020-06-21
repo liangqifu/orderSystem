@@ -204,29 +204,29 @@ public class OrderServiceImpl implements OrderService {
 		order.setOrderNo(this.getOrderNo());
 		Setting setting = settingMapper.getSettingInfo();
 		if(setting != null) {
-			double adultTotalAmount = 0l;
-			double childTotalAmount = 0l;
+			BigDecimal adultTotalAmount = new BigDecimal(0);
+			BigDecimal childTotalAmount = new BigDecimal(0);
 			Integer adult = order.getAdult();
 			Integer child = order.getChild();
 			String orderType = order.getOrderType();
 			if("1".equals(orderType)) {//午餐
 				if(adult != null) {
-					adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), new BigDecimal(adult));
 				}
 				if(child != null) {
-					childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
+					childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), new BigDecimal(child));
 				}
 			}else {//晚餐
 				if(adult != null) {
-					adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
+					adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), new BigDecimal(adult));
 				}
 				if(child != null) {
-					childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
+					childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), new BigDecimal(child));
 				}
 			}
-			double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
-			BigDecimal b = new BigDecimal(totalAmount);
-			totalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			order.setAdultAmount(adultTotalAmount);
+			order.setChildAmount(childTotalAmount);
+			BigDecimal totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
 			order.setTotalAmount(totalAmount);
 		}
 		orderMasterMapper.insertSelective(order);
@@ -444,42 +444,40 @@ public class OrderServiceImpl implements OrderService {
 			Setting setting = settingMapper.getSettingInfo();
 			if(setting != null) {
 				OrderMaster record = new OrderMaster();
-				double adultTotalAmount = 0l;
-				double childTotalAmount = 0l;
+				BigDecimal adultTotalAmount = new BigDecimal(0);
+				BigDecimal childTotalAmount = new BigDecimal(0);
 				Integer adult = orderMaster.getAdult();
 				Integer child = orderMaster.getChild();
 				String orderType = orderMaster.getOrderType();
 				if("1".equals(orderType)) {//午餐
 					if(adult != null) {
-						adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), adult);
+						adultTotalAmount =  DigitalUtil.mul(setting.getAdultLunchPrice(), new BigDecimal(adult));
 					}
 					if(child != null) {
-						childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), child);
+						childTotalAmount =  DigitalUtil.mul(setting.getChildLunchPrice(), new BigDecimal(child));
 					}
 				}else {//晚餐
 					if(adult != null) {
-						adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), adult);
+						adultTotalAmount =  DigitalUtil.mul(setting.getAdultDinnerPrice(), new BigDecimal(adult));
 					}
 					if(child != null) {
-						childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), child);
+						childTotalAmount =  DigitalUtil.mul(setting.getChildDinnerPrice(), new BigDecimal(child));
 					}
 				}
 				record.setAdultAmount(adultTotalAmount);
 				record.setChildAmount(childTotalAmount);
-				double totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
-				if(totalAmount == 0) {
-					totalAmount = orderMaster.getTotalAmount()==null?0l:orderMaster.getTotalAmount();
+				BigDecimal totalAmount = DigitalUtil.add(adultTotalAmount, childTotalAmount);
+				if(totalAmount.compareTo(new BigDecimal(0)) == 0) {
+					totalAmount = orderMaster.getTotalAmount()==null?new BigDecimal(0):orderMaster.getTotalAmount();
 				}
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("orderId", order.getOrderId());
 				Double orderDetailTotalAmount = orderDetailMapper.getTotalAmountByOrderId(param);
 				
 				if(orderDetailTotalAmount != null) {
-					record.setDrinksTotalAmount(orderDetailTotalAmount);
-					totalAmount = DigitalUtil.add(totalAmount, orderDetailTotalAmount);
+					record.setDrinksTotalAmount(DigitalUtil.scale2(new BigDecimal(orderDetailTotalAmount)));
+					totalAmount = DigitalUtil.add(totalAmount, new BigDecimal(orderDetailTotalAmount));
 				}
-				BigDecimal b = new BigDecimal(totalAmount);
-				totalAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				record.setOrderId(orderMaster.getOrderId());
 				record.setTotalAmount(totalAmount);
 				orderMasterMapper.updateByPrimaryKeySelective(record);

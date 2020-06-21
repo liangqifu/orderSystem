@@ -57,7 +57,6 @@ public class PrinterService {
 						break;
 					}
 				}
-				
 			} catch (Exception e) {
 				logger.error("打印异常，参数={"+ticket+"}",e);
 			}

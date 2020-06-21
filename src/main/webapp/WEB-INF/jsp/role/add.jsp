@@ -19,10 +19,13 @@
 					var name = this.value;
 					$.ajax({
 						url : "${APP_PATH}/role/uniqueName",
-						type : "POST",
-						data : {
+						type : 'POST',
+						async : false,
+						datatype : 'json',
+						data : JSON.stringify({
 							"name" : name
-						},
+						}),
+						contentType:"application/json",
 						success : function(result) {
 							if (100 == result.code) {
 								show_validate_msg("#name", "success", "可用");
@@ -54,9 +57,12 @@
 			$.ajax({
 				type : "POST",
 				url : "${APP_PATH}/role/doAdd",
-				data : {
-					name : roleName
-				},
+				async : false,
+				datatype : 'json',
+				data : JSON.stringify({
+					"name" : roleName
+				}),
+				contentType:"application/json",
 				beforeSend : function() {
 					loadingIndex = layer.msg('处理中', {
 						icon : 16

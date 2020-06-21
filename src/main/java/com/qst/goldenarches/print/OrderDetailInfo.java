@@ -1,5 +1,9 @@
 package com.qst.goldenarches.print;
 
+import java.math.BigDecimal;
+
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class OrderDetailInfo {
      /**
      * 数量
@@ -18,7 +22,8 @@ public class OrderDetailInfo {
     /**
      * 单价
      */
-    private Double price;
+    @JSONField(format = "##.##")
+    private BigDecimal price;
 	public Integer getNumber() {
 		return number;
 	}
@@ -37,10 +42,10 @@ public class OrderDetailInfo {
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	public Double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
-	public void setPrice(Double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
     

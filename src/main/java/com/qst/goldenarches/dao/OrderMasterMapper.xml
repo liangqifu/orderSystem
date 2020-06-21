@@ -6,10 +6,10 @@
     <result column="buyer_id" jdbcType="INTEGER" property="buyerId" />
     <result column="order_type" jdbcType="VARCHAR" property="orderType" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
-    <result column="total_amount" jdbcType="DOUBLE" property="totalAmount" />
-    <result column="adult_amount" jdbcType="DOUBLE" property="adultAmount" />
-    <result column="child_amount" jdbcType="DOUBLE" property="childAmount" />
-    <result column="drinks_total_amount" jdbcType="DOUBLE" property="drinksTotalAmount" />
+    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="adult_amount" jdbcType="DECIMAL" property="adultAmount" />
+    <result column="child_amount" jdbcType="DECIMAL" property="childAmount" />
+    <result column="drinks_total_amount" jdbcType="DECIMAL" property="drinksTotalAmount" />
     <result column="table_num" jdbcType="VARCHAR" property="tableNum" />
     <result column="adult" jdbcType="INTEGER" property="adult" />
     <result column="child" jdbcType="INTEGER" property="child" />
@@ -91,10 +91,10 @@
       status, open_time, create_time,update_time
       )
     values (#{buyerId,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR},#{orderNo,jdbcType=VARCHAR},
-     #{totalAmount,jdbcType=DOUBLE}, 
-      #{adultAmount,jdbcType=DOUBLE}, 
-       #{childAmount,jdbcType=DOUBLE}, 
-     #{drinksTotalAmount,jdbcType=DOUBLE}, 
+     #{totalAmount,jdbcType=DECIMAL}, 
+      #{adultAmount,jdbcType=DECIMAL}, 
+       #{childAmount,jdbcType=DECIMAL}, 
+     #{drinksTotalAmount,jdbcType=DECIMAL}, 
       #{tableNum,jdbcType=VARCHAR}, #{adult,jdbcType=INTEGER}, #{child,jdbcType=INTEGER}, 
       #{lunchNum,jdbcType=INTEGER}, #{dinnerNum,jdbcType=INTEGER}, #{waitTime,jdbcType=INTEGER}, 
       '0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP
@@ -161,16 +161,16 @@
         #{orderNo,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
-        #{totalAmount,jdbcType=DOUBLE},
+        #{totalAmount,jdbcType=DECIMAL},
       </if>
       <if test="adultAmount != null">
-        #{adultAmount,jdbcType=DOUBLE},
+        #{adultAmount,jdbcType=DECIMAL},
       </if>
       <if test="childAmount != null">
-        #{childAmount,jdbcType=DOUBLE},
+        #{childAmount,jdbcType=DECIMAL},
       </if>
       <if test="drinksTotalAmount != null">
-        #{drinksTotalAmount,jdbcType=DOUBLE},
+        #{drinksTotalAmount,jdbcType=DECIMAL},
       </if>
       <if test="tableNum != null">
         #{tableNum,jdbcType=VARCHAR},
@@ -209,16 +209,16 @@
         order_no = #{orderNo,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=DOUBLE},
+        total_amount = #{totalAmount,jdbcType=DECIMAL},
       </if>
       <if test="adultAmount != null">
-        adult_amount = #{adultAmount,jdbcType=DOUBLE},
+        adult_amount = #{adultAmount,jdbcType=DECIMAL},
       </if>
       <if test="childAmount != null">
-        child_amount = #{childAmount,jdbcType=DOUBLE},
+        child_amount = #{childAmount,jdbcType=DECIMAL},
       </if>
       <if test="drinksTotalAmount != null">
-        drinks_total_amount = #{drinksTotalAmount,jdbcType=DOUBLE},
+        drinks_total_amount = #{drinksTotalAmount,jdbcType=DECIMAL},
       </if>
       <if test="tableNum != null">
         table_num = #{tableNum,jdbcType=VARCHAR},
@@ -253,10 +253,10 @@
     set buyer_id = #{buyerId,jdbcType=INTEGER},
       order_type = #{orderType,jdbcType=VARCHAR},
       order_no = #{orderNo,jdbcType=VARCHAR},
-      total_amount = #{totalAmount,jdbcType=DOUBLE},
-      adult_amount = #{adultAmount,jdbcType=DOUBLE},
-      child_amount = #{childAmount,jdbcType=DOUBLE},
-      drinks_total_amount = #{drinksTotalAmount,jdbcType=DOUBLE},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
+      adult_amount = #{adultAmount,jdbcType=DECIMAL},
+      child_amount = #{childAmount,jdbcType=DECIMAL},
+      drinks_total_amount = #{drinksTotalAmount,jdbcType=DECIMAL},
       table_num = #{tableNum,jdbcType=VARCHAR},
       adult = #{adult,jdbcType=INTEGER},
       child = #{child,jdbcType=INTEGER},
@@ -273,14 +273,14 @@
   </select>
   
   <select id="checkTableNum" parameterType="java.lang.String" resultType="java.lang.Integer" >
-    SELECT count(1) from order_master s where s.status in('0','1') and s.table_num=#{tableNum,jdbcType=VARCHAR} 
+    SELECT count(1) from order_master s where s.state='0' and s.status in('0','1') and s.table_num=#{tableNum,jdbcType=VARCHAR} 
   </select>
   
   <select id="staTotalAmount" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 	  SELECT 
 	  sum(s.adult*s.adult_amount) as totalAdultAmount,
 	  sum(s.child*s.child_amount) as totalChildAmount 
-	 from order_master s where s.status='2'
+	 from order_master s where s.state='0' and s.status='2'
      <if test="startDate != null and startDate !='' ">
 	   AND  date_format( s.open_time, '%Y-%m-%d' ) <![CDATA[ >=  ]]> #{startDate} 
 	 </if>

@@ -1,11 +1,13 @@
 package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -61,7 +63,8 @@ public class OrderDetail extends BasePo implements Serializable {
      */
 	@ApiModelProperty(value="菜品单价")
 	@NotNull(message="菜品单价不能为空")
-    private Double productPrice;
+	@JSONField(format = "##.##")
+    private BigDecimal productPrice;
 
     /**
      * 商品数量
@@ -140,11 +143,11 @@ public class OrderDetail extends BasePo implements Serializable {
         this.productName = productName == null ? null : productName.trim();
     }
 
-    public Double getProductPrice() {
+    public BigDecimal getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(Double productPrice) {
+    public void setProductPrice(BigDecimal productPrice) {
         this.productPrice = productPrice;
     }
 

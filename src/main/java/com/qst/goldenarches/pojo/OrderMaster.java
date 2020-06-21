@@ -1,12 +1,14 @@
 package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -43,14 +45,18 @@ public class OrderMaster extends BasePo implements Serializable {
      * 订单总金额
      */
 	@ApiModelProperty(value="订单总金额")
-    private Double totalAmount;
+	@JSONField(format = "##.##")
+    private BigDecimal totalAmount;
 	
 	@ApiModelProperty(value="成人总价")
-    private Double adultAmount;
+	@JSONField(format = "##.##")
+    private BigDecimal adultAmount;
     @ApiModelProperty(value="小孩总价")
-    private Double childAmount;
+    @JSONField(format = "##.##")
+    private BigDecimal childAmount;
 	@ApiModelProperty(value="酒水总金额")
-    private Double drinksTotalAmount;
+	@JSONField(format = "##.##")
+    private BigDecimal drinksTotalAmount;
 	
 
     /**
@@ -159,11 +165,11 @@ public class OrderMaster extends BasePo implements Serializable {
         this.orderType = orderType == null ? null : orderType.trim();
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -279,27 +285,27 @@ public class OrderMaster extends BasePo implements Serializable {
 		this.area = area;
 	}
 
-	public Double getDrinksTotalAmount() {
+	public BigDecimal getDrinksTotalAmount() {
 		return drinksTotalAmount;
 	}
 
-	public void setDrinksTotalAmount(Double drinksTotalAmount) {
+	public void setDrinksTotalAmount(BigDecimal drinksTotalAmount) {
 		this.drinksTotalAmount = drinksTotalAmount;
 	}
 
-	public Double getAdultAmount() {
+	public BigDecimal getAdultAmount() {
 		return adultAmount;
 	}
 
-	public void setAdultAmount(Double adultAmount) {
+	public void setAdultAmount(BigDecimal adultAmount) {
 		this.adultAmount = adultAmount;
 	}
 
-	public Double getChildAmount() {
+	public BigDecimal getChildAmount() {
 		return childAmount;
 	}
 
-	public void setChildAmount(Double childAmount) {
+	public void setChildAmount(BigDecimal childAmount) {
 		this.childAmount = childAmount;
 	}
 

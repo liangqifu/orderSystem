@@ -1,5 +1,6 @@
 package com.qst.goldenarches.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import com.qst.goldenarches.print.TicketPC;
 import com.qst.goldenarches.service.OrderPrinterService;
 import com.qst.goldenarches.service.SettingService;
 import com.qst.goldenarches.utils.DateUtils;
+import com.qst.goldenarches.utils.DigitalUtil;
 import com.qst.goldenarches.utils.ResourceUtils;
 import com.qst.goldenarches.vo.OrderNeedServiceVo;
 @Service
@@ -144,14 +146,15 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 			detailInfo = new OrderDetailInfo();
 			detailInfo.setNumber(orderMaster.getAdult());
 			detailInfo.setProductName(ResourceUtils.getValueByLanguage("adult", setting.getLanguage()));
-			detailInfo.setPrice(orderMaster.getAdultAmount());
+			detailInfo.setPrice(DigitalUtil.scale2(orderMaster.getAdultAmount()));
 			list.add(detailInfo);
 		}
 		if(orderMaster.getChild() != null && orderMaster.getChild().intValue() > 0) {
 			detailInfo = new OrderDetailInfo();
 			detailInfo.setNumber(orderMaster.getChild());
 			detailInfo.setProductName(ResourceUtils.getValueByLanguage("child", setting.getLanguage()));
-			detailInfo.setPrice(orderMaster.getChildAmount());
+			
+			detailInfo.setPrice(DigitalUtil.scale2(orderMaster.getChildAmount()));
 			list.add(detailInfo);
 		}
 		OrderDetail param = new OrderDetail();
@@ -164,7 +167,7 @@ public class OrderPrinterServiceImpl implements OrderPrinterService {
 				detailInfo = new OrderDetailInfo();
 				detailInfo.setNumber(orderDetail.getProductNumber());
 				detailInfo.setProductName(orderDetail.getProductName());
-				detailInfo.setPrice(orderDetail.getProductNumber()*orderDetail.getProductPrice());
+				detailInfo.setPrice(DigitalUtil.mul(orderDetail.getProductPrice(), new BigDecimal(orderDetail.getProductNumber())));
 				list.add(detailInfo);
 			}
 		}

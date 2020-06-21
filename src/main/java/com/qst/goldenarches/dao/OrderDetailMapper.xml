@@ -8,7 +8,7 @@
     <result column="round_id" jdbcType="INTEGER" property="roundId" />
     <result column="product_id" jdbcType="INTEGER" property="productId" />
     <result column="product_name" jdbcType="VARCHAR" property="productName" />
-    <result column="product_price" jdbcType="DOUBLE" property="productPrice" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
     <result column="product_number" jdbcType="INTEGER" property="productNumber" />
     <result column="category_id" jdbcType="INTEGER" property="categoryId" />
     <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
@@ -86,7 +86,7 @@
       category_id, category_name, state, 
       create_time, update_time)
     values (#{detailType,jdbcType=VARCHAR},#{orderId,jdbcType=INTEGER},#{roundId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, 
-      #{productName,jdbcType=VARCHAR}, #{productPrice,jdbcType=DOUBLE}, #{productNumber,jdbcType=INTEGER}, 
+      #{productName,jdbcType=VARCHAR}, #{productPrice,jdbcType=DECIMAL}, #{productNumber,jdbcType=INTEGER}, 
       #{categoryId,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, '0', 
       CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   </insert>
@@ -108,7 +108,7 @@
                #{item.roundId,jdbcType=INTEGER}, 
                #{item.productId,jdbcType=INTEGER}, 
                #{item.productName,jdbcType=VARCHAR},
-               #{item.productPrice,jdbcType=DOUBLE}, 
+               #{item.productPrice,jdbcType=DECIMAL}, 
                #{item.productNumber,jdbcType=INTEGER}, 
                #{item.categoryId,jdbcType=INTEGER}, 
                #{item.categoryName,jdbcType=VARCHAR}, 
@@ -171,7 +171,7 @@
         #{productName,jdbcType=VARCHAR},
       </if>
       <if test="productPrice != null">
-        #{productPrice,jdbcType=DOUBLE},
+        #{productPrice,jdbcType=DECIMAL},
       </if>
       <if test="productNumber != null">
         #{productNumber,jdbcType=INTEGER},
@@ -206,7 +206,7 @@
         product_name = #{productName,jdbcType=VARCHAR},
       </if>
       <if test="productPrice != null">
-        product_price = #{productPrice,jdbcType=DOUBLE},
+        product_price = #{productPrice,jdbcType=DECIMAL},
       </if>
       <if test="productNumber != null">
         product_number = #{productNumber,jdbcType=INTEGER},
@@ -231,7 +231,7 @@
       detail_type = #{detailType,jdbcType=VARCHAR},
       product_id = #{productId,jdbcType=INTEGER},
       product_name = #{productName,jdbcType=VARCHAR},
-      product_price = #{productPrice,jdbcType=DOUBLE},
+      product_price = #{productPrice,jdbcType=DECIMAL},
       product_number = #{productNumber,jdbcType=INTEGER},
       category_id = #{categoryId,jdbcType=INTEGER},
       category_name = #{categoryName,jdbcType=VARCHAR},
@@ -241,7 +241,7 @@
   </update>
   
   <select id="getTotalAmountByOrderId" parameterType="java.util.HashMap" resultType="java.lang.Double">
-    SELECT SUM(t1.product_price*t1.product_number) as total FROM order_detail t1 WHERE (t1.state='0' or t1.state is NULL) and t1.detail_type='1' and t1.order_id=#{orderId} GROUP BY t1.order_id
+    SELECT SUM(t1.product_price*t1.product_number) as total FROM order_detail t1 WHERE (t1.state='0' or t1.state is NULL) and t1.detail_type in('1','2') and t1.order_id=#{orderId} GROUP BY t1.order_id
   </select>
   
   <select id="queryDrinksAndServiceCount" parameterType="java.lang.Integer" resultType="java.util.HashMap">

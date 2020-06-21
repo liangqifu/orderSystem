@@ -6,6 +6,7 @@
  */
 package com.qst.goldenarches.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -113,24 +114,25 @@ public class ChartServiceImpl implements ChartService {
         LinkedList<String> dataNameList =new LinkedList<String>();
         LinkedList<Double> dataValueList =new LinkedList<Double>();
         double sum = 0;
-        double total = 0;
+      //  double total = 0;
         List<Map<String, Object>> resList =  orderDetailMapper.queryAmountMoneyOfType(params);
         
         Map<String, Object> retMap = orderMasterMapper.staTotalAmount(params);
         if(!CollectionUtils.isEmpty(retMap)) {
         	Map<String, Object> map1 = new HashMap<String, Object>();
+        	
         	Double totalAdultAmount = Double.valueOf(retMap.get("totalAdultAmount").toString());
         	Double totalChildAmount = Double.valueOf(retMap.get("totalChildAmount").toString());
         	Setting setting = settingService.getSettingInfo();
         	map1.put("name", ResourceUtils.getValueByLanguage("adult", setting.getLanguage()));
-        	map1.put("value",totalAdultAmount);
+        	map1.put("value",DigitalUtil.decimalFormat(new BigDecimal(totalAdultAmount)));
         	resList.add(map1);
         	Map<String, Object> map2 = new HashMap<String, Object>();
         	map2.put("name", ResourceUtils.getValueByLanguage("child", setting.getLanguage()));
-        	map2.put("value",totalChildAmount);
+        	map2.put("value",DigitalUtil.decimalFormat(new BigDecimal(totalChildAmount)));
         	resList.add(map2);
-        	total+=totalAdultAmount;
-        	total+=totalChildAmount;
+        	//total+=totalAdultAmount;
+        	//total+=totalChildAmount;
         }
         for (Map<String, Object> map : resList) {
         	String name = map.get("name").toString();
@@ -141,9 +143,9 @@ public class ChartServiceImpl implements ChartService {
 		}
         datas.put("nameList",dataNameList);
         datas.put("valueList",dataValueList);
-        datas.put("sum",sum);
-        total+=sum;
-        datas.put("total",total);
+        datas.put("sum",DigitalUtil.decimalFormat(new BigDecimal(sum)));
+       // total+=sum;
+        datas.put("total",DigitalUtil.decimalFormat(new BigDecimal(sum)));
         return datas;
     }
 }

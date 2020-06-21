@@ -1,6 +1,9 @@
 package com.qst.goldenarches.print;
 
+import java.math.BigDecimal;
 import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 public class OrderInfo {
 	/**
@@ -28,8 +31,8 @@ public class OrderInfo {
 	 * 打印明细
 	 */
 	private List<OrderDetailInfo> detailInfos;
-	
-	 private Double totalAmount;
+	@JSONField(format = "##.##")
+	private BigDecimal totalAmount;
 	
 	private String printType;
 	
@@ -76,10 +79,10 @@ public class OrderInfo {
 	public void setPrintType(String printType) {
 		this.printType = printType;
 	}
-	public Double getTotalAmount() {
+	public BigDecimal getTotalAmount() {
 		return totalAmount;
 	}
-	public void setTotalAmount(Double totalAmount) {
+	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 	

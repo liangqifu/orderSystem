@@ -1,7 +1,9 @@
 package com.qst.goldenarches.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -49,22 +51,26 @@ public class Setting implements Serializable {
           * 每位成人午餐价格
      */
 	@ApiModelProperty(value="每位成人午餐价格")
-    private Double adultLunchPrice;
+	@JSONField(format = "##.##")
+    private BigDecimal adultLunchPrice;
 	 /**
 	     * 每位成人晚餐价格
 	*/
 	@ApiModelProperty(value="每位成人晚餐价格")
-	private Double adultDinnerPrice;
+	@JSONField(format = "##.##")
+	private BigDecimal adultDinnerPrice;
 	 /**
          * 每位小孩午餐价格
      */
 	@ApiModelProperty(value="每位小孩午餐价格")
-    private Double childLunchPrice;
+	@JSONField(format = "##.##")
+    private BigDecimal childLunchPrice;
 	 /**
 	     * 每位小孩晚餐价格
 	 */
 	@ApiModelProperty(value="每位小孩晚餐价格")
-	private Double childDinnerPrice;
+	@JSONField(format = "##.##")
+	private BigDecimal childDinnerPrice;
 	
 	 /**
              * 服务台打印机id
@@ -121,35 +127,35 @@ public class Setting implements Serializable {
         this.waitTime = waitTime;
     }
 
-	public Double getAdultLunchPrice() {
+	public BigDecimal getAdultLunchPrice() {
 		return adultLunchPrice;
 	}
 
-	public void setAdultLunchPrice(Double adultLunchPrice) {
+	public void setAdultLunchPrice(BigDecimal adultLunchPrice) {
 		this.adultLunchPrice = adultLunchPrice;
 	}
 
-	public Double getAdultDinnerPrice() {
+	public BigDecimal getAdultDinnerPrice() {
 		return adultDinnerPrice;
 	}
 
-	public void setAdultDinnerPrice(Double adultDinnerPrice) {
+	public void setAdultDinnerPrice(BigDecimal adultDinnerPrice) {
 		this.adultDinnerPrice = adultDinnerPrice;
 	}
 
-	public Double getChildLunchPrice() {
+	public BigDecimal getChildLunchPrice() {
 		return childLunchPrice;
 	}
 
-	public void setChildLunchPrice(Double childLunchPrice) {
+	public void setChildLunchPrice(BigDecimal childLunchPrice) {
 		this.childLunchPrice = childLunchPrice;
 	}
 
-	public Double getChildDinnerPrice() {
+	public BigDecimal getChildDinnerPrice() {
 		return childDinnerPrice;
 	}
 
-	public void setChildDinnerPrice(Double childDinnerPrice) {
+	public void setChildDinnerPrice(BigDecimal childDinnerPrice) {
 		this.childDinnerPrice = childDinnerPrice;
 	}
 

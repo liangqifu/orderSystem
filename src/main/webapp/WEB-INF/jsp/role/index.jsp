@@ -42,9 +42,12 @@
             	}
             	
             	$.ajax({
-            		type : "POST",
-            		url  : "${APP_PATH}/role/pageQuery",
-            		data : jsonData,
+					url : "${APP_PATH}/role/pageQuery",
+					type : 'POST',
+					async : false,
+					datatype : 'json',
+					data : JSON.stringify(jsonData),
+					contentType:"application/json",
             		beforeSend : function(){
             			loadingIndex = layer.msg('处理中', {icon: 16});
             		},

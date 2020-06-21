@@ -21,6 +21,8 @@ public class Product extends BasePo {
      */
 	@ApiModelProperty(value="菜品名称")
     private String name;
+    @ApiModelProperty(value="菜品描述")
+    private String remark;
 	@ApiModelProperty(value="菜品编号")
     private String no;
     /**
@@ -168,9 +170,12 @@ public class Product extends BasePo {
 		this.type = type;
 	}
 
-	
-	
-	
 
-    
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

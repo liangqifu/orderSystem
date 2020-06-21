@@ -38,7 +38,7 @@
                 var bv = $form.data('bootstrapValidator');
                 // Use Ajax to submit form data 提交至form标签中的action，result自定义
                 var params  = JSON.stringify($form.serializeJSON());
-                debugger
+
                 $.ajax({
                     type : "POST",
                     dataType : 'json',

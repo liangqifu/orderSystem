@@ -11,11 +11,11 @@
     <result column="Setting_lunch_num" jdbcType="INTEGER" property="lunchNum" />
     <result column="Setting_dinner_num" jdbcType="INTEGER" property="dinnerNum" />
     <result column="Setting_wait_time" jdbcType="INTEGER" property="waitTime" />
-    <result column="Setting_adult_lunch_price" jdbcType="DOUBLE" property="adultLunchPrice" />
-    <result column="Setting_adult_dinner_price" jdbcType="DOUBLE" property="adultDinnerPrice" />
-    <result column="Setting_child_lunch_price" jdbcType="DOUBLE" property="childLunchPrice" />
-    <result column="Setting_child_dinner_price" jdbcType="DOUBLE" property="childDinnerPrice" />
-    <result column="Setting_service_printer_id" jdbcType="DOUBLE" property="servicePrinterId" />
+    <result column="Setting_adult_lunch_price" jdbcType="DECIMAL" property="adultLunchPrice" />
+    <result column="Setting_adult_dinner_price" jdbcType="DECIMAL" property="adultDinnerPrice" />
+    <result column="Setting_child_lunch_price" jdbcType="DECIMAL" property="childLunchPrice" />
+    <result column="Setting_child_dinner_price" jdbcType="DECIMAL" property="childDinnerPrice" />
+    <result column="Setting_service_printer_id" jdbcType="DECIMAL" property="servicePrinterId" />
     <association property="servicePrinter" column="Setting_service_printer_id" select="com.qst.goldenarches.dao.PrinterMapper.getById"/>
   </resultMap>
   <sql id="Base_Column_List">
@@ -67,10 +67,10 @@
       #{lunchNum,jdbcType=INTEGER}, 
       #{dinnerNum,jdbcType=INTEGER}, 
       #{waitTime,jdbcType=INTEGER},
-      #{adultLunchPrice,jdbcType=DOUBLE},
-      #{adultDinnerPrice,jdbcType=DOUBLE},
-      #{childLunchPrice,jdbcType=DOUBLE},
-      #{childDinnerPrice,jdbcType=DOUBLE},
+      #{adultLunchPrice,jdbcType=DECIMAL},
+      #{adultDinnerPrice,jdbcType=DECIMAL},
+      #{childLunchPrice,jdbcType=DECIMAL},
+      #{childDinnerPrice,jdbcType=DECIMAL},
       #{servicePrinterId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.qst.goldenarches.pojo.Setting">
@@ -145,16 +145,16 @@
         #{waitTime,jdbcType=INTEGER},
       </if>
       <if test="adultLunchPrice != null">
-        #{adultLunchPrice,jdbcType=DOUBLE},
+        #{adultLunchPrice,jdbcType=DECIMAL},
       </if>
       <if test="adultDinnerPrice != null">
-        #{adultDinnerPrice,jdbcType=DOUBLE},
+        #{adultDinnerPrice,jdbcType=DECIMAL},
       </if>
       <if test="childLunchPrice != null">
-        #{childLunchPrice,jdbcType=DOUBLE},
+        #{childLunchPrice,jdbcType=DECIMAL},
       </if>
       <if test="childDinnerPrice != null">
-        #{childDinnerPrice,jdbcType=DOUBLE},
+        #{childDinnerPrice,jdbcType=DECIMAL},
       </if>
       <if test="servicePrinterId != null">
         #{servicePrinterId,jdbcType=INTEGER},
@@ -189,16 +189,16 @@
         wait_time = #{waitTime,jdbcType=INTEGER},
       </if>
       <if test="adultLunchPrice != null">
-        adult_lunch_price = #{adultLunchPrice,jdbcType=DOUBLE},
+        adult_lunch_price = #{adultLunchPrice,jdbcType=DECIMAL},
       </if>
       <if test="adultDinnerPrice != null">
-        adult_dinner_price = #{adultDinnerPrice,jdbcType=DOUBLE},
+        adult_dinner_price = #{adultDinnerPrice,jdbcType=DECIMAL},
       </if>
       <if test="childLunchPrice != null">
-        child_lunch_price = #{childLunchPrice,jdbcType=DOUBLE},
+        child_lunch_price = #{childLunchPrice,jdbcType=DECIMAL},
       </if>
       <if test="childDinnerPrice != null">
-        child_dinner_price = #{childDinnerPrice,jdbcType=DOUBLE},
+        child_dinner_price = #{childDinnerPrice,jdbcType=DECIMAL},
       </if>
       <if test="servicePrinterId != null">
         service_printer_id = #{servicePrinterId,jdbcType=INTEGER},
@@ -216,10 +216,10 @@
       lunch_num = #{lunchNum,jdbcType=INTEGER},
       dinner_num = #{dinnerNum,jdbcType=INTEGER},
       wait_time = #{waitTime,jdbcType=INTEGER},
-      adult_lunch_price = #{adultLunchPrice,jdbcType=DOUBLE},
-      adult_dinner_price = #{adultDinnerPrice,jdbcType=DOUBLE},
-      child_lunch_price = #{childLunchPrice,jdbcType=DOUBLE},
-      child_dinner_price = #{childDinnerPrice,jdbcType=DOUBLE},
+      adult_lunch_price = #{adultLunchPrice,jdbcType=DECIMAL},
+      adult_dinner_price = #{adultDinnerPrice,jdbcType=DECIMAL},
+      child_lunch_price = #{childLunchPrice,jdbcType=DECIMAL},
+      child_dinner_price = #{childDinnerPrice,jdbcType=DECIMAL},
       service_printer_id = #{servicePrinterId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

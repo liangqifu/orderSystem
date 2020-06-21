@@ -8,8 +8,10 @@ package com.qst.goldenarches.utils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 
 public class DigitalUtil {
 	
@@ -70,6 +72,35 @@ public class DigitalUtil {
         BigDecimal b2 = new BigDecimal(Double.valueOf(value2));
         return b1.add(b2).doubleValue();
     }
+    public static BigDecimal add(BigDecimal value1,BigDecimal value2){
+        if(value1 !=null && value2 !=null) {
+    		return scale2(value1.add(value2));
+    	}else {
+    		return scale2(null);
+    	}
+    }
+    
+    public static BigDecimal scale2(BigDecimal value) {
+    	if(value != null) {
+    		return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+    	}else {
+    		return new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_UP);
+    	}
+    	
+    }
+    
+    public static String decimalFormat(Object object, String format) {
+    	if(object == null) {
+    		return "";
+    	}
+    	DecimalFormat decimalFormat = new DecimalFormat(format);
+        decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+        return decimalFormat.format(object);
+    }
+    
+    public static String decimalFormat(Object object) {
+    	return decimalFormat(object, "##.##");
+    }
 
     /**
          * 提供精确减法运算的sub方法
@@ -93,6 +124,14 @@ public class DigitalUtil {
         BigDecimal b1 = new BigDecimal(Double.valueOf(value1));
         BigDecimal b2 = new BigDecimal(Double.valueOf(value2));
         return b1.multiply(b2).doubleValue();
+    }
+    public static BigDecimal mul(BigDecimal value1,BigDecimal value2){
+    	if(value1 !=null && value2 !=null) {
+    		return scale2(value1.multiply(value2));
+    	}else {
+    		return scale2(null);
+    	}
+        
     }
 
     /**

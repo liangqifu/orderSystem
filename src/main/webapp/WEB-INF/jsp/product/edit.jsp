@@ -65,7 +65,7 @@
                     data:datajson,
                     dataType : 'json',
                     success : function(result) {
-                    	debugger
+
                         if ( result.code==100 ) {
                             layer.msg("菜品图片修改成功", {time:1000, icon:6}, function(){
                             	

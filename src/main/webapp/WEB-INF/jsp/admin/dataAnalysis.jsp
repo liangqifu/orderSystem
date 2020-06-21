@@ -183,7 +183,7 @@
 
         function showHorizontalBar() {
         	var params = $("#horBarForm").serializeJSON();
-        	params.categoryId = 1;
+        	//params.categoryId = 1;
             $.ajax({
                 type : "POST",
                 dataType : 'json',

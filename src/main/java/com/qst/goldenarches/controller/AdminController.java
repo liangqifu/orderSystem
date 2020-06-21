@@ -6,13 +6,7 @@
  */
 package com.qst.goldenarches.controller;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -87,13 +81,15 @@ public class AdminController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("doUnAssign")
-    public Object dounAssign( Integer adminId, Integer[] assignRoleIds ) {
+    @RequestMapping(value = "doUnAssign",method= RequestMethod.POST,
+            consumes= MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg dounAssign(@RequestBody Map<String, Object> param ) {
         try {
             // 删除关系表数据
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("adminId", adminId);
-            map.put("roleIds", assignRoleIds);
+            map.put("adminId", param.get("adminId"));
+            map.put("roleIds", Arrays.asList(param.get("assignRoleIds").toString().split(",")));
             adminService.removeAdminRoles(map);
             return Msg.success();
         } catch ( Exception e ) {
@@ -108,13 +104,15 @@ public class AdminController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("doAssign")
-    public Object doAssign( Integer adminId, Integer[] unassignRoleIds ) {
+    @RequestMapping(value = "doAssign",method= RequestMethod.POST,
+            consumes= MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg doAssign(@RequestBody Map<String, Object> param ) {
         try {
             // 增加admin_role关系表数据
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("adminId", adminId);
-            map.put("roleIds", unassignRoleIds);
+            map.put("adminId",  param.get("adminId"));
+            map.put("roleIds",  Arrays.asList(param.get("unassignRoleIds").toString().split(",")));
             adminService.addAdminRoles(map);
             return Msg.success();
         } catch ( Exception e ) {
@@ -218,8 +216,10 @@ public class AdminController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("doAdd")
-    public Msg doAdd( Admin admin ) {
+    @RequestMapping(value = "doAdd",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Msg doAdd(@RequestBody Admin admin ) {
         try {
             if (adminService.validateAccountUnique(admin.getAccount())){
                 admin.setPassword("1234");//默认密码
@@ -240,12 +240,14 @@ public class AdminController {
      * @param account
      * @return
      */
-    @RequestMapping("uniqueAcct")
+    @RequestMapping(value = "uniqueAcct",method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public Msg validateAccountUnique(String account,HttpSession session){
+    public Msg validateAccountUnique(@RequestBody Map<String,String> param,HttpSession session){
         try {
-            if(account!=null) {
-                boolean flag = adminService.validateAccountUnique(account);
+            if(param.get("account")!=null && !"".equals(param.get("account"))) {
+                boolean flag = adminService.validateAccountUnique(param.get("account"));
                 if (flag){
                     return Msg.success();
                 }

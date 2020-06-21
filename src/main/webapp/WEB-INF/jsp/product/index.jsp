@@ -642,6 +642,12 @@
                                 <input type="text" autocomplete="off" data-bv-notempty="true" data-bv-notempty-message="" name="name" class="form-control i18n" data-properties="pleaseEnter/notempty" data-ptype="placeholder/notempty" id="name" placeholder="">
                             </div>
                         </div>
+						<div class="form-group">
+							<label for="remark" class="col-sm-3 control-label i18n" data-properties="product-remark" data-ptype="text" ></label>
+							<div class="col-sm-6">
+								<input type="text" autocomplete="off"  name="remark" class="form-control i18n"  id="remark" placeholder="">
+							</div>
+						</div>
                         
                         <div class="form-group">
                             <label for="price" class="col-sm-3 control-label i18n" data-properties="product-price" data-ptype="text" ></label>
@@ -658,7 +664,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="type" class="col-sm-3 control-label i18n" data-properties="product-type" data-ptype="text" ></label> 
+							<label  class="col-sm-3 control-label i18n" data-properties="product-type" data-ptype="text" ></label>
 							<div class="col-sm-6">
 							      <div class="checkbox checkbox-primary fl">
 								      <input id="type1" name="type1" class="styled" type="checkbox" checked>
